@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PendaftaranPernikahan;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -15,6 +16,7 @@ class DashboardController extends Controller
             'lunas'        => PendaftaranPernikahan::where('status_pembayaran', 'lunas')->count(),
             'menunggu'     => PendaftaranPernikahan::where('status_pembayaran', 'menunggu')->count(),
             'belum_bayar'  => PendaftaranPernikahan::where('status_pembayaran', 'belum_bayar')->count(),
+            'total_users'  => User::count(),
         ];
 
         $pendaftaran = PendaftaranPernikahan::latest()->paginate(10);

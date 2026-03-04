@@ -226,6 +226,17 @@
             <div class="lbl">Belum Bayar</div>
         </div>
     </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);box-shadow:0 6px 16px rgba(124,58,237,.3)">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+            </svg>
+        </div>
+        <div class="stat-body">
+            <div class="val">{{ $stats['total_users'] }}</div>
+            <div class="lbl">Total Pengguna</div>
+        </div>
+    </div>
 </div>
 
 {{-- Table --}}
