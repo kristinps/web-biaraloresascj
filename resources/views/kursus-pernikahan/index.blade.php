@@ -32,9 +32,9 @@
                 <span class="w-5 h-5 rounded-full bg-white text-blue-800 text-xs font-bold flex items-center justify-center">3</span>
                 Upload Dokumen
             </span>
-            <span class="inline-flex items-center gap-2 text-white text-xs font-semibold px-4 py-2 rounded-full" style="background:rgba(255,255,255,.15)">
-                <span class="w-5 h-5 rounded-full bg-white text-blue-800 text-xs font-bold flex items-center justify-center">4</span>
-                Pembayaran
+            <span class="inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-full" style="background:rgba(255,255,255,.25);color:#fde68a">
+                <span class="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold" style="background:#fde68a;color:#7c3aed">4</span>
+                Pembayaran QRIS →
             </span>
         </div>
     </div>
@@ -435,123 +435,32 @@
     </section>
 
     {{-- ══════════════════════════════════════════════════════
-         STEP 4 · PEMBAYARAN
+         TOMBOL LANJUT KE PEMBAYARAN
     ══════════════════════════════════════════════════════ --}}
-    <section>
-        <div class="flex items-center gap-3 mb-6">
-            <span class="w-9 h-9 rounded-full text-white text-sm font-extrabold flex items-center justify-center shadow-lg flex-shrink-0" style="background:#7c3aed">4</span>
-            <h2 class="text-xl font-extrabold text-gray-800">Pembayaran Pendaftaran</h2>
-            <div class="flex-1 h-px bg-gray-300"></div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-
-            {{-- Info Biaya --}}
-            <div class="px-6 py-5 flex items-center gap-4" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">
-                <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl flex-shrink-0">💳</div>
-                <div>
-                    <h3 class="text-white font-extrabold text-base">Informasi Biaya Kursus</h3>
-                    <p class="text-purple-200 text-xs mt-0.5">Lakukan pembayaran sebelum mengirim formulir</p>
-                </div>
-            </div>
-
-            {{-- Rincian biaya --}}
-            <div class="p-6">
-                <div class="rounded-2xl overflow-hidden mb-6" style="border:1.5px solid #e9d5ff">
-                    <div class="grid grid-cols-2 text-sm" style="background:#faf5ff">
-                        <div class="px-5 py-3 font-semibold text-gray-600 border-b" style="border-color:#e9d5ff">Keterangan</div>
-                        <div class="px-5 py-3 font-semibold text-gray-600 border-b border-l" style="border-color:#e9d5ff">Jumlah</div>
-                        <div class="px-5 py-3 text-gray-700 border-b" style="border-color:#e9d5ff">Biaya Kursus Pernikahan</div>
-                        <div class="px-5 py-3 font-bold border-b border-l" style="color:#7c3aed;border-color:#e9d5ff">Rp 300.000</div>
-                        <div class="px-5 py-3 text-gray-700 border-b" style="border-color:#e9d5ff">Materi &amp; Modul</div>
-                        <div class="px-5 py-3 font-bold border-b border-l" style="color:#7c3aed;border-color:#e9d5ff">Rp 50.000</div>
-                        <div class="px-5 py-3 font-extrabold text-gray-800" style="background:#f3e8ff">Total</div>
-                        <div class="px-5 py-3 font-extrabold border-l text-lg" style="background:#f3e8ff;color:#7c3aed;border-color:#e9d5ff">Rp 350.000</div>
-                    </div>
-                </div>
-
-                {{-- Rekening tujuan --}}
-                <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">Rekening Tujuan Transfer</p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                    @foreach([
-                        ['🏦','BRI','123-456-789-0','a.n. Biara Loresa SCJ'],
-                        ['🏦','BCA','987-654-321-0','a.n. Biara Loresa SCJ'],
-                        ['🏦','Mandiri','111-222-333-4','a.n. Biara Loresa SCJ'],
-                    ] as [$icon,$bank,$rek,$an])
-                    <div class="rounded-xl p-4 text-center" style="background:#faf5ff;border:1.5px solid #e9d5ff">
-                        <p class="text-xl mb-1">{{ $icon }}</p>
-                        <p class="font-extrabold text-gray-800 text-sm">{{ $bank }}</p>
-                        <p class="font-mono font-bold mt-1 text-base" style="color:#7c3aed">{{ $rek }}</p>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ $an }}</p>
-                    </div>
-                    @endforeach
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    {{-- Metode Pembayaran --}}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                            Metode Pembayaran <span class="text-red-500">*</span>
-                        </label>
-                        <select name="metode_pembayaran"
-                            class="w-full rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 transition-all {{ $errors->has('metode_pembayaran') ? 'ring-2 ring-red-400' : '' }}"
-                            style="background:#faf5ff;border:1.5px solid #e9d5ff;focus:ring-purple-400">
-                            <option value="">-- Pilih metode --</option>
-                            <option value="Transfer BRI"     {{ old('metode_pembayaran')==='Transfer BRI'     ?'selected':'' }}>Transfer BRI</option>
-                            <option value="Transfer BCA"     {{ old('metode_pembayaran')==='Transfer BCA'     ?'selected':'' }}>Transfer BCA</option>
-                            <option value="Transfer Mandiri" {{ old('metode_pembayaran')==='Transfer Mandiri' ?'selected':'' }}>Transfer Mandiri</option>
-                            <option value="Tunai"            {{ old('metode_pembayaran')==='Tunai'            ?'selected':'' }}>Tunai (bayar di tempat)</option>
-                        </select>
-                        @error('metode_pembayaran')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                    </div>
-
-                    {{-- Upload Bukti --}}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                            Bukti Pembayaran <span class="text-gray-400 font-normal normal-case">(jika transfer)</span>
-                        </label>
-                        <label id="lbl-bukti" class="upload-zone" style="border-color:#e9d5ff;background:#faf5ff;padding:.85rem 1rem" onclick="return false">
-                            <input type="file" name="bukti_pembayaran" accept=".jpg,.jpeg,.png,.pdf"
-                                class="sr-only" onchange="picked(this,'bukti')">
-                            <div id="bukti-icon" class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-1.5" style="background:#f3e8ff">
-                                <svg class="w-5 h-5" fill="none" stroke="#9333ea" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                                </svg>
-                            </div>
-                            <p id="bukti-text" class="text-xs font-semibold" style="color:#9333ea">Klik untuk pilih file</p>
-                            <p class="text-xs text-gray-400 mt-0.5">JPG · PNG · PDF · maks. 2 MB</p>
-                        </label>
-                        @error('bukti_pembayaran')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                    </div>
-                </div>
-
-                {{-- Catatan --}}
-                <div class="mt-4 rounded-xl flex items-start gap-3 px-4 py-3" style="background:#fef9c3;border:1.5px solid #fde68a">
-                    <span class="text-lg flex-shrink-0">⚠️</span>
-                    <p class="text-xs" style="color:#92400e">
-                        Untuk pembayaran <strong>tunai</strong>, bukti pembayaran tidak perlu diunggah.
-                        Pembayaran dapat dilakukan langsung di sekretariat Biara Loresa SCJ saat kursus berlangsung.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ══════════════════════════════════════════════════════
-         TOMBOL KIRIM
-    ══════════════════════════════════════════════════════ --}}
-    <div class="bg-white rounded-2xl shadow-lg px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="text-xs text-gray-400 text-center sm:text-left">
-            🔒 Data bersifat rahasia dan hanya digunakan untuk keperluan kursus pernikahan Biara Loresa SCJ.
-        </p>
-        <button type="submit"
-            class="w-full sm:w-auto flex items-center justify-center gap-2 text-white font-bold text-sm px-10 py-3.5 rounded-xl shadow-lg transition-all active:scale-95"
-            style="background:linear-gradient(135deg,#2230ce,#3d56f5)">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+    <div class="bg-white rounded-2xl shadow-lg px-6 py-5">
+        {{-- Info langkah berikutnya --}}
+        <div class="flex items-start gap-3 mb-5 p-4 rounded-xl" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1.5px solid #6ee7b7">
+            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color:#059669" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            Kirim Pendaftaran
-        </button>
+            <div>
+                <p class="font-semibold text-sm" style="color:#065f46">Setelah mengisi formulir ini, Anda akan diarahkan ke halaman pembayaran QRIS</p>
+                <p class="text-xs mt-0.5" style="color:#047857">Total pembayaran: <strong>Rp 350.000</strong> · dibayar melalui QRIS (GoPay, OVO, DANA, ShopeePay, dll.)</p>
+            </div>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-xs text-gray-400 text-center sm:text-left">
+                🔒 Data bersifat rahasia dan hanya digunakan untuk keperluan kursus pernikahan Biara Loresa SCJ.
+            </p>
+            <button type="submit" id="btn-submit" disabled
+                class="w-full sm:w-auto flex items-center justify-center gap-2 font-bold text-sm px-10 py-3.5 rounded-xl shadow-lg transition-all"
+                style="background:#d1d5db;color:#9ca3af;cursor:not-allowed">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                </svg>
+                <span id="btn-submit-text">Lengkapi semua data terlebih dahulu</span>
+            </button>
+        </div>
     </div>
 
     </form>
@@ -576,6 +485,69 @@
 </style>
 
 <script>
+// ── Validasi form real-time ──────────────────────────────────
+const REQUIRED_FIELDS = [
+    'nama_pria','tempat_lahir_pria','tanggal_lahir_pria','nik_pria',
+    'agama_pria','pekerjaan_pria','alamat_pria','nama_ayah_pria','nama_ibu_pria',
+    'nama_wanita','tempat_lahir_wanita','tanggal_lahir_wanita','nik_wanita',
+    'agama_wanita','pekerjaan_wanita','alamat_wanita','nama_ayah_wanita','nama_ibu_wanita',
+    'tanggal_pernikahan','tempat_pernikahan','email','nomor_hp',
+];
+
+const btn     = document.getElementById('btn-submit');
+const btnText = document.getElementById('btn-submit-text');
+
+function checkForm() {
+    let allFilled = true;
+    let emptyCount = 0;
+
+    REQUIRED_FIELDS.forEach(name => {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (!el || el.value.trim() === '') {
+            allFilled = false;
+            emptyCount++;
+        }
+    });
+
+    // Validasi NIK harus 16 digit
+    const nikPria   = document.querySelector('[name="nik_pria"]');
+    const nikWanita = document.querySelector('[name="nik_wanita"]');
+    if (nikPria   && nikPria.value.trim().length > 0   && nikPria.value.trim().length !== 16) allFilled = false;
+    if (nikWanita && nikWanita.value.trim().length > 0 && nikWanita.value.trim().length !== 16) allFilled = false;
+
+    // Validasi email sederhana
+    const emailEl = document.querySelector('[name="email"]');
+    if (emailEl && emailEl.value.trim() && !emailEl.value.includes('@')) allFilled = false;
+
+    if (allFilled) {
+        btn.disabled = false;
+        btn.style.background  = 'linear-gradient(135deg,#1e2685,#7c3aed,#be185d)';
+        btn.style.color       = '#fff';
+        btn.style.cursor      = 'pointer';
+        btn.classList.add('active:scale-95','hover:opacity-90');
+        btnText.textContent = 'Lanjut ke Pembayaran QRIS';
+    } else {
+        btn.disabled = true;
+        btn.style.background  = '#d1d5db';
+        btn.style.color       = '#9ca3af';
+        btn.style.cursor      = 'not-allowed';
+        btn.classList.remove('active:scale-95','hover:opacity-90');
+        const s = emptyCount === 1 ? '' : '';
+        btnText.textContent = `Lengkapi semua data (${emptyCount} kolom belum diisi)`;
+    }
+}
+
+// Pasang listener ke semua field wajib
+REQUIRED_FIELDS.forEach(name => {
+    const el = document.querySelector(`[name="${name}"]`);
+    if (el) el.addEventListener('input', checkForm);
+    if (el) el.addEventListener('change', checkForm);
+});
+
+// Jalankan sekali saat load (jika ada old values dari validasi server)
+document.addEventListener('DOMContentLoaded', checkForm);
+
+// ── Upload dokumen ───────────────────────────────────────────
 function picked(input, id) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];

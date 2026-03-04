@@ -19,12 +19,14 @@ class PendaftaranPernikahan extends Model
         'surat_baptis_pria', 'surat_baptis_wanita',
         'surat_pengantar_kombas_pria', 'surat_pengantar_kombas_wanita',
         'status', 'catatan',
-        'metode_pembayaran', 'bukti_pembayaran', 'status_pembayaran',
+        'status_pembayaran', 'midtrans_order_id', 'midtrans_snap_token', 'midtrans_transaction_id',
+        'qris_url', 'qris_expired_at',
     ];
 
     protected $casts = [
         'tanggal_lahir_pria'   => 'date',
         'tanggal_lahir_wanita' => 'date',
         'tanggal_pernikahan'   => 'date',
+        'qris_expired_at'      => 'datetime',
     ];
 }
