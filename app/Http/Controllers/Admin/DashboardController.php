@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\PendaftaranPernikahan;
+use Illuminate\Http\Request;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $stats = [
+            'total'        => PendaftaranPernikahan::count(),
+            'lunas'        => PendaftaranPernikahan::where('status_pembayaran', 'lunas')->count(),
+            'menunggu'     => PendaftaranPernikahan::where('status_pembayaran', 'menunggu')->count(),
+            'belum_bayar'  => PendaftaranPernikahan::where('status_pembayaran', 'belum_bayar')->count(),
+        ];
+
+        $pendaftaran = PendaftaranPernikahan::latest()->paginate(10);
+
+        return view('admin.dashboard', compact('stats', 'pendaftaran'));
+    }
+
+    public function list(Request $request)
+    {
+        $query = PendaftaranPernikahan::latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_pria', 'like', "%{$search}%")
+                  ->orWhere('nama_wanita', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status_pembayaran', $request->status);
+        }
+
+        $pendaftaran = $query->paginate(15);
+
+        return view('admin.pendaftaran.index', compact('pendaftaran'));
+    }
+
+    public function show($id)
+    {
+        $pendaftaran = PendaftaranPernikahan::findOrFail($id);
+
+        return view('admin.pendaftaran.show', compact('pendaftaran'));
+    }
+}
