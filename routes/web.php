@@ -30,10 +30,10 @@ Route::get('/pembayaran/{id}/status', [PembayaranController::class, 'checkStatus
 Route::get('/pembayaran/{id}/qr-image', [PembayaranController::class, 'qrImage'])->name('pembayaran.qr-image');
 Route::post('/pembayaran/callback', [PembayaranController::class, 'callback'])->name('pembayaran.callback');
 
-// Admin Auth
-Route::get('/admin/login',  [AdminAuthController::class, 'showLogin'])->name('admin.login');
-Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
-Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->middleware('admin')->name('admin.logout');
-Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->middleware('admin')->name('admin.dashboard');
-Route::get('/admin/pendaftaran', [AdminDashboardController::class, 'list'])->middleware('admin')->name('admin.pendaftaran.index');
-Route::get('/admin/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->middleware('admin')->name('admin.pendaftaran.show');
+// Admin — clean URLs untuk subdomain admin.biaraloresa.my.id
+Route::get('/login',  [AdminAuthController::class, 'showLogin'])->name('admin.login');
+Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
+Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('admin')->name('admin.logout');
+Route::get('/dashboard', [AdminDashboardController::class, 'index'])->middleware('admin')->name('admin.dashboard');
+Route::get('/pendaftaran', [AdminDashboardController::class, 'list'])->middleware('admin')->name('admin.pendaftaran.index');
+Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->middleware('admin')->name('admin.pendaftaran.show');
