@@ -170,6 +170,114 @@
     </div>
 </section>
 
+{{-- Kursus Pernikahan --}}
+<section class="py-20 bg-white relative overflow-hidden">
+    {{-- Dekorasi latar --}}
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full opacity-5" style="background:radial-gradient(circle,#3d56f5,transparent);transform:translate(30%,-30%)"></div>
+    <div class="absolute bottom-0 left-0 w-72 h-72 rounded-full opacity-5" style="background:radial-gradient(circle,#be185d,transparent);transform:translate(-30%,30%)"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+
+        {{-- Heading --}}
+        <div class="text-center mb-14">
+            <span class="inline-flex items-center gap-2 bg-rose-50 text-rose-600 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-4">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+                Program Pastoral
+            </span>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-800 mb-4">Kursus Pernikahan</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                Biara Loresa SCJ menyelenggarakan kursus pernikahan sebagai persiapan rohani 
+                bagi pasangan yang hendak menerima Sakramen Pernikahan.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+            {{-- Kiri: Penjelasan --}}
+            <div class="space-y-6">
+                <p class="text-gray-600 leading-relaxed text-base">
+                    Kursus ini dirancang untuk membantu pasangan memahami makna dan tanggung jawab 
+                    pernikahan Katolik secara menyeluruh — mulai dari dimensi rohani, komunikasi, 
+                    hingga peran keluarga dalam Gereja dan masyarakat.
+                </p>
+
+                {{-- Highlight materi --}}
+                <div class="space-y-3">
+                    @foreach([
+                        ['✝️','Makna Sakramen Pernikahan','Mendalami pernikahan sebagai perjanjian kudus di hadapan Tuhan dan Gereja.'],
+                        ['💬','Komunikasi & Keluarga','Membangun relasi yang sehat, saling menghormati, dan penuh kasih dalam keluarga.'],
+                        ['👶','Tanggung Jawab Orang Tua','Peran suami–istri dalam mendidik anak dalam iman dan nilai-nilai Kristiani.'],
+                        ['🤝','Pastoral Keluarga','Keterlibatan keluarga dalam kehidupan menggereja dan pelayanan bersama.'],
+                    ] as [$icon, $judul, $desc])
+                    <div class="flex items-start gap-4 bg-gray-50 rounded-xl p-4 hover:bg-primary-50 transition-colors">
+                        <span class="text-2xl flex-shrink-0 mt-0.5">{{ $icon }}</span>
+                        <div>
+                            <p class="font-semibold text-gray-800 text-sm">{{ $judul }}</p>
+                            <p class="text-gray-500 text-xs mt-0.5 leading-relaxed">{{ $desc }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Kanan: Info box + CTA --}}
+            <div class="space-y-5">
+
+                {{-- Jadwal & Syarat --}}
+                <div class="rounded-2xl overflow-hidden shadow-md border border-gray-100">
+                    <div class="px-6 py-4 text-white font-bold text-sm" style="background:linear-gradient(135deg,#1e2685,#3d56f5)">
+                        📋 Informasi Pendaftaran
+                    </div>
+                    <div class="bg-white divide-y divide-gray-50">
+                        @foreach([
+                            ['Waktu Kursus',   '3 hari (Jumat–Minggu)'],
+                            ['Tempat',         'Biara Loresa SCJ, Kecamatan Damai'],
+                            ['Biaya',          'Rp 350.000 / pasang (termasuk modul)'],
+                            ['Peserta',        'Calon mempelai pria & wanita'],
+                            ['Pendaftaran',    'Minimal 2 bulan sebelum pernikahan'],
+                        ] as [$label, $nilai])
+                        <div class="flex items-center justify-between px-6 py-3.5">
+                            <span class="text-sm text-gray-500">{{ $label }}</span>
+                            <span class="text-sm font-semibold text-gray-800 text-right max-w-[55%]">{{ $nilai }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Syarat dokumen --}}
+                <div class="rounded-2xl p-5 border border-amber-200" style="background:#fffbeb">
+                    <p class="text-xs font-bold uppercase tracking-widest text-amber-700 mb-3">📄 Dokumen yang Diperlukan</p>
+                    <ul class="space-y-1.5">
+                        @foreach(['KTP kedua calon mempelai','Surat Baptis dari paroki asal','Surat Pengantar Kombas (Komisi Keluarga)','Bukti pembayaran pendaftaran'] as $dok)
+                        <li class="flex items-center gap-2 text-sm text-amber-900">
+                            <svg class="w-4 h-4 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            {{ $dok }}
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                {{-- Tombol daftar --}}
+                <a href="{{ route('kursus-pernikahan') }}"
+                    class="flex items-center justify-center gap-3 w-full text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:opacity-90 active:scale-95 transition-all text-base"
+                    style="background:linear-gradient(135deg,#1e2685 0%,#3d56f5 50%,#be185d 100%)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Daftar Kursus Pernikahan Sekarang
+                </a>
+
+                <p class="text-center text-xs text-gray-400">
+                    Pertanyaan? Hubungi kami di
+                    <a href="{{ route('kontak') }}" class="text-primary-600 font-semibold hover:underline">halaman kontak</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
 {{-- Berita Terbaru --}}
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

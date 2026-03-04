@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Biara Loresa SCJ - Serikat Imam-imam Hati Kudus Yesus">
     <title>@yield('title', 'Biara Loresa SCJ')</title>
+    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('logo.png') }}">
+    <link rel="apple-touch-icon" sizes="192x192" href="{{ asset('logo-192.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -40,6 +43,10 @@
                     <a href="{{ route('profil') }}" class="nav-link text-sm {{ request()->routeIs('profil') ? 'text-primary-700 font-semibold' : '' }}">Profil</a>
                     <a href="{{ route('berita') }}" class="nav-link text-sm {{ request()->routeIs('berita*') ? 'text-primary-700 font-semibold' : '' }}">Berita</a>
                     <a href="{{ route('galeri') }}" class="nav-link text-sm {{ request()->routeIs('galeri') ? 'text-primary-700 font-semibold' : '' }}">Galeri</a>
+                    <a href="{{ route('kursus-pernikahan') }}" class="nav-link text-sm {{ request()->routeIs('kursus-pernikahan*') ? 'text-rose-600 font-semibold' : 'text-rose-500' }} flex items-center space-x-1">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+                        <span>Kursus Nikah</span>
+                    </a>
                     <a href="{{ route('kontak') }}" class="bg-primary-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-primary-800 transition-colors font-medium">Kontak</a>
                 </div>
 
@@ -58,6 +65,7 @@
                     <a href="{{ route('profil') }}" class="nav-link text-sm px-2 py-1">Profil</a>
                     <a href="{{ route('berita') }}" class="nav-link text-sm px-2 py-1">Berita</a>
                     <a href="{{ route('galeri') }}" class="nav-link text-sm px-2 py-1">Galeri</a>
+                    <a href="{{ route('kursus-pernikahan') }}" class="nav-link text-sm px-2 py-1 text-rose-500">Kursus Nikah</a>
                     <a href="{{ route('kontak') }}" class="nav-link text-sm px-2 py-1">Kontak</a>
                 </div>
             </div>
@@ -99,6 +107,7 @@
                         <li><a href="{{ route('profil') }}" class="text-sm hover:text-white transition-colors">Profil Komunitas</a></li>
                         <li><a href="{{ route('berita') }}" class="text-sm hover:text-white transition-colors">Berita & Kegiatan</a></li>
                         <li><a href="{{ route('galeri') }}" class="text-sm hover:text-white transition-colors">Galeri Foto</a></li>
+                        <li><a href="{{ route('kursus-pernikahan') }}" class="text-sm hover:text-white transition-colors">Kursus Pernikahan</a></li>
                         <li><a href="{{ route('kontak') }}" class="text-sm hover:text-white transition-colors">Hubungi Kami</a></li>
                     </ul>
                 </div>
