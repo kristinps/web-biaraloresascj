@@ -25,4 +25,5 @@ Route::get('/kursus-pernikahan/sukses/{id}', [KursusPendaftaranController::class
 Route::get('/pembayaran/{id}', [PembayaranController::class, 'show'])->name('pembayaran.show');
 Route::get('/pembayaran/{id}/selesai', [PembayaranController::class, 'finish'])->name('pembayaran.finish');
 Route::get('/pembayaran/{id}/status', [PembayaranController::class, 'checkStatus'])->name('pembayaran.status');
+Route::get('/pembayaran/{id}/qr-image', [PembayaranController::class, 'qrImage'])->name('pembayaran.qr-image');
 Route::post('/pembayaran/callback', [PembayaranController::class, 'callback'])->name('pembayaran.callback');

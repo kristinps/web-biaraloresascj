@@ -150,6 +150,30 @@ class PembayaranController extends Controller
         }
     }
 
+    public function qrImage($id)
+    {
+        $pendaftaran = PendaftaranPernikahan::findOrFail($id);
+
+        if (! $pendaftaran->qris_url) {
+            abort(404);
+        }
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(10)
+                ->get($pendaftaran->qris_url);
+
+            if ($response->successful()) {
+                return response($response->body(), 200)
+                    ->header('Content-Type', 'image/png')
+                    ->header('Cache-Control', 'public, max-age=3600');
+            }
+        } catch (\Exception $e) {
+            // fallback: redirect ke URL asli
+        }
+
+        return redirect($pendaftaran->qris_url);
+    }
+
     public function finish(Request $request, $id)
     {
         $pendaftaran = PendaftaranPernikahan::findOrFail($id);
