@@ -11,7 +11,8 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth()->check() || ! auth()->user()->is_admin) {
-            return redirect()->to('https://admin.biaraloresa.my.id/login')
+            $loginUrl = 'https://admin.biaraloresa.my.id/admin/login';
+            return redirect($loginUrl)
                 ->with('error', 'Silakan login sebagai administrator.');
         }
 

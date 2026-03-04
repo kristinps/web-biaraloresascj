@@ -226,17 +226,6 @@
             <div class="lbl">Belum Bayar</div>
         </div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);box-shadow:0 6px 16px rgba(124,58,237,.3)">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-            </svg>
-        </div>
-        <div class="stat-body">
-            <div class="val">{{ $stats['total_users'] }}</div>
-            <div class="lbl">Total Pengguna</div>
-        </div>
-    </div>
 </div>
 
 {{-- Table --}}
@@ -246,7 +235,7 @@
             <h2>Pendaftaran Terbaru</h2>
             <p>10 pendaftaran terbaru yang masuk</p>
         </div>
-        <a href="https://admin.biaraloresa.my.id/pendaftaran" class="btn-sm">
+        <a href="{{ route('admin.pendaftaran.index') }}" class="btn-sm">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
             </svg>
@@ -295,7 +284,7 @@
                             @endif
                         </td>
                         <td>
-                            <a href="https://admin.biaraloresa.my.id/pendaftaran/{{ $item->id }}" class="btn-detail">
+                            <a href="{{ route('admin.pendaftaran.show', $item->id) }}" class="btn-detail">
                                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>

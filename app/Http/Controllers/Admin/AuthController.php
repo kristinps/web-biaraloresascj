@@ -8,12 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    private string $adminBase = 'https://admin.biaraloresa.my.id';
-
     public function showLogin()
     {
         if (Auth::check() && Auth::user()->is_admin) {
-            return redirect()->to($this->adminBase . '/dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         return view('admin.login');
@@ -40,7 +38,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->to($this->adminBase . '/dashboard')
+            return redirect()->route('admin.dashboard')
                 ->with('success', 'Selamat datang, ' . Auth::user()->name . '!');
         }
 
@@ -55,7 +53,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->to($this->adminBase . '/login')
+        return redirect()->route('admin.login')
             ->with('success', 'Anda telah berhasil keluar.');
     }
 }

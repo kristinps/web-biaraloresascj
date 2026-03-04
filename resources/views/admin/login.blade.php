@@ -394,7 +394,7 @@
             </div>
         @endif
 
-        <form method="POST" action="https://admin.biaraloresa.my.id/login" novalidate>
+        <form method="POST" action="{{ route('admin.login.post') }}" novalidate>
             @csrf
 
             <div class="form-group">
