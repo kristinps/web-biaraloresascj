@@ -11,6 +11,22 @@ use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
+// ─── Admin — hanya aktif di admin.biaraloresa.my.id (harus di atas agar prioritas lebih tinggi)
+Route::domain('admin.biaraloresa.my.id')->group(function () {
+    Route::get('/', function () {
+        return auth()->check() && auth()->user()->is_admin
+            ? redirect()->route('admin.dashboard')
+            : redirect()->route('admin.login');
+    });
+    Route::get('/login',  [AdminAuthController::class, 'showLogin'])->name('admin.login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('admin')->name('admin.logout');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->middleware('admin')->name('admin.dashboard');
+    Route::get('/pendaftaran', [AdminDashboardController::class, 'list'])->middleware('admin')->name('admin.pendaftaran.index');
+    Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->middleware('admin')->name('admin.pendaftaran.show');
+});
+
+// ─── Halaman Publik
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
 Route::get('/berita', [BeritaController::class, 'index'])->name('berita');
@@ -23,19 +39,9 @@ Route::get('/kursus-pernikahan', [KursusPendaftaranController::class, 'index'])-
 Route::post('/kursus-pernikahan', [KursusPendaftaranController::class, 'store'])->name('kursus-pernikahan.store');
 Route::get('/kursus-pernikahan/sukses/{id}', [KursusPendaftaranController::class, 'sukses'])->name('kursus-pernikahan.sukses');
 
-// Pembayaran QRIS via Midtrans
+// ─── Pembayaran QRIS via Midtrans
 Route::get('/pembayaran/{id}', [PembayaranController::class, 'show'])->name('pembayaran.show');
 Route::get('/pembayaran/{id}/selesai', [PembayaranController::class, 'finish'])->name('pembayaran.finish');
 Route::get('/pembayaran/{id}/status', [PembayaranController::class, 'checkStatus'])->name('pembayaran.status');
 Route::get('/pembayaran/{id}/qr-image', [PembayaranController::class, 'qrImage'])->name('pembayaran.qr-image');
 Route::post('/pembayaran/callback', [PembayaranController::class, 'callback'])->name('pembayaran.callback');
-
-// Admin — hanya aktif di subdomain admin.biaraloresa.my.id
-Route::domain('admin.biaraloresa.my.id')->group(function () {
-    Route::get('/login',  [AdminAuthController::class, 'showLogin'])->name('admin.login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
-    Route::post('/logout', [AdminAuthController::class, 'logout'])->middleware('admin')->name('admin.logout');
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->middleware('admin')->name('admin.dashboard');
-    Route::get('/pendaftaran', [AdminDashboardController::class, 'list'])->middleware('admin')->name('admin.pendaftaran.index');
-    Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->middleware('admin')->name('admin.pendaftaran.show');
-});
