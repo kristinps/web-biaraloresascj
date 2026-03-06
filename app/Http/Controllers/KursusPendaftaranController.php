@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PendaftaranPernikahan;
+use App\Models\PeriodePernikahan;
 use Illuminate\Http\Request;
 
 class KursusPendaftaranController extends Controller
@@ -107,6 +108,7 @@ class KursusPendaftaranController extends Controller
         }
 
         $validated['status_pembayaran'] = 'belum_bayar';
+        $validated['periode_id'] = PeriodePernikahan::periodeAktif()?->id;
         $pendaftaran = PendaftaranPernikahan::create($validated);
 
         return redirect()->route('pembayaran.show', ['id' => $pendaftaran->id])

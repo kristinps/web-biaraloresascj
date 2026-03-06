@@ -90,6 +90,42 @@
     .doc-link:hover { background: #e0e7ff; }
     .doc-link svg { width: 13px; height: 13px; }
 
+    /* Dokumen & kursus status badges */
+    .dok-badge { display:inline-flex;align-items:center;gap:7px;padding:5px 13px;border-radius:99px;font-size:12.5px;font-weight:700; }
+    .dok-badge-dot { width:7px;height:7px;border-radius:50%; }
+    .dok-lengkap { background:#f0fdf4;color:#15803d; } .dok-lengkap .dok-badge-dot { background:#22c55e; }
+    .dok-tidak   { background:#fef2f2;color:#dc2626; } .dok-tidak .dok-badge-dot   { background:#ef4444; }
+    .dok-periksa { background:#fffbeb;color:#b45309; } .dok-periksa .dok-badge-dot { background:#f59e0b; }
+
+    .kursus-badge { display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:99px;font-size:12px;font-weight:700; }
+    .kursus-badge-dot { width:6px;height:6px;border-radius:50%; }
+    .kb-belum   { background:#f8fafc;color:#475569; } .kb-belum .kursus-badge-dot   { background:#94a3b8; }
+    .kb-terjadwal { background:#eff6ff;color:#1d4ed8; } .kb-terjadwal .kursus-badge-dot { background:#3b82f6; }
+    .kb-berjalan  { background:#fef3c7;color:#b45309; } .kb-berjalan .kursus-badge-dot  { background:#f59e0b; }
+    .kb-lulus { background:#f0fdf4;color:#15803d; } .kb-lulus .kursus-badge-dot { background:#22c55e; }
+    .kb-tidak { background:#fef2f2;color:#dc2626; } .kb-tidak .kursus-badge-dot { background:#ef4444; }
+
+    .action-card { background:#fff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04);margin-bottom:20px; }
+    .action-head { padding:14px 22px;background:linear-gradient(135deg,#f59e0b,#fbbf24);display:flex;align-items:center;gap:9px; }
+    .action-head svg { width:17px;height:17px;color:rgba(255,255,255,0.85); }
+    .action-head h3 { font-size:13.5px;font-weight:700;color:#fff; }
+    .action-body { padding:20px 22px; }
+
+    .form-group { margin-bottom:14px; }
+    .form-label { display:block;font-size:12.5px;font-weight:600;color:#374151;margin-bottom:5px; }
+    .form-select, .form-textarea { width:100%;padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:13.5px;color:#1e293b;background:#fff;outline:none;transition:border-color 0.2s;font-family:inherit; }
+    .form-select:focus, .form-textarea:focus { border-color:#6366f1; }
+    .form-textarea { resize:vertical;min-height:80px; }
+
+    .btn-action { display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:opacity 0.2s; }
+    .btn-action:hover { opacity:0.88; }
+    .btn-action svg { width:14px;height:14px; }
+    .btn-indigo { background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff; }
+
+    .check-row { display:flex;align-items:center;gap:8px;margin-top:10px; }
+    .check-row input[type=checkbox] { width:15px;height:15px;cursor:pointer;accent-color:#6366f1; }
+    .check-row label { font-size:13px;color:#374151;cursor:pointer; }
+
     /* Full-width top card */
     .top-card {
         background: #fff;
@@ -139,6 +175,70 @@
                 {{ $pendaftaran->midtrans_order_id }}
             </span>
         @endif
+    </div>
+</div>
+
+{{-- Aksi Pemeriksaan Dokumen --}}
+<div class="action-card">
+    <div class="action-head">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+        </svg>
+        <h3>Pemeriksaan Kelengkapan Dokumen</h3>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            @php $statusDok = $pendaftaran->status_dokumen ?? 'belum_diperiksa'; @endphp
+            @if($statusDok === 'lengkap')
+                <span class="dok-badge dok-lengkap"><span class="dok-badge-dot"></span>Dokumen Lengkap</span>
+            @elseif($statusDok === 'tidak_lengkap')
+                <span class="dok-badge dok-tidak"><span class="dok-badge-dot"></span>Tidak Lengkap</span>
+            @else
+                <span class="dok-badge dok-periksa"><span class="dok-badge-dot"></span>Belum Diperiksa</span>
+            @endif
+            @php $statusKursus = $pendaftaran->status_kursus ?? 'belum_dijadwalkan'; @endphp
+            @if($statusKursus === 'lulus')
+                <span class="kursus-badge kb-lulus"><span class="kursus-badge-dot"></span>Lulus Kursus</span>
+            @elseif($statusKursus === 'tidak_lulus')
+                <span class="kursus-badge kb-tidak"><span class="kursus-badge-dot"></span>Tidak Lulus</span>
+            @elseif($statusKursus === 'terjadwal')
+                <span class="kursus-badge kb-terjadwal"><span class="kursus-badge-dot"></span>Terjadwal</span>
+            @elseif($statusKursus === 'sedang_berjalan')
+                <span class="kursus-badge kb-berjalan"><span class="kursus-badge-dot"></span>Sedang Berjalan</span>
+            @else
+                <span class="kursus-badge kb-belum"><span class="kursus-badge-dot"></span>Belum Dijadwalkan</span>
+            @endif
+        </div>
+    </div>
+    <div class="action-body">
+        <form action="{{ route('admin.dokumen.update', $pendaftaran->id) }}" method="POST">
+            @csrf
+            <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:start">
+                <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label">Status Dokumen</label>
+                    <select name="status_dokumen" class="form-select">
+                        <option value="belum_diperiksa" {{ $statusDok === 'belum_diperiksa' ? 'selected' : '' }}>Belum Diperiksa</option>
+                        <option value="lengkap"         {{ $statusDok === 'lengkap'         ? 'selected' : '' }}>✅ Lengkap</option>
+                        <option value="tidak_lengkap"   {{ $statusDok === 'tidak_lengkap'   ? 'selected' : '' }}>⚠️ Tidak Lengkap</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label">Pesan / Catatan untuk Peserta</label>
+                    <textarea name="catatan_dokumen" class="form-textarea" rows="2"
+                        placeholder="Contoh: Surat baptis pria belum diunggah. Mohon segera melengkapi...">{{ $pendaftaran->catatan_dokumen }}</textarea>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px">
+                <div class="check-row">
+                    <input type="checkbox" name="kirim_email" id="kirim_email" value="1">
+                    <label for="kirim_email">Kirim notifikasi email ke peserta ({{ $pendaftaran->email }})</label>
+                </div>
+                <button type="submit" class="btn-action btn-indigo">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25"/>
+                    </svg>
+                    Simpan & Kirim
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 

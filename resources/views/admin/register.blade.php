@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin — Biara Loresa SCJ</title>
+    <title>Daftar Admin — Biara Loresa SCJ</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,6 @@
             overflow: hidden;
         }
 
-        /* ─── Background image (sama dengan beranda) ─── */
         .bg-hero {
             position: fixed;
             inset: 0;
@@ -30,7 +29,6 @@
             object-fit: cover;
             object-position: center;
         }
-        /* Overlay identik dengan .hero-overlay di homepage */
         .bg-hero::after {
             content: '';
             position: absolute;
@@ -38,7 +36,6 @@
             background: linear-gradient(135deg, rgba(30,38,133,0.92) 0%, rgba(61,86,245,0.72) 100%);
         }
 
-        /* ─── Layout ─── */
         .page-wrap {
             position: relative;
             z-index: 1;
@@ -47,7 +44,7 @@
             min-height: 100vh;
         }
 
-        /* ─── Left branding panel (hanya desktop) ─── */
+        /* ─── Left branding panel ─── */
         .left-panel {
             flex: 1;
             display: none;
@@ -139,7 +136,7 @@
             .right-panel { padding: 36px 20px; }
         }
 
-        /* Top logo mark (mobile only) */
+        /* Mobile brand */
         .mobile-brand {
             display: flex;
             align-items: center;
@@ -194,7 +191,7 @@
         .alert svg { flex-shrink: 0; width: 16px; height: 16px; margin-top: 1px; }
 
         /* Form */
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 18px; }
         label {
             display: block;
             font-size: 13px;
@@ -257,26 +254,29 @@
         .eye-btn svg { width: 17px; height: 17px; }
         input.has-eye { padding-right: 42px; }
 
-        /* Remember */
-        .remember-row {
-            display: flex; align-items: center; gap: 9px;
-            margin-bottom: 24px;
+        /* Strength bar */
+        .strength-bar {
+            margin-top: 8px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
         }
-        .remember-row input[type="checkbox"] {
-            width: 15px; height: 15px;
-            padding: 0; cursor: pointer;
-            accent-color: #1e2685;
+        .strength-bar .fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.3s, background 0.3s;
         }
-        .remember-row label {
-            margin: 0;
-            font-size: 13px;
-            color: #64748b;
-            font-weight: 400;
-            cursor: pointer;
+        .strength-label {
+            font-size: 11.5px;
+            margin-top: 4px;
+            color: #94a3b8;
+            transition: color 0.3s;
         }
 
         /* Submit */
-        .btn-login {
+        .btn-register {
             width: 100%;
             padding: 12px;
             border: none;
@@ -291,14 +291,15 @@
             box-shadow: 0 6px 20px rgba(30,38,133,0.35);
             transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
             display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 6px;
         }
-        .btn-login:hover {
+        .btn-register:hover {
             opacity: 0.92;
             transform: translateY(-1px);
             box-shadow: 0 10px 28px rgba(30,38,133,0.45);
         }
-        .btn-login:active { transform: translateY(0); }
-        .btn-login svg { width: 16px; height: 16px; }
+        .btn-register:active { transform: translateY(0); }
+        .btn-register svg { width: 16px; height: 16px; }
 
         /* Gold accent line */
         .gold-line {
@@ -308,24 +309,23 @@
             margin-bottom: 28px;
         }
 
-        .back-link {
+        .login-link {
             text-align: center;
-            margin-top: 24px;
+            margin-top: 20px;
             font-size: 13px;
             color: #94a3b8;
         }
-        .back-link a {
+        .login-link a {
             color: #1e2685;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s;
         }
-        .back-link a:hover { color: #2b3fe8; text-decoration: underline; }
+        .login-link a:hover { color: #2b3fe8; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-{{-- Background (identik beranda) --}}
 <div class="bg-hero">
     <img src="https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1920&h=1080&fit=crop"
          alt="Biara Loresa SCJ">
@@ -372,8 +372,8 @@
         <div class="gold-line"></div>
 
         <div class="form-heading">
-            <h2>Panel Administrator</h2>
-            <p>Masuk untuk mengelola data pendaftaran kursus pernikahan</p>
+            <h2>Daftar Akun Admin</h2>
+            <p>Buat akun administrator baru untuk panel pengelolaan</p>
         </div>
 
         @if(session('error'))
@@ -385,32 +385,42 @@
             </div>
         @endif
 
-        @if($errors->has('email') && session('unverified_email'))
-            <div class="alert alert-warning" style="background:#fffbeb;border:1px solid #fde68a;color:#92400e;">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;width:16px;height:16px;margin-top:1px">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
-                </svg>
-                <div>
-                    Email Anda belum diverifikasi.
-                    <a href="{{ route('verification.notice') }}" style="font-weight:700;color:#92400e;text-decoration:underline">
-                        Aktifkan akun di sini →
-                    </a>
-                </div>
-            </div>
-        @endif
-
-        @if(session('success'))
-            <div class="alert alert-success">
+        @if($errors->any() && !$errors->has('name') && !$errors->has('email') && !$errors->has('password') && !$errors->has('password_confirmation'))
+            <div class="alert alert-error">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
                 </svg>
-                {{ session('success') }}
+                Terjadi kesalahan, silakan periksa kembali form Anda.
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login.post') }}" novalidate>
+        <form method="POST" action="{{ route('admin.register.post') }}" novalidate>
             @csrf
 
+            {{-- Nama --}}
+            <div class="form-group">
+                <label for="name">Nama Lengkap</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                    </svg>
+                    <input type="text" id="name" name="name"
+                           value="{{ old('name') }}"
+                           placeholder="Nama Lengkap"
+                           class="{{ $errors->has('name') ? 'is-invalid' : '' }}"
+                           autocomplete="name" required>
+                </div>
+                @error('name')
+                    <div class="field-error">
+                        <svg fill="currentColor" viewBox="0 0 20 20" style="width:13px;height:13px;flex-shrink:0">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            {{-- Email --}}
             <div class="form-group">
                 <label for="email">Alamat Email</label>
                 <div class="input-wrap">
@@ -433,6 +443,7 @@
                 @enderror
             </div>
 
+            {{-- Password --}}
             <div class="form-group">
                 <label for="password">Kata Sandi</label>
                 <div class="input-wrap">
@@ -440,16 +451,19 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
                     </svg>
                     <input type="password" id="password" name="password"
-                           placeholder="••••••••••"
+                           placeholder="Minimal 8 karakter"
                            class="has-eye {{ $errors->has('password') ? 'is-invalid' : '' }}"
-                           autocomplete="current-password" required>
-                    <button type="button" class="eye-btn" onclick="togglePassword()" id="eye-btn" aria-label="Tampilkan kata sandi">
-                        <svg id="eye-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                           autocomplete="new-password" required
+                           oninput="checkStrength(this.value)">
+                    <button type="button" class="eye-btn" onclick="togglePassword('password','eye-icon-1')" aria-label="Tampilkan kata sandi">
+                        <svg id="eye-icon-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                     </button>
                 </div>
+                <div class="strength-bar"><div class="fill" id="strength-fill"></div></div>
+                <div class="strength-label" id="strength-label">Masukkan kata sandi</div>
                 @error('password')
                     <div class="field-error">
                         <svg fill="currentColor" viewBox="0 0 20 20" style="width:13px;height:13px;flex-shrink:0">
@@ -460,36 +474,82 @@
                 @enderror
             </div>
 
-            <div class="remember-row">
-                <input type="checkbox" id="remember" name="remember" value="1"
-                       {{ old('remember') ? 'checked' : '' }}>
-                <label for="remember">Ingat sesi login saya</label>
+            {{-- Konfirmasi Password --}}
+            <div class="form-group">
+                <label for="password_confirmation">Konfirmasi Kata Sandi</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+                    </svg>
+                    <input type="password" id="password_confirmation" name="password_confirmation"
+                           placeholder="Ulangi kata sandi"
+                           class="has-eye {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}"
+                           autocomplete="new-password" required>
+                    <button type="button" class="eye-btn" onclick="togglePassword('password_confirmation','eye-icon-2')" aria-label="Tampilkan konfirmasi">
+                        <svg id="eye-icon-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
+                </div>
+                @error('password_confirmation')
+                    <div class="field-error">
+                        <svg fill="currentColor" viewBox="0 0 20 20" style="width:13px;height:13px;flex-shrink:0">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
-            <button type="submit" class="btn-login">
+            <button type="submit" class="btn-register">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/>
                 </svg>
-                Masuk ke Panel Admin
+                Buat Akun Admin
             </button>
         </form>
 
-        <div class="back-link">
-            <a href="{{ url('/') }}">← Kembali ke Beranda</a>
+        <div class="login-link">
+            Sudah punya akun? <a href="{{ route('login') }}">Masuk di sini</a>
         </div>
     </div>
 </div>
 
 <script>
-    let visible = false;
-    function togglePassword() {
-        visible = !visible;
-        const input = document.getElementById('password');
-        const icon  = document.getElementById('eye-icon');
-        input.type  = visible ? 'text' : 'password';
-        icon.innerHTML = visible
-            ? `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>`
-            : `<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>`;
+    const eyeOpen  = `<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>`;
+    const eyeClose = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>`;
+
+    const visibleMap = {};
+    function togglePassword(inputId, iconId) {
+        visibleMap[inputId] = !visibleMap[inputId];
+        document.getElementById(inputId).type = visibleMap[inputId] ? 'text' : 'password';
+        document.getElementById(iconId).innerHTML = visibleMap[inputId] ? eyeClose : eyeOpen;
+    }
+
+    function checkStrength(val) {
+        const fill  = document.getElementById('strength-fill');
+        const label = document.getElementById('strength-label');
+        let score = 0;
+        if (val.length >= 8)  score++;
+        if (val.length >= 12) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+
+        const levels = [
+            { pct: '0%',   color: '#e2e8f0', text: 'Masukkan kata sandi' },
+            { pct: '20%',  color: '#ef4444', text: 'Sangat lemah' },
+            { pct: '40%',  color: '#f97316', text: 'Lemah' },
+            { pct: '60%',  color: '#eab308', text: 'Cukup' },
+            { pct: '80%',  color: '#22c55e', text: 'Kuat' },
+            { pct: '100%', color: '#16a34a', text: 'Sangat kuat' },
+        ];
+        const l = val.length === 0 ? levels[0] : levels[Math.min(score, 5)];
+        fill.style.width      = l.pct;
+        fill.style.background = l.color;
+        label.textContent     = l.text;
+        label.style.color     = l.color === '#e2e8f0' ? '#94a3b8' : l.color;
     }
 </script>
 </body>

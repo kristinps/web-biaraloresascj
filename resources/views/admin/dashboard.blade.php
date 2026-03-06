@@ -180,6 +180,42 @@
 
 @section('content')
 
+{{-- Periode Aktif Banner --}}
+@if($periodeAktif)
+<div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;border-radius:14px;padding:16px 22px;margin-bottom:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <div style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#22c55e,#4ade80);box-shadow:0 4px 10px rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" style="width:20px;height:20px">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+        </svg>
+    </div>
+    <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:#166534">Periode Aktif: {{ $periodeAktif->nama }}</div>
+        <div style="font-size:12.5px;color:#15803d;margin-top:2px">
+            Mulai {{ $periodeAktif->tanggal_mulai->format('d M Y') }}
+            &nbsp;·&nbsp; {{ $statsPeriodeAktif['total'] }} pendaftar
+            &nbsp;·&nbsp; {{ $statsPeriodeAktif['lunas'] }} lunas
+        </div>
+    </div>
+    <a href="{{ route('admin.periode.show', $periodeAktif) }}"
+       style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#22c55e;color:#fff;border-radius:9px;font-size:13px;font-weight:600;text-decoration:none;box-shadow:0 4px 10px rgba(34,197,94,0.3)">
+        Lihat Periode
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:13px;height:13px">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+        </svg>
+    </a>
+</div>
+@else
+<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:14px;padding:14px 20px;margin-bottom:22px;display:flex;align-items:center;gap:12px">
+    <svg fill="none" stroke="#b45309" stroke-width="2" viewBox="0 0 24 24" style="width:20px;height:20px;flex-shrink:0">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+    </svg>
+    <div style="flex:1;font-size:13.5px;color:#92400e">
+        Belum ada periode aktif.
+        <a href="{{ route('admin.periode.create') }}" style="color:#6366f1;font-weight:600;text-decoration:none">Buat periode sekarang →</a>
+    </div>
+</div>
+@endif
+
 {{-- Stats --}}
 <div class="stats-grid">
     <div class="stat-card">
@@ -250,6 +286,7 @@
                     <tr>
                         <th>#</th>
                         <th>Pasangan</th>
+                        <th class="hide-mobile">Periode</th>
                         <th class="hide-mobile">Tanggal Daftar</th>
                         <th>Status Pembayaran</th>
                         <th>Aksi</th>
@@ -264,6 +301,15 @@
                                 {{ $item->nama_pria }} &amp; {{ $item->nama_wanita }}
                                 <small>{{ $item->email }}</small>
                             </div>
+                        </td>
+                        <td class="hide-mobile">
+                            @if($item->periode)
+                                <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;background:#ede9fe;color:#6d28d9;font-size:12px;font-weight:600">
+                                    {{ $item->periode->nama }}
+                                </span>
+                            @else
+                                <span style="font-size:12.5px;color:#94a3b8">—</span>
+                            @endif
                         </td>
                         <td class="hide-mobile" style="color:#64748b;font-size:13px">
                             {{ $item->created_at->format('d M Y') }}
