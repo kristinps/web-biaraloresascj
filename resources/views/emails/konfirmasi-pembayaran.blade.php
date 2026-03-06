@@ -345,6 +345,37 @@
               </tr>
             </table>
 
+            <!-- ── Akses Dashboard Peserta ── -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:16px;margin-bottom:28px;">
+              <tr>
+                <td style="padding:24px 24px 8px;">
+                  <p style="font-size:14px;font-weight:800;color:#1e40af;margin:0 0 16px;line-height:1.4;">
+                    🔐 &nbsp; Akses Dashboard Peserta
+                  </p>
+                  <p style="font-size:13.5px;color:#1e3a8a;line-height:1.8;margin:0 0 10px;">
+                    <strong>Email login:</strong> {{ $pendaftaran->email }}
+                  </p>
+                  <p style="font-size:13.5px;color:#1e3a8a;line-height:1.8;margin:0 0 16px;">
+                    Gunakan email di atas dan <strong>kata sandi yang telah dikirim ke email Anda saat pendaftaran</strong> untuk login. Jika lupa kata sandi, gunakan fitur &quot;Buat password baru&quot; di halaman login.
+                  </p>
+                  <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
+                    <tr>
+                      <td>
+                        <a href="{{ config('app.url') }}/login"
+                           style="display:inline-block;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#ffffff;font-size:13px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;">
+                          Login → biaraloresa.my.id/login
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="font-size:12px;color:#3b82f6;margin:0;line-height:1.6;">
+                    Dashboard: <strong>biaraloresa.my.id/dashboard</strong>
+                  </p>
+                </td>
+              </tr>
+            </table>
+
             <!-- Divider -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
               <tr>

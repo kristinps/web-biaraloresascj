@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Catatan: Route login/dashboard peserta (tanpa domain) untuk biaraloresa.my.id.
+ * Jangan jalankan route:cache jika menyebabkan 404 di /login. Setelah ubah route, jalankan: php artisan route:clear
+ */
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfilController;
@@ -16,6 +21,18 @@ use App\Http\Controllers\Admin\DokumenController as AdminDokumenController;
 use App\Http\Controllers\Admin\MateriKursusController as AdminMateriKursusController;
 use App\Http\Controllers\Admin\KehadiranController as AdminKehadiranController;
 use App\Http\Controllers\Admin\KursusController as AdminKursusController;
+use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\UserDashboardController;
+
+// ─── Login & Dashboard Peserta (biaraloresa.my.id/login, biaraloresa.my.id/dashboard)
+Route::get('/login', [UserAuthController::class, 'showLogin'])->name('user.login');
+Route::post('/login', [UserAuthController::class, 'login'])->name('user.login.post');
+Route::post('/logout', [UserAuthController::class, 'logout'])->name('user.logout')->middleware('auth');
+Route::get('/lupa-password', [UserAuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/lupa-password', [UserAuthController::class, 'sendResetLink'])->middleware('throttle:5,1')->name('password.email');
+Route::get('/password/reset/{token}', [UserAuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [UserAuthController::class, 'resetPassword'])->middleware('throttle:5,1')->name('password.update');
+Route::get('/dashboard', [UserDashboardController::class, 'index'])->middleware('auth')->name('user.dashboard'); // Hanya user login
 
 // ─── Admin
 Route::domain('admin.biaraloresa.my.id')->group(function () {
@@ -91,6 +108,7 @@ Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
 Route::get('/kontak', [KontakController::class, 'index'])->name('kontak');
 Route::post('/kontak', [KontakController::class, 'store'])->name('kontak.store');
 
+// Pendaftaran kursus pernikahan: tanpa login (publik)
 Route::get('/kursus-pernikahan', [KursusPendaftaranController::class, 'index'])->name('kursus-pernikahan');
 Route::post('/kursus-pernikahan', [KursusPendaftaranController::class, 'store'])->name('kursus-pernikahan.store');
 Route::get('/kursus-pernikahan/sukses/{id}', [KursusPendaftaranController::class, 'sukses'])->name('kursus-pernikahan.sukses');

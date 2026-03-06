@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InformasiPendaftaranDanAkun;
 use App\Models\PendaftaranPernikahan;
 use App\Models\PeriodePernikahan;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class KursusPendaftaranController extends Controller
 {
@@ -118,13 +125,38 @@ class KursusPendaftaranController extends Controller
         $validated['periode_id'] = PeriodePernikahan::periodeAktif()?->id;
         $pendaftaran = PendaftaranPernikahan::create($validated);
 
+        $plainPassword = Str::random(10);
+        $name = $pendaftaran->nama_pria . ' & ' . $pendaftaran->nama_wanita;
+        $user = User::updateOrCreate(
+            ['email' => $pendaftaran->email],
+            [
+                'name'              => $name,
+                'password'          => Hash::make($plainPassword),
+                'is_admin'          => false,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        session([
+            'pendaftaran_akun_password' => $plainPassword,
+            'pendaftaran_akun_id'       => $pendaftaran->id,
+        ]);
+        Auth::login($user, false);
+
+        try {
+            Mail::to($pendaftaran->email)->send(new InformasiPendaftaranDanAkun($pendaftaran, $plainPassword));
+        } catch (\Exception $e) {
+            Log::error('Gagal kirim email informasi pendaftaran & akun ID ' . $pendaftaran->id . ': ' . $e->getMessage());
+        }
+
         return redirect()->route('pembayaran.show', ['id' => $pendaftaran->id])
-            ->with('success', 'Biodata berhasil disimpan. Silakan selesaikan pembayaran.');
+            ->with('success', 'Biodata berhasil disimpan. Informasi akun login dan pembayaran telah dikirim ke email Anda. Silakan selesaikan pembayaran.');
     }
 
     public function sukses(Request $request, $id)
     {
-        $pendaftaran = PendaftaranPernikahan::findOrFail($id);
-        return view('kursus-pernikahan.sukses', compact('pendaftaran'));
+        $pendaftaran = PendaftaranPernikahan::findOrFail($id)->load('periode');
+        $akun_password = (session('pendaftaran_akun_id') == (int) $id) ? session('pendaftaran_akun_password') : null;
+        return view('kursus-pernikahan.sukses', compact('pendaftaran', 'akun_password'));
     }
 }
