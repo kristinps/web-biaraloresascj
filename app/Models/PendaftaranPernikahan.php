@@ -20,6 +20,7 @@ class PendaftaranPernikahan extends Model
         'tanggal_pernikahan', 'tempat_pernikahan',
         'email', 'nomor_hp',
         'ktp_pria', 'ktp_wanita',
+        'foto_pria', 'foto_wanita',
         'surat_baptis_pria', 'surat_baptis_wanita',
         'surat_pengantar_kombas_pria', 'surat_pengantar_kombas_wanita',
         'status', 'catatan',

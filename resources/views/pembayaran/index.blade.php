@@ -76,7 +76,7 @@
                         {{-- Border dekoratif --}}
                         <div class="absolute -inset-2 rounded-2xl opacity-30"
                              style="background:linear-gradient(135deg,#1e2685,#7c3aed,#be185d)"></div>
-                        <div class="relative bg-white rounded-xl p-4 shadow-lg">
+                        <div id="qr-container" class="relative bg-white rounded-xl p-4 shadow-lg">
                             {{-- QR Image diambil melalui proxy server kita --}}
                             <img src="{{ route('pembayaran.qr-image', $pendaftaran->id) }}"
                                  alt="QR Code QRIS Pembayaran"
@@ -90,6 +90,15 @@
                                           d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                                 </svg>
                                 <p class="text-xs text-center">QR Code tidak tersedia.<br/>Coba muat ulang halaman.</p>
+                            </div>
+                            {{-- Overlay regenerasi --}}
+                            <div id="qr-overlay" style="display:none"
+                                 class="absolute inset-0 bg-white/90 rounded-xl flex flex-col items-center justify-center z-10">
+                                <svg class="w-8 h-8 animate-spin mb-2" style="color:#7c3aed" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                <p class="text-xs font-semibold" style="color:#7c3aed">Memuat QR baru…</p>
                             </div>
                         </div>
                     </div>
@@ -140,11 +149,12 @@
                 <div id="status-result" class="mt-3 hidden"></div>
 
                 {{-- Masa berlaku --}}
-                @if($pendaftaran->qris_expired_at)
-                <p class="text-center text-xs text-gray-400 mt-3">
+                <p id="expiry-label" class="text-center text-xs text-gray-400 mt-3">
+                    @if($pendaftaran->qris_expired_at)
                     QR berlaku hingga: <strong>{{ $pendaftaran->qris_expired_at->locale('id')->isoFormat('D MMM YYYY, HH:mm') }} WIB</strong>
+                    &nbsp;·&nbsp;<span id="countdown" class="font-mono"></span>
+                    @endif
                 </p>
-                @endif
             </div>
         </div>
 
@@ -158,75 +168,195 @@
 </div>
 
 <script>
-const statusUrl  = @json(route('pembayaran.status', $pendaftaran->id));
-const finishUrl  = @json(route('kursus-pernikahan.sukses', $pendaftaran->id));
-let   polling    = null;
+const statusUrl = @json(route('pembayaran.status', $pendaftaran->id));
+const newQrUrl  = @json(route('pembayaran.new-qr', $pendaftaran->id));
+const finishUrl = @json(route('kursus-pernikahan.sukses', $pendaftaran->id));
+const csrfToken = @json(csrf_token());
 
-function cekStatusPembayaran() {
-    const btn  = document.getElementById('btn-check-status');
-    const text = document.getElementById('btn-check-text');
-    const res  = document.getElementById('status-result');
+let expiryDate   = @json($pendaftaran->qris_expired_at?->toIso8601String());
+let polling      = null;
+let countdownInt = null;
+let regenerating = false;
 
-    btn.disabled  = true;
-    text.textContent = 'Mengecek status…';
+// ── Countdown timer ────────────────────────────────────────────────────────
+function startCountdown() {
+    clearInterval(countdownInt);
+    if (!expiryDate) return;
 
-    fetch(statusUrl)
-        .then(r => r.json())
-        .then(data => {
-            if (data.status === 'lunas') {
-                res.className = 'mt-3 p-3 rounded-xl text-sm font-semibold text-center';
-                res.style.background = '#ecfdf5';
-                res.style.color      = '#065f46';
-                res.style.border     = '1.5px solid #6ee7b7';
-                res.textContent      = '✓ Pembayaran berhasil dikonfirmasi! Mengalihkan…';
-                res.classList.remove('hidden');
-                setTimeout(() => { window.location.href = data.redirect_url || finishUrl; }, 1500);
-            } else if (data.status === 'pending' || data.status === 'menunggu') {
-                res.className = 'mt-3 p-3 rounded-xl text-sm text-center';
-                res.style.background = '#fffbeb';
-                res.style.color      = '#92400e';
-                res.style.border     = '1.5px solid #fde68a';
-                res.textContent      = '⏳ Pembayaran belum terkonfirmasi. Silakan scan QR terlebih dahulu.';
-                res.classList.remove('hidden');
-                btn.disabled  = false;
-                text.textContent = 'Cek Status Lagi';
-            } else if (data.status === 'gagal' || data.status === 'expire') {
-                res.className = 'mt-3 p-3 rounded-xl text-sm text-center';
-                res.style.background = '#fef2f2';
-                res.style.color      = '#991b1b';
-                res.style.border     = '1.5px solid #fecaca';
-                res.textContent      = '✕ Transaksi dibatalkan atau kedaluwarsa. Muat ulang halaman untuk QR baru.';
-                res.classList.remove('hidden');
-                btn.disabled  = false;
-                text.textContent = 'Cek Status Lagi';
-            } else {
-                res.className = 'mt-3 p-3 rounded-xl text-sm text-center';
-                res.style.background = '#f3f4f6';
-                res.style.color      = '#374151';
-                res.style.border     = '1.5px solid #e5e7eb';
-                res.textContent      = 'Belum ada pembayaran yang masuk. Silakan scan QR di atas.';
-                res.classList.remove('hidden');
-                btn.disabled  = false;
-                text.textContent = 'Cek Status Lagi';
-            }
-        })
-        .catch(() => {
-            btn.disabled  = false;
-            text.textContent = 'Cek Status Lagi';
-        });
+    const el = document.getElementById('countdown');
+    countdownInt = setInterval(() => {
+        const diff = Math.floor((new Date(expiryDate) - Date.now()) / 1000);
+        if (!el) return;
+        if (diff <= 0) {
+            el.textContent = '(kedaluwarsa)';
+            el.style.color = '#dc2626';
+            clearInterval(countdownInt);
+            return;
+        }
+        const h = Math.floor(diff / 3600);
+        const m = Math.floor((diff % 3600) / 60);
+        const s = diff % 60;
+        el.textContent = h > 0
+            ? `(${h}j ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}d)`
+            : `(${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}d)`;
+        el.style.color = diff < 300 ? '#dc2626' : '#6b7280';
+    }, 1000);
 }
 
-// Auto-poll setiap 10 detik
-polling = setInterval(() => {
-    fetch(statusUrl)
-        .then(r => r.json())
-        .then(data => {
+// ── Auto-regenerate QR tanpa reload halaman ────────────────────────────────
+async function regenerateQr() {
+    if (regenerating) return;
+    regenerating = true;
+
+    const overlay   = document.getElementById('qr-overlay');
+    const statusRes = document.getElementById('status-result');
+    const btn       = document.getElementById('btn-check-status');
+    const btnText   = document.getElementById('btn-check-text');
+
+    if (overlay) overlay.style.display = 'flex';
+    if (btn) btn.disabled = true;
+    if (btnText) btnText.textContent = 'Memuat QR baru…';
+
+    try {
+        const res  = await fetch(newQrUrl, {
+            method:  'POST',
+            headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+        });
+        const data = await res.json();
+
+        if (data.status === 'lunas') {
+            window.location.href = data.redirect_url || finishUrl;
+            return;
+        }
+
+        if (data.success) {
+            const img = document.getElementById('qr-image');
+            if (img) {
+                img.style.display = 'block';
+                img.src = data.qr_image_url;
+                const fb = document.getElementById('qr-fallback');
+                if (fb) fb.style.display = 'none';
+            }
+
+            expiryDate = data.expired_at;
+            const expiryLabel = document.getElementById('expiry-label');
+            if (expiryLabel) {
+                expiryLabel.innerHTML = `QR berlaku hingga: <strong>${data.expired_label} WIB</strong> &nbsp;·&nbsp;<span id="countdown" class="font-mono"></span>`;
+            }
+            startCountdown();
+
+            if (statusRes) {
+                statusRes.className = 'mt-3 p-3 rounded-xl text-sm text-center hidden';
+                statusRes.textContent = '';
+            }
+        } else {
+            showStatusMsg('error', '⚠ Gagal membuat QR baru. Coba lagi.');
+        }
+    } catch {
+        showStatusMsg('error', '⚠ Koneksi gagal saat memuat QR baru.');
+    } finally {
+        if (overlay) overlay.style.display = 'none';
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.textContent = 'Saya Sudah Bayar — Cek Status';
+        regenerating = false;
+    }
+}
+
+// ── Tampilkan pesan status ─────────────────────────────────────────────────
+function showStatusMsg(type, text) {
+    const el = document.getElementById('status-result');
+    if (!el) return;
+
+    const styles = {
+        success: { bg: '#ecfdf5', color: '#065f46', border: '1.5px solid #6ee7b7' },
+        warning: { bg: '#fffbeb', color: '#92400e', border: '1.5px solid #fde68a' },
+        error:   { bg: '#fef2f2', color: '#991b1b', border: '1.5px solid #fecaca' },
+        neutral: { bg: '#f3f4f6', color: '#374151', border: '1.5px solid #e5e7eb' },
+    };
+    const s = styles[type] || styles.neutral;
+    el.className   = 'mt-3 p-3 rounded-xl text-sm text-center';
+    el.style.background = s.bg;
+    el.style.color      = s.color;
+    el.style.border     = s.border;
+    el.textContent = text;
+    el.classList.remove('hidden');
+}
+
+// ── Tombol "Saya Sudah Bayar" ──────────────────────────────────────────────
+async function cekStatusPembayaran() {
+    const btn     = document.getElementById('btn-check-status');
+    const btnText = document.getElementById('btn-check-text');
+    btn.disabled     = true;
+    btnText.textContent = 'Mengecek status…';
+
+    try {
+        const res  = await fetch(statusUrl);
+        const data = await res.json();
+        await handleStatus(data);
+    } catch {
+        showStatusMsg('error', '⚠ Gagal memeriksa status. Coba lagi.');
+        btn.disabled = false;
+        btnText.textContent = 'Cek Status Lagi';
+    }
+}
+
+// ── Handler status terpusat ────────────────────────────────────────────────
+async function handleStatus(data) {
+    const btn     = document.getElementById('btn-check-status');
+    const btnText = document.getElementById('btn-check-text');
+
+    if (data.status === 'lunas') {
+        clearInterval(polling);
+        clearInterval(countdownInt);
+        showStatusMsg('success', '✓ Pembayaran berhasil dikonfirmasi! Mengalihkan…');
+        setTimeout(() => { window.location.href = data.redirect_url || finishUrl; }, 1500);
+        return;
+    }
+
+    if (data.status === 'pending' || data.status === 'menunggu') {
+        showStatusMsg('warning', '⏳ Pembayaran belum terkonfirmasi. Silakan scan QR terlebih dahulu.');
+        btn.disabled = false;
+        btnText.textContent = 'Cek Status Lagi';
+        return;
+    }
+
+    if (data.status === 'expire' || data.status === 'cancel' || data.status === 'deny' || data.status === 'gagal') {
+        showStatusMsg('warning', '🔄 QR kedaluwarsa atau dibatalkan. Membuat QR baru secara otomatis…');
+        await regenerateQr();
+        return;
+    }
+
+    // belum_bayar / unknown
+    showStatusMsg('neutral', 'Belum ada pembayaran yang masuk. Silakan scan QR di atas.');
+    btn.disabled = false;
+    btnText.textContent = 'Cek Status Lagi';
+}
+
+// ── Auto-poll setiap 5 detik ───────────────────────────────────────────────
+function startPolling() {
+    polling = setInterval(async () => {
+        if (regenerating) return;
+        try {
+            const res  = await fetch(statusUrl);
+            const data = await res.json();
+
             if (data.status === 'lunas') {
                 clearInterval(polling);
+                clearInterval(countdownInt);
                 window.location.href = data.redirect_url || finishUrl;
+                return;
             }
-        })
-        .catch(() => {});
-}, 10000);
+
+            if (data.status === 'expire' || data.status === 'cancel' || data.status === 'deny') {
+                clearInterval(polling);
+                await regenerateQr();
+                startPolling();
+            }
+        } catch { /* abaikan error jaringan sementara */ }
+    }, 5000);
+}
+
+startPolling();
+startCountdown();
 </script>
 @endsection

@@ -43,6 +43,8 @@ class KursusPendaftaranController extends Controller
 
             'ktp_pria'                     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'ktp_wanita'                   => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'foto_pria'                    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'foto_wanita'                  => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             'surat_baptis_pria'            => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'surat_baptis_wanita'          => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'surat_pengantar_kombas_pria'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -85,6 +87,10 @@ class KursusPendaftaranController extends Controller
             'ktp_pria.max'                         => 'Ukuran file KTP calon pria maksimal 2 MB.',
             'ktp_wanita.mimes'                     => 'KTP calon wanita harus berformat JPG, PNG, atau PDF.',
             'ktp_wanita.max'                       => 'Ukuran file KTP calon wanita maksimal 2 MB.',
+            'foto_pria.mimes'                      => 'Foto calon pria harus berformat JPG atau PNG.',
+            'foto_pria.max'                        => 'Ukuran file foto calon pria maksimal 2 MB.',
+            'foto_wanita.mimes'                    => 'Foto calon wanita harus berformat JPG atau PNG.',
+            'foto_wanita.max'                      => 'Ukuran file foto calon wanita maksimal 2 MB.',
             'surat_baptis_pria.mimes'              => 'Surat baptis calon pria harus berformat JPG, PNG, atau PDF.',
             'surat_baptis_pria.max'                => 'Ukuran file surat baptis calon pria maksimal 2 MB.',
             'surat_baptis_wanita.mimes'            => 'Surat baptis calon wanita harus berformat JPG, PNG, atau PDF.',
@@ -97,6 +103,7 @@ class KursusPendaftaranController extends Controller
 
         $dokumenFields = [
             'ktp_pria', 'ktp_wanita',
+            'foto_pria', 'foto_wanita',
             'surat_baptis_pria', 'surat_baptis_wanita',
             'surat_pengantar_kombas_pria', 'surat_pengantar_kombas_wanita',
         ];

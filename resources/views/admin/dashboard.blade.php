@@ -13,6 +13,47 @@
         gap: 18px;
         margin-bottom: 28px;
     }
+
+    /* ─── Charts Grid ─── */
+    .charts-row {
+        display: grid;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+    .charts-row-2 { grid-template-columns: 1fr 1fr; }
+    .charts-row-1 { grid-template-columns: 1fr; }
+    .chart-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        overflow: hidden;
+    }
+    .chart-header {
+        padding: 18px 22px 12px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .chart-header h3 {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .chart-header p {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
+    .chart-body {
+        padding: 20px 22px;
+        position: relative;
+    }
+    .chart-body.donut { display: flex; align-items: center; justify-content: center; min-height: 260px; }
+    .chart-body.bar   { min-height: 260px; }
+    .chart-body.line  { min-height: 240px; }
+
+    @media (max-width: 768px) {
+        .charts-row-2 { grid-template-columns: 1fr; }
+    }
     .stat-card {
         background: #fff;
         border-radius: 16px;
@@ -264,6 +305,47 @@
     </div>
 </div>
 
+{{-- ═══════════════ CHARTS ═══════════════ --}}
+
+{{-- Row 1: Donut Status Pembayaran + Bar per Periode --}}
+<div class="charts-row charts-row-2">
+
+    {{-- Donut: Status Pembayaran --}}
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3>Status Pembayaran</h3>
+            <p>Distribusi status pembayaran seluruh pendaftaran</p>
+        </div>
+        <div class="chart-body donut">
+            <canvas id="chartPembayaran" style="max-width:260px;max-height:260px"></canvas>
+        </div>
+    </div>
+
+    {{-- Bar: Pendaftaran per Periode --}}
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3>Pendaftaran per Periode</h3>
+            <p>Jumlah pendaftar pada setiap periode kursus</p>
+        </div>
+        <div class="chart-body bar">
+            <canvas id="chartPeriode"></canvas>
+        </div>
+    </div>
+</div>
+
+{{-- Row 2: Line Tren per Bulan --}}
+<div class="charts-row charts-row-1">
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3>Tren Pendaftaran 12 Bulan Terakhir</h3>
+            <p>Jumlah pendaftaran baru per bulan</p>
+        </div>
+        <div class="chart-body line">
+            <canvas id="chartBulan"></canvas>
+        </div>
+    </div>
+</div>
+
 {{-- Table --}}
 <div class="card">
     <div class="card-header">
@@ -357,3 +439,117 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#64748b';
+
+    // ── Shared palette ──
+    const palette = {
+        lunas   : { bg: 'rgba(34,197,94,0.15)',  border: '#22c55e' },
+        menunggu: { bg: 'rgba(245,158,11,0.15)', border: '#f59e0b' },
+        belum   : { bg: 'rgba(148,163,184,0.15)',border: '#94a3b8' },
+        primary : { bg: 'rgba(99,102,241,0.12)', border: '#6366f1' },
+        purple  : { bg: 'rgba(139,92,246,0.12)', border: '#8b5cf6' },
+        pink    : { bg: 'rgba(236,72,153,0.12)', border: '#ec4899' },
+        cyan    : { bg: 'rgba(6,182,212,0.12)',  border: '#06b6d4' },
+    };
+
+    const donutColors = ['#22c55e','#f59e0b','#94a3b8','#6366f1','#8b5cf6','#ec4899','#06b6d4'];
+
+    // ── 1. Donut – Status Pembayaran ──
+    new Chart(document.getElementById('chartPembayaran'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Lunas', 'Menunggu Pembayaran', 'Belum Bayar'],
+            datasets: [{
+                data: [{{ $stats['lunas'] }}, {{ $stats['menunggu'] }}, {{ $stats['belum_bayar'] }}],
+                backgroundColor: ['#22c55e','#f59e0b','#94a3b8'],
+                borderColor: '#fff',
+                borderWidth: 3,
+                hoverOffset: 8,
+            }]
+        },
+        options: {
+            cutout: '68%',
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 18, font: { size: 12 } } },
+                tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} pendaftar` } }
+            },
+        }
+    });
+
+    // ── 2. Bar – Pendaftaran per Periode ──
+    new Chart(document.getElementById('chartPeriode'), {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($chartPeriodeLabels) !!},
+            datasets: [
+                {
+                    label: 'Lunas',
+                    data: {!! json_encode($chartPeriodeLunas) !!},
+                    backgroundColor: 'rgba(34,197,94,0.75)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                },
+                {
+                    label: 'Menunggu',
+                    data: {!! json_encode($chartPeriodeMenunggu) !!},
+                    backgroundColor: 'rgba(245,158,11,0.75)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                },
+                {
+                    label: 'Belum Bayar',
+                    data: {!! json_encode($chartPeriodeBelum) !!},
+                    backgroundColor: 'rgba(148,163,184,0.75)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 } } } },
+            scales: {
+                x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 30 } },
+                y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+
+    // ── 3. Line – Tren per Bulan ──
+    new Chart(document.getElementById('chartBulan'), {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($chartBulanLabels) !!},
+            datasets: [{
+                label: 'Pendaftaran',
+                data: {!! json_encode($chartBulanData) !!},
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99,102,241,0.08)',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#6366f1',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.4,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false } },
+                y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+
+})();
+</script>
+@endpush

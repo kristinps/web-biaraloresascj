@@ -6,18 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('pendaftaran_pernikahan', function (Blueprint $table) {
-            $table->string('qris_url')->nullable()->after('snap_token');
-            $table->timestamp('qris_expired_at')->nullable()->after('qris_url');
+            $table->string('foto_pria')->nullable()->after('ktp_wanita');
+            $table->string('foto_wanita')->nullable()->after('foto_pria');
         });
     }
 
     public function down(): void
     {
         Schema::table('pendaftaran_pernikahan', function (Blueprint $table) {
-            $table->dropColumn(['qris_url', 'qris_expired_at']);
+            $table->dropColumn(['foto_pria', 'foto_wanita']);
         });
     }
 };

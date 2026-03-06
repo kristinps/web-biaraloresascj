@@ -355,6 +355,68 @@
                 </div>
             </div>
 
+            {{-- ─── Foto 3x4 ─── --}}
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="flex items-center gap-4 px-6 py-4" style="background:#fff7ed;border-bottom:1.5px solid #fed7aa">
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0" style="background:#fed7aa">📷</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-gray-800">Pas Foto Terbaru</h4>
+                        <p class="text-xs text-gray-500">Ukuran 3×4 cm · Latar belakang bebas · Format JPG/PNG</p>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full" style="background:#fed7aa;color:#9a3412">Wajib</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2" style="divide-color:#f3f4f6">
+                    <div class="p-6" style="border-right:1.5px solid #f3f4f6">
+                        <p class="text-xs font-bold mb-3" style="color:#1d4ed8">● Calon Pria</p>
+                        {{-- Preview area foto pria --}}
+                        <div id="foto-pria-preview-wrap" class="hidden mb-3 flex justify-center">
+                            <div class="relative inline-block">
+                                <img id="foto-pria-preview" src="" alt="Preview foto pria"
+                                    class="rounded-lg object-cover shadow border-2 border-blue-200"
+                                    style="width:96px;height:128px">
+                                <span class="absolute -top-2 -right-2 bg-green-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold">3×4</span>
+                            </div>
+                        </div>
+                        <label id="lbl-foto-pria" class="upload-zone" style="border-color:#bfdbfe;background:#eff6ff" onclick="return false">
+                            <input type="file" name="foto_pria" accept=".jpg,.jpeg,.png" class="sr-only" onchange="pickedFoto(this,'foto-pria')">
+                            <div id="foto-pria-icon" class="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2" style="background:#dbeafe">
+                                <svg class="w-6 h-6" fill="none" stroke="#3b82f6" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <p id="foto-pria-text" class="text-xs font-semibold" style="color:#2563eb">Klik untuk pilih foto</p>
+                            <p class="text-xs text-gray-400 mt-1">JPG · PNG · Ukuran 3×4</p>
+                        </label>
+                        @error('foto_pria')<p class="text-red-500 text-xs mt-2">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="p-6">
+                        <p class="text-xs font-bold mb-3" style="color:#be123c">● Calon Wanita</p>
+                        {{-- Preview area foto wanita --}}
+                        <div id="foto-wanita-preview-wrap" class="hidden mb-3 flex justify-center">
+                            <div class="relative inline-block">
+                                <img id="foto-wanita-preview" src="" alt="Preview foto wanita"
+                                    class="rounded-lg object-cover shadow border-2 border-rose-200"
+                                    style="width:96px;height:128px">
+                                <span class="absolute -top-2 -right-2 bg-green-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold">3×4</span>
+                            </div>
+                        </div>
+                        <label id="lbl-foto-wanita" class="upload-zone" style="border-color:#fecdd3;background:#fff1f2" onclick="return false">
+                            <input type="file" name="foto_wanita" accept=".jpg,.jpeg,.png" class="sr-only" onchange="pickedFoto(this,'foto-wanita')">
+                            <div id="foto-wanita-icon" class="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2" style="background:#ffe4e6">
+                                <svg class="w-6 h-6" fill="none" stroke="#f43f5e" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <p id="foto-wanita-text" class="text-xs font-semibold" style="color:#e11d48">Klik untuk pilih foto</p>
+                            <p class="text-xs text-gray-400 mt-1">JPG · PNG · Ukuran 3×4</p>
+                        </label>
+                        @error('foto_wanita')<p class="text-red-500 text-xs mt-2">{{ $message }}</p>@enderror
+                    </div>
+                </div>
+            </div>
+
             {{-- ─── Surat Baptis ─── --}}
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div class="flex items-center gap-4 px-6 py-4" style="background:#faf5ff;border-bottom:1.5px solid #e9d5ff">
@@ -546,6 +608,34 @@ REQUIRED_FIELDS.forEach(name => {
 
 // Jalankan sekali saat load (jika ada old values dari validasi server)
 document.addEventListener('DOMContentLoaded', checkForm);
+
+// ── Upload foto (dengan preview gambar) ─────────────────────
+function pickedFoto(input, id) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const name = file.name.length > 22 ? file.name.slice(0,20)+'…' : file.name;
+    const lbl  = document.getElementById('lbl-' + id);
+    const icon = document.getElementById(id + '-icon');
+    const text = document.getElementById(id + '-text');
+    const previewWrap = document.getElementById(id + '-preview-wrap');
+    const previewImg  = document.getElementById(id + '-preview');
+
+    lbl.classList.add('done');
+    icon.style.background = '#dcfce7';
+    icon.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="#22c55e" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+    text.style.color = '#15803d';
+    text.textContent = '✓ ' + name;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        previewWrap.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+
+    lbl.onclick = null;
+    lbl.querySelector('input').click;
+}
 
 // ── Upload dokumen ───────────────────────────────────────────
 function picked(input, id) {

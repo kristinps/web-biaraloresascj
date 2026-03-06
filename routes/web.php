@@ -99,4 +99,5 @@ Route::get('/pembayaran/{id}', [PembayaranController::class, 'show'])->name('pem
 Route::get('/pembayaran/{id}/selesai', [PembayaranController::class, 'finish'])->name('pembayaran.finish');
 Route::get('/pembayaran/{id}/status', [PembayaranController::class, 'checkStatus'])->name('pembayaran.status');
 Route::get('/pembayaran/{id}/qr-image', [PembayaranController::class, 'qrImage'])->name('pembayaran.qr-image');
+Route::post('/pembayaran/{id}/new-qr', [PembayaranController::class, 'newQr'])->name('pembayaran.new-qr');
 Route::post('/pembayaran/callback', [PembayaranController::class, 'callback'])->name('pembayaran.callback');

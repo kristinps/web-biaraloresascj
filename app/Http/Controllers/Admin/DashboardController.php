@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PendaftaranPernikahan;
 use App\Models\PeriodePernikahan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -35,12 +36,46 @@ class DashboardController extends Controller
 
         $totalPeriode = PeriodePernikahan::count();
 
+        // ── Chart: Tren pendaftaran 12 bulan terakhir ──
+        $rawBulan = PendaftaranPernikahan::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bulan, COUNT(*) as total")
+            ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->pluck('total', 'bulan');
+
+        $chartBulanLabels = [];
+        $chartBulanData   = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $key = now()->subMonths($i)->format('Y-m');
+            $chartBulanLabels[] = now()->subMonths($i)->format('M Y');
+            $chartBulanData[]   = (int) ($rawBulan[$key] ?? 0);
+        }
+
+        // ── Chart: Pendaftaran per Periode ──
+        $periodeChart = PeriodePernikahan::withCount([
+            'pendaftaran',
+            'pendaftaran as pendaftaran_lunas_count'    => fn($q) => $q->where('status_pembayaran', 'lunas'),
+            'pendaftaran as pendaftaran_menunggu_count' => fn($q) => $q->where('status_pembayaran', 'menunggu'),
+            'pendaftaran as pendaftaran_belum_count'    => fn($q) => $q->where('status_pembayaran', 'belum_bayar'),
+        ])->latest()->take(8)->get();
+
+        $chartPeriodeLabels  = $periodeChart->pluck('nama')->toArray();
+        $chartPeriodeLunas   = $periodeChart->pluck('pendaftaran_lunas_count')->toArray();
+        $chartPeriodeMenunggu= $periodeChart->pluck('pendaftaran_menunggu_count')->toArray();
+        $chartPeriodeBelum   = $periodeChart->pluck('pendaftaran_belum_count')->toArray();
+
         return view('admin.dashboard', compact(
             'stats',
             'statsPeriodeAktif',
             'periodeAktif',
             'pendaftaran',
-            'totalPeriode'
+            'totalPeriode',
+            'chartBulanLabels',
+            'chartBulanData',
+            'chartPeriodeLabels',
+            'chartPeriodeLunas',
+            'chartPeriodeMenunggu',
+            'chartPeriodeBelum'
         ));
     }
 

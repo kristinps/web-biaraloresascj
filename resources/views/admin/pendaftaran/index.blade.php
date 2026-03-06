@@ -42,20 +42,6 @@
         border-color: #6366f1;
         box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
     }
-    select.filter-select {
-        padding: 9px 14px;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 10px;
-        font-size: 13.5px;
-        font-family: 'Inter', sans-serif;
-        outline: none;
-        color: #374151;
-        background: #fff;
-        cursor: pointer;
-        transition: border-color 0.2s;
-    }
-    select.filter-select:focus { border-color: #6366f1; }
-
     .card {
         background: #fff;
         border-radius: 16px;
@@ -76,21 +62,8 @@
     tbody tr:hover { background: #f8fafc; }
     tbody tr:last-child { border-bottom: none; }
     td { padding: 13px 18px; font-size: 13.5px; color: #374151; vertical-align: middle; }
-    .td-num { color: #6366f1; font-weight: 700; font-size: 13px; white-space: nowrap; }
     .td-names { font-weight: 600; color: #1e293b; }
     .td-names small { display: block; font-size: 12px; font-weight: 400; color: #94a3b8; margin-top: 1px; }
-    .badge {
-        display: inline-flex; align-items: center; gap: 5px;
-        padding: 4px 10px; border-radius: 99px;
-        font-size: 12px; font-weight: 600; white-space: nowrap;
-    }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .badge-green { background:#f0fdf4; color:#15803d; }
-    .badge-green .badge-dot { background:#22c55e; }
-    .badge-amber { background:#fffbeb; color:#b45309; }
-    .badge-amber .badge-dot { background:#f59e0b; }
-    .badge-slate { background:#f8fafc; color:#475569; }
-    .badge-slate .badge-dot { background:#94a3b8; }
     .btn-detail {
         display: inline-flex; align-items: center; gap: 5px;
         padding: 6px 12px; border-radius: 8px;
@@ -120,16 +93,10 @@
             <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="Cari nama atau email...">
         </div>
-        <select name="status" class="filter-select">
-            <option value="">Semua Status</option>
-            <option value="lunas"      {{ request('status') === 'lunas' ? 'selected' : '' }}>Lunas</option>
-            <option value="menunggu"   {{ request('status') === 'menunggu' ? 'selected' : '' }}>Menunggu</option>
-            <option value="belum_bayar"{{ request('status') === 'belum_bayar' ? 'selected' : '' }}>Belum Bayar</option>
-        </select>
         <button type="submit" style="padding:9px 18px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">
             Filter
         </button>
-        @if(request('search') || request('status'))
+        @if(request('search'))
             <a href="{{ route('admin.pendaftaran.index') }}" style="padding:9px 14px;background:#f1f5f9;color:#64748b;border-radius:10px;font-size:13.5px;font-weight:500;text-decoration:none">
                 Reset
             </a>
@@ -143,40 +110,26 @@
             <table>
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Pasangan</th>
-                        <th class="hide-mobile">No. HP</th>
                         <th class="hide-mobile">Tanggal Nikah</th>
                         <th class="hide-mobile">Tanggal Daftar</th>
-                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($pendaftaran as $item)
                     <tr>
-                        <td class="td-num">#{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}</td>
                         <td>
                             <div class="td-names">
                                 {{ $item->nama_pria }} &amp; {{ $item->nama_wanita }}
                                 <small>{{ $item->email }}</small>
                             </div>
                         </td>
-                        <td class="hide-mobile" style="color:#64748b;font-size:13px">{{ $item->no_hp }}</td>
                         <td class="hide-mobile" style="color:#64748b;font-size:13px">
                             {{ $item->tanggal_pernikahan ? $item->tanggal_pernikahan->format('d M Y') : '-' }}
                         </td>
                         <td class="hide-mobile" style="color:#64748b;font-size:13px">
                             {{ $item->created_at->format('d M Y') }}
-                        </td>
-                        <td>
-                            @if($item->status_pembayaran === 'lunas')
-                                <span class="badge badge-green"><span class="badge-dot"></span>Lunas</span>
-                            @elseif($item->status_pembayaran === 'menunggu')
-                                <span class="badge badge-amber"><span class="badge-dot"></span>Menunggu</span>
-                            @else
-                                <span class="badge badge-slate"><span class="badge-dot"></span>Belum Bayar</span>
-                            @endif
                         </td>
                         <td>
                             <a href="{{ route('admin.pendaftaran.show', $item->id) }}" class="btn-detail">

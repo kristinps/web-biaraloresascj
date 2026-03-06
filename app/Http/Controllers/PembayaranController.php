@@ -26,82 +26,23 @@ class PembayaranController extends Controller
     {
         $pendaftaran = PendaftaranPernikahan::findOrFail($id);
 
-        // Jika sudah lunas, langsung ke halaman sukses
         if ($pendaftaran->status_pembayaran === 'lunas') {
             return redirect()->route('kursus-pernikahan.sukses', $id);
         }
 
-        // Generate QRIS jika belum ada atau sudah expired
         $needsNewQris = ! $pendaftaran->qris_url
             || ! $pendaftaran->qris_expired_at
             || now()->greaterThan($pendaftaran->qris_expired_at);
 
         if ($needsNewQris) {
-            $this->setupMidtrans();
-
-            $orderId = 'KURSUS-' . $pendaftaran->id . '-' . time();
-
-            $params = [
-                'payment_type' => 'qris',
-                'transaction_details' => [
-                    'order_id'     => $orderId,
-                    'gross_amount' => 350000,
-                ],
-                'qris' => [
-                    'acquirer' => 'gopay',
-                ],
-                'customer_details' => [
-                    'first_name' => $pendaftaran->nama_pria,
-                    'last_name'  => '& ' . $pendaftaran->nama_wanita,
-                    'email'      => $pendaftaran->email,
-                    'phone'      => $pendaftaran->nomor_hp,
-                ],
-                'item_details' => [
-                    [
-                        'id'       => 'kursus-nikah',
-                        'price'    => 300000,
-                        'quantity' => 1,
-                        'name'     => 'Biaya Kursus Pernikahan',
-                    ],
-                    [
-                        'id'       => 'administrasi',
-                        'price'    => 50000,
-                        'quantity' => 1,
-                        'name'     => 'Biaya Administrasi',
-                    ],
-                ],
-            ];
-
             try {
-                $response = CoreApi::charge($params);
-
-                $qrisUrl   = $response->actions[0]->url ?? null;
-
-                // Coba ambil dari generate_qr_code action jika ada
-                if (isset($response->actions)) {
-                    foreach ($response->actions as $action) {
-                        if ($action->name === 'generate-qr-code' || $action->name === 'generate_qr_code') {
-                            $qrisUrl = $action->url;
-                            break;
-                        }
-                    }
-                }
-
-                $pendaftaran->update([
-                    'midtrans_order_id'    => $orderId,
-                    'midtrans_transaction_id' => $response->transaction_id ?? null,
-                    'qris_url'             => $qrisUrl,
-                    'qris_expired_at'      => now()->addHours(24),
-                    'status_pembayaran'    => 'menunggu',
-                ]);
+                $this->generateQris($pendaftaran);
             } catch (\Exception $e) {
                 Log::error('Midtrans QRIS error: ' . $e->getMessage());
                 return back()->with('error', 'Gagal menghubungi gateway pembayaran. Silakan coba lagi.');
             }
         }
 
-        // Cek status terkini dari Midtrans jika masih menunggu
-        $midtransStatus = null;
         if ($pendaftaran->midtrans_order_id && $pendaftaran->status_pembayaran === 'menunggu') {
             try {
                 $this->setupMidtrans();
@@ -138,7 +79,7 @@ class PembayaranController extends Controller
                 $pendaftaran->update(['status_pembayaran' => 'lunas']);
                 $this->kirimEmailKonfirmasi($pendaftaran);
                 return response()->json([
-                    'status'      => 'lunas',
+                    'status'       => 'lunas',
                     'redirect_url' => route('kursus-pernikahan.sukses', $id),
                 ]);
             }
@@ -147,10 +88,98 @@ class PembayaranController extends Controller
                 $pendaftaran->update(['status_pembayaran' => 'gagal']);
             }
 
-            return response()->json(['status' => $status]);
+            return response()->json([
+                'status'     => $status,
+                'expired_at' => $pendaftaran->qris_expired_at?->toIso8601String(),
+            ]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
+    }
+
+    public function newQr($id)
+    {
+        $pendaftaran = PendaftaranPernikahan::findOrFail($id);
+
+        if ($pendaftaran->status_pembayaran === 'lunas') {
+            return response()->json([
+                'status'       => 'lunas',
+                'redirect_url' => route('kursus-pernikahan.sukses', $id),
+            ]);
+        }
+
+        try {
+            $this->generateQris($pendaftaran);
+            $pendaftaran->refresh();
+
+            return response()->json([
+                'success'       => true,
+                'qr_image_url'  => route('pembayaran.qr-image', $id) . '?t=' . time(),
+                'expired_at'    => $pendaftaran->qris_expired_at->toIso8601String(),
+                'expired_label' => $pendaftaran->qris_expired_at->locale('id')->isoFormat('D MMM YYYY, HH:mm'),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Midtrans new QRIS error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Gagal membuat QR baru.'], 500);
+        }
+    }
+
+    private function generateQris(PendaftaranPernikahan $pendaftaran): void
+    {
+        $this->setupMidtrans();
+
+        $orderId = 'KURSUS-' . $pendaftaran->id . '-' . time();
+
+        $params = [
+            'payment_type' => 'qris',
+            'transaction_details' => [
+                'order_id'     => $orderId,
+                'gross_amount' => 350000,
+            ],
+            'qris' => [
+                'acquirer' => 'gopay',
+            ],
+            'customer_details' => [
+                'first_name' => $pendaftaran->nama_pria,
+                'last_name'  => '& ' . $pendaftaran->nama_wanita,
+                'email'      => $pendaftaran->email,
+                'phone'      => $pendaftaran->nomor_hp,
+            ],
+            'item_details' => [
+                [
+                    'id'       => 'kursus-nikah',
+                    'price'    => 300000,
+                    'quantity' => 1,
+                    'name'     => 'Biaya Kursus Pernikahan',
+                ],
+                [
+                    'id'       => 'administrasi',
+                    'price'    => 50000,
+                    'quantity' => 1,
+                    'name'     => 'Biaya Administrasi',
+                ],
+            ],
+        ];
+
+        $response = CoreApi::charge($params);
+
+        $qrisUrl = $response->actions[0]->url ?? null;
+        if (isset($response->actions)) {
+            foreach ($response->actions as $action) {
+                if ($action->name === 'generate-qr-code' || $action->name === 'generate_qr_code') {
+                    $qrisUrl = $action->url;
+                    break;
+                }
+            }
+        }
+
+        $pendaftaran->update([
+            'midtrans_order_id'       => $orderId,
+            'midtrans_transaction_id' => $response->transaction_id ?? null,
+            'qris_url'                => $qrisUrl,
+            'qris_expired_at'         => now()->addHours(24),
+            'status_pembayaran'       => 'menunggu',
+        ]);
     }
 
     private function kirimEmailKonfirmasi(PendaftaranPernikahan $pendaftaran): void
