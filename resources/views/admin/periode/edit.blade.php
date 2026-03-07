@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'admin.layouts.app')
 
 @section('title', 'Edit Periode')
 @section('page-title', 'Edit Periode')
@@ -60,7 +60,7 @@
 
 @section('content')
 <div class="form-card">
-    <form action="{{ route('admin.periode.update', $periode) }}" method="POST">
+    <form action="{{ route($routePrefix . '.periode.update', $periode) }}" method="POST">
         @csrf @method('PUT')
 
         <div class="form-group">
@@ -96,7 +96,7 @@
                 </svg>
                 Simpan Perubahan
             </button>
-            <a href="{{ route('admin.periode.index') }}" class="btn-secondary">Batal</a>
+            <a href="{{ route($routePrefix . '.periode.index') }}" class="btn-secondary">Batal</a>
         </div>
     </form>
 </div>

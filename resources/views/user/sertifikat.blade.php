@@ -1,4 +1,4 @@
-@extends('user.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'user.layouts.app')
 
 @section('title', 'Sertifikat')
 @section('page-title', 'Sertifikat')
@@ -42,7 +42,7 @@
             <div>
                 @if($item->status_kursus === 'lulus')
                     <span class="badge badge-green">Lulus — Sertifikat tersedia</span>
-                    <a href="{{ route('user.sertifikat.download', $item) }}" class="btn-download">
+                    <a href="{{ route($userRoutePrefix . '.sertifikat.download', $item) }}" class="btn-download">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         Download Sertifikat
                     </a>

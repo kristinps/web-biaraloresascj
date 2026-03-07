@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'admin.layouts.app')
 
 @section('title', 'Buat Periode Baru')
 @section('page-title', 'Buat Periode Baru')
@@ -70,7 +70,7 @@
 
 @section('content')
 <div class="form-card">
-    <form action="{{ route('admin.periode.store') }}" method="POST">
+    <form action="{{ route($routePrefix . '.periode.store') }}" method="POST">
         @csrf
 
         <div class="form-group">
@@ -111,7 +111,7 @@
                 </svg>
                 Buat Periode
             </button>
-            <a href="{{ route('admin.periode.index') }}" class="btn-secondary">Batal</a>
+            <a href="{{ route($routePrefix . '.periode.index') }}" class="btn-secondary">Batal</a>
         </div>
     </form>
 </div>

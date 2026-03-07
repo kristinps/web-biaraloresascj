@@ -8,8 +8,83 @@ use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\KursusPendaftaranController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\User\UserDashboardController;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PeriodeController;
+use App\Http\Controllers\Admin\MateriKursusController;
+use App\Http\Controllers\Admin\KehadiranController;
+use App\Http\Controllers\Admin\DokumenController;
+use App\Http\Controllers\Admin\KursusController;
+
+// ─── Login & Logout (domain utama: biaraloresa.my.id)
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+
+// ─── Dashboard (domain utama) — butuh auth, redirect by role
+Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('index');
+
+    // Super Admin & Admin: dashboard grafik, pendaftaran, peserta, materi
+    Route::middleware('role:super_admin,admin')->group(function () {
+        Route::get('/admin', [DashboardController::class, 'admin'])->name('admin');
+        Route::get('/pendaftaran', [AdminDashboardController::class, 'list'])->name('pendaftaran.index');
+        Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->name('pendaftaran.show');
+        Route::get('/periode', [PeriodeController::class, 'index'])->name('periode.index');
+        Route::get('/periode/create', [PeriodeController::class, 'create'])->name('periode.create');
+        Route::post('/periode', [PeriodeController::class, 'store'])->name('periode.store');
+        Route::get('/periode/{periode}', [PeriodeController::class, 'show'])->name('periode.show');
+        Route::get('/periode/{periode}/edit', [PeriodeController::class, 'edit'])->name('periode.edit');
+        Route::put('/periode/{periode}', [PeriodeController::class, 'update'])->name('periode.update');
+        Route::get('/periode/{periode}/materi', [MateriKursusController::class, 'index'])->name('materi.index');
+        Route::post('/periode/{periode}/materi', [MateriKursusController::class, 'store'])->name('materi.store');
+        Route::put('/materi/{materi}', [MateriKursusController::class, 'update'])->name('materi.update');
+        Route::get('/periode/{periode}/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
+        Route::put('/pendaftaran/{id}/dokumen', [DokumenController::class, 'updateStatus'])->name('pendaftaran.dokumen');
+        Route::put('/pendaftaran/{pendaftaran}/status-kursus', [KehadiranController::class, 'updateStatusKursus'])->name('pendaftaran.status-kursus');
+        Route::post('/materi/{materi}/kirim-materi', [MateriKursusController::class, 'kirimMateri'])->name('materi.kirim');
+        Route::post('/materi/{materi}/kirim-zoom', [MateriKursusController::class, 'kirimZoom'])->name('materi.kirim-zoom');
+        Route::delete('/materi/{materi}', [MateriKursusController::class, 'destroy'])->name('materi.destroy');
+        Route::post('/periode/{periode}/kehadiran', [KehadiranController::class, 'updateBulk'])->name('kehadiran.update');
+        Route::post('/periode/{periode}/tutup', [PeriodeController::class, 'tutup'])->name('periode.tutup');
+        Route::post('/periode/{periode}/buka', [PeriodeController::class, 'buka'])->name('periode.buka');
+        Route::delete('/periode/{periode}', [PeriodeController::class, 'destroy'])->name('periode.destroy');
+        Route::post('/periode/{periode}/kirim-jadwal', [KursusController::class, 'kirimJadwal'])->name('kursus.kirim-jadwal');
+        Route::post('/periode/{periode}/kirim-sertifikat', [KursusController::class, 'kirimSertifikat'])->name('kursus.kirim-sertifikat');
+        Route::post('/periode/{periode}/kirim-jadwal-selanjutnya', [KursusController::class, 'kirimJadwalSelanjutnya'])->name('kursus.kirim-jadwal-selanjutnya');
+        Route::put('/pendaftaran/{pendaftaran}/pindah-jadwal', [KursusController::class, 'pindahJadwal'])->name('kursus.pindah-jadwal');
+    });
+
+    // Hanya Super Admin: CRUD admin
+    Route::middleware('role:super_admin')->prefix('admin-crud')->name('admin-crud.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AdminCrudController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AdminCrudController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\AdminCrudController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [\App\Http\Controllers\Admin\AdminCrudController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [\App\Http\Controllers\Admin\AdminCrudController::class, 'update'])->name('update');
+        Route::delete('/{user}', [\App\Http\Controllers\Admin\AdminCrudController::class, 'destroy'])->name('destroy');
+    });
+
+    // User (peserta): dashboard pesan, status, dokumen, jadwal, biaya, surat, profil, password
+    Route::middleware('role:user')->group(function () {
+        Route::get('/user', [DashboardController::class, 'user'])->name('user');
+        Route::get('/status-pendaftaran', [UserDashboardController::class, 'statusPendaftaran'])->name('user.status-pendaftaran');
+        Route::get('/dokumen', [UserDashboardController::class, 'dokumen'])->name('user.dokumen');
+        Route::get('/jadwal-materi', [UserDashboardController::class, 'jadwalMateri'])->name('user.jadwal-materi');
+        Route::get('/pembayaran', [UserDashboardController::class, 'pembayaran'])->name('user.pembayaran');
+        Route::get('/biaya', [UserDashboardController::class, 'biaya'])->name('user.biaya');
+        Route::get('/sertifikat', [UserDashboardController::class, 'sertifikat'])->name('user.sertifikat');
+        Route::get('/sertifikat/{pendaftaran}/download', [UserDashboardController::class, 'downloadSertifikat'])->name('user.sertifikat.download');
+        Route::get('/profil', [UserProfileController::class, 'show'])->name('user.profil');
+        Route::put('/profil', [UserProfileController::class, 'update'])->name('user.profil.update');
+        Route::get('/password', [UserProfileController::class, 'showPassword'])->name('user.password');
+        Route::put('/password', [UserProfileController::class, 'updatePassword'])->name('user.password.update');
+    });
+});
 
 // ─── Admin — hanya aktif di admin.biaraloresa.my.id (harus di atas agar prioritas lebih tinggi)
 Route::domain('admin.biaraloresa.my.id')->group(function () {

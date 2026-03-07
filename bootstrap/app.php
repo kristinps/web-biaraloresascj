@@ -17,9 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'role'  => \App\Http\Middleware\RoleMiddleware::class,
         ]);
-        // Tanpa auth mengakses halaman yang dilindungi: admin → register admin
-        $middleware->redirectGuestsTo(fn (Request $request) => str_contains($request->getHost(), 'admin.') ? 'https://admin.biaraloresa.my.id/register' : url('/'));
+        // Tanpa auth: admin subdomain → register admin; domain utama → login
+        $middleware->redirectGuestsTo(fn (Request $request) => str_contains($request->getHost(), 'admin.') ? 'https://admin.biaraloresa.my.id/register' : url('/login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

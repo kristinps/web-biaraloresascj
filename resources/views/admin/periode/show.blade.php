@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'admin.layouts.app')
 
 @section('title', $periode->nama)
 @section('page-title', $periode->nama)
@@ -102,7 +102,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.periode.index') }}" class="btn-back">
+<a href="{{ route($routePrefix . '.periode.index') }}" class="btn-back">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
     </svg>
@@ -147,11 +147,11 @@
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
             <div class="btn-label">Kirim Jadwal Kursus<small>Email ke semua peserta</small></div>
         </button>
-        <a href="{{ route('admin.materi.index', $periode) }}" class="batch-btn bb-purple">
+        <a href="{{ route($routePrefix . '.materi.index', $periode) }}" class="batch-btn bb-purple">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.966 8.966 0 00-6 2.292m0-14.25v14.25"/></svg>
             <div class="btn-label">Kelola Materi Kursus<small>Tambah materi & kirim ke peserta</small></div>
         </a>
-        <a href="{{ route('admin.kehadiran.index', $periode) }}" class="batch-btn bb-amber">
+        <a href="{{ route($routePrefix . '.kehadiran.index', $periode) }}" class="batch-btn bb-amber">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <div class="btn-label">Absensi & Status Kursus<small>Kelola kehadiran peserta</small></div>
         </a>
@@ -174,7 +174,7 @@
             <h3>Kirim Jadwal Kursus</h3>
             <button class="close-btn" onclick="closeModal('modal-jadwal')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
         </div>
-        <form action="{{ route('admin.kursus.kirim-jadwal', $periode) }}" method="POST">
+        <form action="{{ route($routePrefix . '.kursus.kirim-jadwal', $periode) }}" method="POST">
             @csrf
             <div class="modal-body">
                 <p style="font-size:13px;color:#64748b;margin-bottom:14px">Email jadwal kursus akan dikirim ke <strong>{{ $stats['total'] }} peserta</strong>. Status kursus akan berubah menjadi <strong>Terjadwal</strong>.</p>
@@ -197,7 +197,7 @@
             <h3>Kirim Sertifikat Kelulusan</h3>
             <button class="close-btn" onclick="closeModal('modal-sertifikat')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
         </div>
-        <form action="{{ route('admin.kursus.kirim-sertifikat', $periode) }}" method="POST">
+        <form action="{{ route($routePrefix . '.kursus.kirim-sertifikat', $periode) }}" method="POST">
             @csrf
             <div class="modal-body">
                 <p style="font-size:13px;color:#64748b;margin-bottom:14px">Email sertifikat hanya dikirim ke peserta berstatus <strong>Lulus</strong>.</p>
@@ -220,7 +220,7 @@
             <h3>Kirim Jadwal Kegiatan Selanjutnya</h3>
             <button class="close-btn" onclick="closeModal('modal-jadsel')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
         </div>
-        <form action="{{ route('admin.kursus.kirim-jadwal-selanjutnya', $periode) }}" method="POST">
+        <form action="{{ route($routePrefix . '.kursus.kirim-jadwal-selanjutnya', $periode) }}" method="POST">
             @csrf
             <div class="modal-body">
                 <p style="font-size:13px;color:#64748b;margin-bottom:14px">Dikirim ke peserta berstatus <strong>Lulus</strong>.</p>
@@ -289,7 +289,7 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.pendaftaran.show', $item->id) }}" class="btn-detail">
+                            <a href="{{ route($routePrefix . '.pendaftaran.show', $item->id) }}" class="btn-detail">
                                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                 Detail
                             </a>

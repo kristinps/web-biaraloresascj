@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'admin.layouts.app')
 
 @section('title', 'Detail Pendaftaran #' . str_pad($pendaftaran->id, 5, '0', STR_PAD_LEFT))
 @section('page-title', 'Detail Pendaftaran')
@@ -148,7 +148,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.pendaftaran.index') }}" class="back-link">
+<a href="{{ route($routePrefix . '.pendaftaran.index') }}" class="back-link">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
     </svg>
@@ -209,8 +209,9 @@
         </div>
     </div>
     <div class="action-body">
-        <form action="{{ route('admin.dokumen.update', $pendaftaran->id) }}" method="POST">
+        <form action="{{ $routePrefix === 'dashboard' ? route('dashboard.pendaftaran.dokumen', $pendaftaran->id) : route('admin.dokumen.update', $pendaftaran->id) }}" method="POST">
             @csrf
+            @if($routePrefix === 'dashboard') @method('PUT') @endif
             <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:start">
                 <div class="form-group" style="margin-bottom:0">
                     <label class="form-label">Status Dokumen</label>

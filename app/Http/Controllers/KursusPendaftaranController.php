@@ -123,21 +123,23 @@ class KursusPendaftaranController extends Controller
 
         $validated['status_pembayaran'] = 'belum_bayar';
         $validated['periode_id'] = PeriodePernikahan::periodeAktif()?->id;
-        $pendaftaran = PendaftaranPernikahan::create($validated);
 
         $plainPassword = Str::random(10);
-        $name = $pendaftaran->nama_pria . ' & ' . $pendaftaran->nama_wanita;
+        $name = ($validated['nama_pria'] ?? '') . ' & ' . ($validated['nama_wanita'] ?? '');
         $user = User::updateOrCreate(
-            ['email' => $pendaftaran->email],
+            ['email' => $validated['email']],
             [
                 'name'              => $name,
                 'password'          => Hash::make($plainPassword),
+                'role'              => User::ROLE_USER,
                 'is_admin'          => false,
                 'email_verified_at' => now(),
-                'foto_pria'         => $pendaftaran->foto_pria,
-                'foto_wanita'       => $pendaftaran->foto_wanita,
+                'foto_pria'         => $validated['foto_pria'] ?? null,
+                'foto_wanita'       => $validated['foto_wanita'] ?? null,
             ]
         );
+        $validated['user_id'] = $user->id;
+        $pendaftaran = PendaftaranPernikahan::create($validated);
 
         session([
             'pendaftaran_akun_password' => $plainPassword,

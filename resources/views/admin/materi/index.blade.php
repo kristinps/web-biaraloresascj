@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'admin.layouts.app')
 
 @section('title', 'Materi Kursus — ' . $periode->nama)
 @section('page-title', 'Materi Kursus')
@@ -76,7 +76,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.periode.show', $periode) }}" class="back-link">
+<a href="{{ route($routePrefix . '.periode.show', $periode) }}" class="back-link">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
     Kembali ke Periode
 </a>
@@ -85,7 +85,7 @@
     <p style="font-size:13px;color:#64748b">
         <strong>{{ $jumlahPeserta }} peserta</strong> terdaftar. Email materi/zoom dikirim ke semua peserta sekaligus.
     </p>
-    <a href="{{ route('admin.kehadiran.index', $periode) }}"
+    <a href="{{ route($routePrefix . '.kehadiran.index', $periode) }}"
        style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:15px;height:15px"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         Kelola Absensi
@@ -100,7 +100,7 @@
             <h2>Tambah Materi Baru</h2>
         </div>
         <div class="panel-body">
-            <form action="{{ route('admin.materi.store', $periode) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route($routePrefix . '.materi.store', $periode) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     <label class="form-label">Urutan / Sesi ke- <span style="color:#ef4444">*</span></label>
@@ -185,7 +185,7 @@
                         @endif
                     </div>
                     <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;border-top:1px solid #f1f5f9;padding-top:12px">
-                        <form action="{{ route('admin.materi.kirim-materi', $materi) }}" method="POST" onsubmit="return confirm('Kirim email materi ini ke {{ $jumlahPeserta }} peserta?')">
+                        <form action="{{ route($routePrefix . '.materi.kirim-materi', $materi) }}" method="POST" onsubmit="return confirm('Kirim email materi ini ke {{ $jumlahPeserta }} peserta?')">
                             @csrf
                             <button type="submit" class="action-btn ab-indigo">
                                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
@@ -193,7 +193,7 @@
                             </button>
                         </form>
                         @if($materi->zoom_link)
-                        <form action="{{ route('admin.materi.kirim-zoom', $materi) }}" method="POST" onsubmit="return confirm('Kirim link Zoom ini ke {{ $jumlahPeserta }} peserta?')">
+                        <form action="{{ route($routePrefix . '.materi.kirim-zoom', $materi) }}" method="POST" onsubmit="return confirm('Kirim link Zoom ini ke {{ $jumlahPeserta }} peserta?')">
                             @csrf
                             <button type="submit" class="action-btn ab-blue">
                                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
@@ -205,7 +205,7 @@
                             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
                             Edit
                         </button>
-                        <form action="{{ route('admin.materi.destroy', $materi) }}" method="POST" onsubmit="return confirm('Hapus materi ini?')">
+                        <form action="{{ route($routePrefix . '.materi.destroy', $materi) }}" method="POST" onsubmit="return confirm('Hapus materi ini?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="action-btn ab-red">
                                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
@@ -223,7 +223,7 @@
                             <h3>Edit Materi: {{ $materi->judul }}</h3>
                             <button class="close-btn" onclick="closeModal('modal-edit-{{ $materi->id }}')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
                         </div>
-                        <form action="{{ route('admin.materi.update', $materi) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route($routePrefix . '.materi.update', $materi) }}" method="POST" enctype="multipart/form-data">
                             @csrf @method('PUT')
                             <div class="modal-body">
                                 <div class="form-group"><label class="form-label">Urutan / Sesi ke-</label><input type="number" name="urutan" class="form-input" value="{{ $materi->urutan }}" min="1" max="99" required></div>

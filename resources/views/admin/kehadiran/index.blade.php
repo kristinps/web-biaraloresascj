@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'admin.layouts.app')
 
 @section('title', 'Absensi Kursus — ' . $periode->nama)
 @section('page-title', 'Absensi & Status Kursus')
@@ -80,7 +80,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.periode.show', $periode) }}" class="back-link">
+<a href="{{ route($routePrefix . '.periode.show', $periode) }}" class="back-link">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
     Kembali ke Periode
 </a>
@@ -98,7 +98,7 @@
         <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:#cbd5e1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <p>
             @if($materiList->isEmpty())
-                Belum ada materi kursus. <a href="{{ route('admin.materi.index', $periode) }}" style="color:#6366f1">Tambah materi terlebih dahulu.</a>
+                Belum ada materi kursus. <a href="{{ route($routePrefix . '.materi.index', $periode) }}" style="color:#6366f1">Tambah materi terlebih dahulu.</a>
             @else
                 Belum ada peserta dalam periode ini.
             @endif
@@ -115,7 +115,7 @@
             Simpan Absensi
         </button>
     </div>
-    <form id="form-absensi" action="{{ route('admin.kehadiran.update-bulk', $periode) }}" method="POST">
+    <form id="form-absensi" action="{{ route($routePrefix . '.kehadiran.update', $periode) }}" method="POST">
         @csrf
         <div class="table-wrap">
             <table class="absensi">
@@ -186,7 +186,7 @@
             <button class="close-btn" onclick="closeModal('modal-status')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
         </div>
         <form id="form-status" method="POST">
-            @csrf @method('PATCH')
+            @csrf @method('PUT')
             <div class="modal-body">
                 <div style="margin-bottom:14px">
                     <label>Status Kursus</label>
@@ -208,6 +208,7 @@
                 <p style="font-size:12.5px;font-weight:600;color:#374151;margin-bottom:10px">Pindahkan ke Periode Lain (jika tidak lulus)</p>
                 <form id="form-pindah" method="POST">
                     @csrf
+                    @method('PUT')
                     <div style="display:flex;gap:8px">
                         <select name="periode_id_baru" style="flex:1;padding:8px 10px;border-radius:8px;border:1.5px solid #e2e8f0;font-size:13px;color:#374151;outline:none">
                             <option value="">— Pilih Periode Baru —</option>
@@ -229,8 +230,8 @@
 <script>
 function openStatusModal(id, nama, currentStatus) {
     document.getElementById('modal-peserta-nama').textContent = nama;
-    document.getElementById('form-status').action = '{{ url("pendaftaran") }}/' + id + '/status-kursus';
-    document.getElementById('form-pindah').action  = '{{ url("pendaftaran") }}/' + id + '/pindah-jadwal';
+    document.getElementById('form-status').action = '{{ $routePrefix === "dashboard" ? url("dashboard/pendaftaran") : url("pendaftaran") }}/' + id + '/status-kursus';
+    document.getElementById('form-pindah').action  = '{{ $routePrefix === "dashboard" ? url("dashboard/pendaftaran") : url("pendaftaran") }}/' + id + '/pindah-jadwal';
     var sel = document.getElementById('modal-status-select');
     for (var i = 0; i < sel.options.length; i++) {
         sel.options[i].selected = (sel.options[i].value === currentStatus);

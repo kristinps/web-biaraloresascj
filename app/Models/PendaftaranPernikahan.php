@@ -12,6 +12,7 @@ class PendaftaranPernikahan extends Model
     protected $table = 'pendaftaran_pernikahan';
 
     protected $fillable = [
+        'user_id',
         'periode_id',
         'nama_pria', 'tempat_lahir_pria', 'tanggal_lahir_pria', 'nik_pria',
         'agama_pria', 'pekerjaan_pria', 'alamat_pria', 'nama_ayah_pria', 'nama_ibu_pria',
@@ -39,6 +40,11 @@ class PendaftaranPernikahan extends Model
     public function routeNotificationForMail($notification): string
     {
         return $this->email;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function periode()

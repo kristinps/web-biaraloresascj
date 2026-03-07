@@ -26,12 +26,32 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
+        'role',
         'is_admin',
         'password',
         'profile_photo',
         'foto_pria',
         'foto_wanita',
     ];
+
+    public const ROLE_SUPER_ADMIN = 'super_admin';
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_USER = 'user';
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === self::ROLE_SUPER_ADMIN;
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, [self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN], true);
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === self::ROLE_USER;
+    }
 
     public function profilePhotoUrl(): string
     {
@@ -73,5 +93,15 @@ class User extends Authenticatable implements MustVerifyEmail
             'password'          => 'hashed',
             'is_admin'          => 'boolean',
         ];
+    }
+
+    public function pesanDashboard()
+    {
+        return $this->hasMany(PesanDashboard::class, 'user_id')->latest();
+    }
+
+    public function pendaftaranPernikahan()
+    {
+        return $this->hasMany(PendaftaranPernikahan::class, 'user_id');
     }
 }

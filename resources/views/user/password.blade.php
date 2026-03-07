@@ -1,4 +1,4 @@
-@extends('user.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'user.layouts.app')
 
 @section('title', 'Ubah Kata Sandi')
 @section('page-title', 'Ubah Kata Sandi')
@@ -18,7 +18,7 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <form method="POST" action="{{ route('user.password.update') }}">
+        <form method="POST" action="{{ route($userRoutePrefix . '.password.update') }}">
             @csrf
             <div class="form-group">
                 <label for="password_current">Kata sandi saat ini</label>
@@ -39,6 +39,6 @@
     </div>
 </div>
 <p style="margin-top:20px;font-size:13px;color:#64748b">
-    <a href="{{ route('user.profil') }}" style="color:#6366f1;font-weight:600;text-decoration:none">Kembali ke Profil</a>
+    <a href="{{ route($userRoutePrefix . '.profil') }}" style="color:#6366f1;font-weight:600;text-decoration:none">Kembali ke Profil</a>
 </p>
 @endsection

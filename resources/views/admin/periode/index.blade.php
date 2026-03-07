@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'admin.layouts.app')
 
 @section('title', 'Periode Pernikahan')
 @section('page-title', 'Periode Pernikahan')
@@ -130,7 +130,7 @@
 @section('content')
 
 <div class="page-actions">
-    <a href="{{ route('admin.periode.create') }}" class="btn-primary">
+    <a href="{{ route($routePrefix . '.periode.create') }}" class="btn-primary">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
         </svg>
@@ -169,19 +169,19 @@
                 {{ $p->pendaftaran_count }} pendaftar
             </span>
             <div class="actions-group">
-                <a href="{{ route('admin.periode.show', $p) }}" class="btn-action">
+                <a href="{{ route($routePrefix . '.periode.show', $p) }}" class="btn-action">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                     Detail
                 </a>
-                <a href="{{ route('admin.periode.edit', $p) }}" class="btn-action">
+                <a href="{{ route($routePrefix . '.periode.edit', $p) }}" class="btn-action">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/>
                     </svg>
                     Edit
                 </a>
-                <form action="{{ route('admin.periode.tutup', $p) }}" method="POST"
+                <form action="{{ route($routePrefix . '.periode.tutup', $p) }}" method="POST"
                       onsubmit="return confirm('Tutup periode {{ addslashes($p->nama) }}? Periode tidak akan menerima pendaftaran baru.')">
                     @csrf @method('PATCH')
                     <button type="submit" class="btn-action warning">
@@ -199,7 +199,7 @@
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:#cbd5e1">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
             </svg>
-            <p>Belum ada periode aktif. <a href="{{ route('admin.periode.create') }}" style="color:#6366f1;font-weight:600">Buat periode baru.</a></p>
+            <p>Belum ada periode aktif. <a href="{{ route($routePrefix . '.periode.create') }}" style="color:#6366f1;font-weight:600">Buat periode baru.</a></p>
         </div>
     @endif
 </div>
@@ -231,13 +231,13 @@
                 {{ $p->pendaftaran_count }} pendaftar
             </span>
             <div class="actions-group">
-                <a href="{{ route('admin.periode.show', $p) }}" class="btn-action">
+                <a href="{{ route($routePrefix . '.periode.show', $p) }}" class="btn-action">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                     Detail
                 </a>
-                <form action="{{ route('admin.periode.buka', $p) }}" method="POST"
+                <form action="{{ route($routePrefix . '.periode.buka', $p) }}" method="POST"
                       onsubmit="return confirm('Aktifkan kembali periode ini?')">
                     @csrf @method('PATCH')
                     <button type="submit" class="btn-action success">
@@ -248,7 +248,7 @@
                     </button>
                 </form>
                 @if($p->pendaftaran_count === 0)
-                <form action="{{ route('admin.periode.destroy', $p) }}" method="POST"
+                <form action="{{ route($routePrefix . '.periode.destroy', $p) }}" method="POST"
                       onsubmit="return confirm('Hapus periode ini secara permanen?')">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn-action danger">

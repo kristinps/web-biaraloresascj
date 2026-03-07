@@ -14,8 +14,8 @@ class UserProfileController extends Controller
     public function show()
     {
         $user = Auth::user();
-        if ($user->is_admin) {
-            return redirect()->away('https://admin.biaraloresa.my.id/pendaftaran');
+        if ($user->isAdmin()) {
+            return redirect()->route('dashboard.index');
         }
 
         // Pakai foto dari user; kalau belum ada, ambil dari pendaftaran terakhir (pas foto saat daftar)
@@ -43,44 +43,18 @@ class UserProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-        if ($user->is_admin) {
-            return redirect()->away('https://admin.biaraloresa.my.id/pendaftaran');
+        if ($user->isAdmin()) {
+            return redirect()->route('dashboard.index');
         }
 
         $request->validate([
-            'name'       => ['required', 'string', 'max:255'],
-            'email'      => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'foto_pria'  => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
-            'foto_wanita'=> ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+            'name' => ['required', 'string', 'max:255'],
         ], [
-            'name.required'   => 'Nama wajib diisi.',
-            'email.required'  => 'Email wajib diisi.',
-            'email.unique'    => 'Email ini sudah digunakan akun lain.',
-            'foto_pria.image'   => 'Foto calon pria harus berupa gambar.',
-            'foto_pria.mimes'   => 'Foto calon pria harus JPG atau PNG.',
-            'foto_pria.max'     => 'Foto calon pria maksimal 2 MB.',
-            'foto_wanita.image' => 'Foto calon wanita harus berupa gambar.',
-            'foto_wanita.mimes' => 'Foto calon wanita harus JPG atau PNG.',
-            'foto_wanita.max'   => 'Foto calon wanita maksimal 2 MB.',
+            'name.required' => 'Nama wajib diisi.',
         ]);
 
-        $data = $request->only('name', 'email');
-
-        if ($request->hasFile('foto_pria')) {
-            if ($user->foto_pria) {
-                Storage::disk('public')->delete($user->foto_pria);
-            }
-            $data['foto_pria'] = $request->file('foto_pria')->store('profil-pasangan', 'public');
-        }
-
-        if ($request->hasFile('foto_wanita')) {
-            if ($user->foto_wanita) {
-                Storage::disk('public')->delete($user->foto_wanita);
-            }
-            $data['foto_wanita'] = $request->file('foto_wanita')->store('profil-pasangan', 'public');
-        }
-
-        $user->update($data);
+        // Hanya nama yang dapat diedit; email dan foto tidak dapat diubah
+        $user->update(['name' => $request->name]);
 
         return redirect()->route('user.profil')->with('success', 'Profil berhasil diperbarui.');
     }
@@ -88,8 +62,8 @@ class UserProfileController extends Controller
     public function showPassword()
     {
         $user = Auth::user();
-        if ($user->is_admin) {
-            return redirect()->away('https://admin.biaraloresa.my.id/pendaftaran');
+        if ($user->isAdmin()) {
+            return redirect()->route('dashboard.index');
         }
 
         return view('user.password');
@@ -98,8 +72,8 @@ class UserProfileController extends Controller
     public function updatePassword(Request $request)
     {
         $user = Auth::user();
-        if ($user->is_admin) {
-            return redirect()->away('https://admin.biaraloresa.my.id/pendaftaran');
+        if ($user->isAdmin()) {
+            return redirect()->route('dashboard.index');
         }
 
         $request->validate([
