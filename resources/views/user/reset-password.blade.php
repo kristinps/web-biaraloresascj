@@ -43,7 +43,7 @@
             </form>
 
             <div class="mt-6 text-center">
-                <a href="{{ url('/login') }}" class="text-sm text-primary-600 hover:text-primary-700 font-medium">← Kembali ke Login</a>
+                <a href="{{ route('home') }}" class="text-sm text-primary-600 hover:text-primary-700 font-medium">← Kembali ke Beranda</a>
             </div>
         </div>
     </div>

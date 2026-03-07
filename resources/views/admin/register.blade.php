@@ -511,7 +511,7 @@
         </form>
 
         <div class="login-link">
-            Sudah punya akun? <a href="{{ route('login') }}">Masuk di sini</a>
+            Sudah punya akun? Verifikasi email Anda lalu akses panel admin.
         </div>
     </div>
 </div>

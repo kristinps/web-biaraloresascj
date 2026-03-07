@@ -9,69 +9,20 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function showLogin()
-    {
-        if (Auth::check() && Auth::user()->is_admin) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return view('admin.login');
-    }
-
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string',
-        ], [
-            'email.required'    => 'Alamat email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
-            'password.required' => 'Kata sandi wajib diisi.',
-        ]);
-
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $user = Auth::user();
-
-            if (! $user->is_admin) {
-                Auth::logout();
-                return back()->withErrors([
-                    'email' => 'Akun ini tidak memiliki akses administrator.',
-                ])->withInput($request->only('email'));
-            }
-
-            if (! $user->hasVerifiedEmail()) {
-                Auth::logout();
-                return back()->withErrors([
-                    'email' => 'Email Anda belum diverifikasi. Silakan cek kotak masuk dan klik tautan aktivasi.',
-                ])->withInput($request->only('email'))
-                  ->with('unverified_email', $request->email);
-            }
-
-            $request->session()->regenerate();
-
-            return redirect()->route('admin.dashboard')
-                ->with('success', 'Selamat datang, ' . $user->name . '!');
-        }
-
-        return back()->withErrors([
-            'email' => 'Email atau kata sandi tidak sesuai.',
-        ])->withInput($request->only('email'));
-    }
-
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')
+        return redirect()->route('admin.register')
             ->with('success', 'Anda telah berhasil keluar.');
     }
 
     public function showRegister()
     {
         if (Auth::check() && Auth::user()->is_admin) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.pendaftaran.index');
         }
 
         return view('admin.register');
@@ -135,14 +86,14 @@ class AuthController extends Controller
         }
 
         if ($user->hasVerifiedEmail()) {
-            return redirect()->route('login')
-                ->with('success', 'Email Anda sudah diverifikasi sebelumnya. Silakan masuk.');
+            return redirect()->route('admin.register')
+                ->with('success', 'Email Anda sudah diverifikasi sebelumnya.');
         }
 
         $user->markEmailAsVerified();
 
-        return redirect()->route('login')
-            ->with('success', 'Email berhasil diverifikasi! Akun Anda telah aktif. Silakan masuk.');
+        return redirect()->route('admin.register')
+            ->with('success', 'Email berhasil diverifikasi! Akun Anda telah aktif.');
     }
 
     public function resendVerificationEmail(Request $request)

@@ -411,7 +411,7 @@
         </div>
 
         <div class="back-link">
-            <a href="{{ route('login') }}">← Kembali ke Halaman Login</a>
+            <a href="{{ route('admin.register') }}">← Kembali ke Halaman Register</a>
         </div>
 
     </div>

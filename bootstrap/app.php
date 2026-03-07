@@ -18,8 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
-        // Tanpa login mengakses halaman yang dilindungi auth: admin → login admin, lainnya → /login (peserta)
-        $middleware->redirectGuestsTo(fn (Request $request) => str_contains($request->getHost(), 'admin.') ? 'https://admin.biaraloresa.my.id/login' : url('/login'));
+        // Tanpa auth mengakses halaman yang dilindungi: admin → register admin
+        $middleware->redirectGuestsTo(fn (Request $request) => str_contains($request->getHost(), 'admin.') ? 'https://admin.biaraloresa.my.id/register' : url('/'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -41,7 +41,7 @@
         </div>
         <div class="info-section">
             <h3>Pendaftaran</h3>
-            <p>Minimal 2 bulan sebelum tanggal pernikahan. Untuk mendaftar, gunakan menu <a href="{{ route('kursus-pernikahan') }}" style="color:#6366f1;font-weight:600;text-decoration:none">Daftar Kursus Pernikahan</a> atau dari halaman <a href="{{ route('user.dashboard') }}" style="color:#6366f1;font-weight:600;text-decoration:none">Dashboard</a>.</p>
+            <p>Minimal 2 bulan sebelum tanggal pernikahan. Untuk mendaftar, gunakan menu <a href="{{ route('kursus-pernikahan') }}" style="color:#6366f1;font-weight:600;text-decoration:none">Daftar Kursus Pernikahan</a> atau dari halaman <a href="{{ route('kursus-pernikahan') }}" style="color:#6366f1;font-weight:600;text-decoration:none">Daftar Kursus Pernikahan</a>.</p>
         </div>
     </div>
 </div>

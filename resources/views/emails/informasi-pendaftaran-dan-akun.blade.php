@@ -178,12 +178,11 @@
                       </td>
                     </tr>
                   </table>
-                  <p style="font-size:12px;color:#065f46;margin:0 0 12px;">Simpan email ini. Anda dapat mengubah kata sandi setelah login (menu profil / lupa password).</p>
-                  <a href="{{ config('app.url') }}/login"
+                  <p style="font-size:12px;color:#065f46;margin:0 0 12px;">Simpan email ini untuk keperluan konfirmasi dan informasi kursus.</p>
+                  <a href="{{ config('app.url') }}"
                      style="display:inline-block;background:linear-gradient(135deg,#059669,#10b981);color:#ffffff;font-size:13px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;">
-                    Login di biaraloresa.my.id/login →
+                    Kunjungi website kami →
                   </a>
-                  <p style="font-size:12px;color:#047857;margin:14px 0 0;">Dashboard: <strong>biaraloresa.my.id/dashboard</strong></p>
                 </td>
               </tr>
             </table>

@@ -15,7 +15,7 @@ class UserProfileController extends Controller
     {
         $user = Auth::user();
         if ($user->is_admin) {
-            return redirect()->away('https://admin.biaraloresa.my.id/dashboard');
+            return redirect()->away('https://admin.biaraloresa.my.id/pendaftaran');
         }
 
         // Pakai foto dari user; kalau belum ada, ambil dari pendaftaran terakhir (pas foto saat daftar)
@@ -44,7 +44,7 @@ class UserProfileController extends Controller
     {
         $user = Auth::user();
         if ($user->is_admin) {
-            return redirect()->away('https://admin.biaraloresa.my.id/dashboard');
+            return redirect()->away('https://admin.biaraloresa.my.id/pendaftaran');
         }
 
         $request->validate([
@@ -89,7 +89,7 @@ class UserProfileController extends Controller
     {
         $user = Auth::user();
         if ($user->is_admin) {
-            return redirect()->away('https://admin.biaraloresa.my.id/dashboard');
+            return redirect()->away('https://admin.biaraloresa.my.id/pendaftaran');
         }
 
         return view('user.password');
@@ -99,7 +99,7 @@ class UserProfileController extends Controller
     {
         $user = Auth::user();
         if ($user->is_admin) {
-            return redirect()->away('https://admin.biaraloresa.my.id/dashboard');
+            return redirect()->away('https://admin.biaraloresa.my.id/pendaftaran');
         }
 
         $request->validate([

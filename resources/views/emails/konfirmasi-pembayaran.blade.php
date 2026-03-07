@@ -357,21 +357,18 @@
                     <strong>Email login:</strong> {{ $pendaftaran->email }}
                   </p>
                   <p style="font-size:13.5px;color:#1e3a8a;line-height:1.8;margin:0 0 16px;">
-                    Gunakan email di atas dan <strong>kata sandi yang telah dikirim ke email Anda saat pendaftaran</strong> untuk login. Jika lupa kata sandi, gunakan fitur &quot;Buat password baru&quot; di halaman login.
+                    Simpan email di atas untuk keperluan konfirmasi dan informasi kursus.
                   </p>
                   <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
                     <tr>
                       <td>
-                        <a href="{{ config('app.url') }}/login"
+                        <a href="{{ config('app.url') }}"
                            style="display:inline-block;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#ffffff;font-size:13px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;">
-                          Login → biaraloresa.my.id/login
+                          Kunjungi website kami →
                         </a>
                       </td>
                     </tr>
                   </table>
-                  <p style="font-size:12px;color:#3b82f6;margin:0;line-height:1.6;">
-                    Dashboard: <strong>biaraloresa.my.id/dashboard</strong>
-                  </p>
                 </td>
               </tr>
             </table>

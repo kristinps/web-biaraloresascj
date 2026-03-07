@@ -47,11 +47,6 @@
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
                         <span>Kursus Nikah</span>
                     </a>
-                    @auth
-                        <a href="{{ route('user.dashboard') }}" class="text-sm px-4 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-700 hover:bg-primary-50 transition-colors">Dashboard</a>
-                    @else
-                        <a href="{{ route('user.login') }}" class="text-sm px-4 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-700 hover:bg-primary-50 transition-colors">Login</a>
-                    @endauth
                     <a href="{{ route('kontak') }}" class="bg-primary-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-primary-800 transition-colors font-medium">Kontak</a>
                 </div>
 
@@ -71,11 +66,6 @@
                     <a href="{{ route('berita') }}" class="nav-link text-sm px-2 py-1">Berita</a>
                     <a href="{{ route('galeri') }}" class="nav-link text-sm px-2 py-1">Galeri</a>
                     <a href="{{ route('kursus-pernikahan') }}" class="nav-link text-sm px-2 py-1 text-rose-500">Kursus Nikah</a>
-                    @auth
-                        <a href="{{ route('user.dashboard') }}" class="nav-link text-sm px-2 py-1 font-medium text-primary-700">Dashboard</a>
-                    @else
-                        <a href="{{ route('user.login') }}" class="nav-link text-sm px-2 py-1 font-medium text-primary-700">Login</a>
-                    @endauth
                     <a href="{{ route('kontak') }}" class="nav-link text-sm px-2 py-1">Kontak</a>
                 </div>
             </div>
@@ -118,7 +108,6 @@
                         <li><a href="{{ route('berita') }}" class="text-sm hover:text-white transition-colors">Berita & Kegiatan</a></li>
                         <li><a href="{{ route('galeri') }}" class="text-sm hover:text-white transition-colors">Galeri Foto</a></li>
                         <li><a href="{{ route('kursus-pernikahan') }}" class="text-sm hover:text-white transition-colors">Kursus Pernikahan</a></li>
-                        <li><a href="{{ route('user.login') }}" class="text-sm hover:text-white transition-colors">Login</a></li>
                         <li><a href="{{ route('kontak') }}" class="text-sm hover:text-white transition-colors">Hubungi Kami</a></li>
                     </ul>
                 </div>
