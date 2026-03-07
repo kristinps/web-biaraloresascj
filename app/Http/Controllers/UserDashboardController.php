@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PendaftaranPernikahan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -75,6 +76,25 @@ class UserDashboardController extends Controller
         }
         $pendaftaranList = PendaftaranPernikahan::where('email', $user->email)->with('periode')->orderByDesc('created_at')->get();
         return view('user.sertifikat', ['pendaftaranList' => $pendaftaranList]);
+    }
+
+    public function downloadSertifikat(PendaftaranPernikahan $pendaftaran)
+    {
+        $user = Auth::user();
+        if ($user->is_admin) {
+            return redirect()->away('https://admin.biaraloresa.my.id/dashboard');
+        }
+        if ($pendaftaran->email !== $user->email) {
+            abort(403, 'Anda tidak berhak mengunduh sertifikat ini.');
+        }
+        if ($pendaftaran->status_kursus !== 'lulus') {
+            return back()->with('error', 'Sertifikat hanya tersedia untuk peserta yang berstatus Lulus.');
+        }
+        $pendaftaran->load('periode');
+        $pdf = Pdf::loadView('user.sertifikat-pdf', ['pendaftaran' => $pendaftaran])
+            ->setPaper('a4', 'portrait');
+        $filename = 'Sertifikat-' . \Str::slug($pendaftaran->nama_pria . '-' . $pendaftaran->nama_wanita) . '.pdf';
+        return $pdf->download($filename);
     }
 
     public function pembayaran()

@@ -143,19 +143,54 @@
         .logout-btn:hover { color: #f87171; }
         .logout-btn svg { width: 16px; height: 16px; }
 
-        /* ─── Main ─── */
+        /* ─── Main (full cover) ─── */
         .main {
             margin-left: var(--sidebar-w);
             flex: 1;
+            min-width: 0;
+            width: 100%;
             min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow: auto;
         }
 
-        /* ─── Content ─── */
+        /* ─── Content (full cover) ─── */
         .content {
             flex: 1;
+            min-height: 100%;
+            padding: 40px 28px 28px;
+        }
+
+        /* ─── Full banner background (semua halaman dashboard) ─── */
+        .dashboard-banner-wrap {
+            position: relative;
+            min-height: 100vh;
+            margin: -28px;
             padding: 28px;
+            overflow: hidden;
+        }
+        .dashboard-banner-wrap::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1920&h=1080&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+        .dashboard-banner-wrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(30,38,133,0.88) 0%, rgba(61,86,245,0.65) 100%);
+            z-index: 1;
+        }
+        .dashboard-banner-inner {
+            position: relative;
+            z-index: 2;
         }
 
         /* ─── Toast alert ─── */
@@ -203,9 +238,10 @@
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
-            .main { margin-left: 0; }
+            .main { margin-left: 0; min-height: 100vh; height: auto; }
             .menu-toggle-fab { display: flex; }
-            .content { padding: 20px 16px; }
+            .content { padding: 32px 16px 20px; min-height: auto; }
+            .dashboard-banner-wrap { margin: -20px -16px; padding: 20px 16px; }
         }
     </style>
     @stack('styles')
@@ -350,24 +386,28 @@
         </svg>
     </button>
     <main class="content">
-        @if(session('success'))
-            <div class="toast toast-success">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="toast toast-error">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
-                </svg>
-                {{ session('error') }}
-            </div>
-        @endif
+        <div class="dashboard-banner-wrap">
+            <div class="dashboard-banner-inner">
+                @if(session('success'))
+                    <div class="toast toast-success">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="toast toast-error">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+                        </svg>
+                        {{ session('error') }}
+                    </div>
+                @endif
 
-        @yield('content')
+                @yield('content')
+            </div>
+        </div>
     </main>
 </div>
 

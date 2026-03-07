@@ -206,10 +206,70 @@
     @media (max-width: 480px) {
         .stats-grid { grid-template-columns: 1fr; }
     }
+
+    /* Bar atas dashboard: judul + tombol logout */
+    .dashboard-top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    .dashboard-top-bar .page-heading {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 2px 0;
+    }
+    .dashboard-top-bar .page-subtitle {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin: 0;
+    }
+    .btn-logout {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        background: #fff;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .btn-logout:hover {
+        background: #fef2f2;
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+    .btn-logout svg { width: 18px; height: 18px; }
 </style>
 @endpush
 
 @section('content')
+
+{{-- Bar atas: judul + tombol Logout --}}
+<div class="dashboard-top-bar">
+    <div>
+        <h1 class="page-heading">Dashboard</h1>
+        <p class="page-subtitle">Ringkasan data pendaftaran kursus pernikahan Anda</p>
+    </div>
+    <form method="POST" action="{{ route('user.logout') }}" style="margin:0">
+        @csrf
+        <button type="submit" class="btn-logout" title="Keluar dari akun">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+            </svg>
+            Keluar
+        </button>
+    </form>
+</div>
 
 {{-- Stats --}}
 <div class="stats-grid">
@@ -274,6 +334,35 @@
 </div>
 @endif
 
+@php
+    $pendaftaranDenganCatatan = $pendaftaranList->filter(fn($p) => !empty($p->catatan_dokumen));
+@endphp
+@if($pendaftaranDenganCatatan->isNotEmpty())
+<div class="card" style="margin-bottom: 20px; border-left: 4px solid #f59e0b;">
+    <div class="card-header" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);">
+        <div>
+            <h2 style="display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#b45309"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+                Hasil pemeriksaan dari panitia
+            </h2>
+            <p>Catatan atau hasil aksi admin terkait pendaftaran Anda</p>
+        </div>
+    </div>
+    <div style="padding: 16px 24px;">
+        @foreach($pendaftaranDenganCatatan as $p)
+        <div style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; {{ $loop->last ? 'border-bottom: none;' : '' }}">
+            <div style="font-size: 12.5px; font-weight: 600; color: #64748b; margin-bottom: 4px;">
+                #{{ str_pad($p->id, 5, '0', STR_PAD_LEFT) }} · {{ $p->nama_pria }} &amp; {{ $p->nama_wanita }}
+            </div>
+            <div style="font-size: 13.5px; color: #334155; line-height: 1.5; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                {{ $p->catatan_dokumen }}
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 {{-- Table: Pendaftaran Saya --}}
 <div class="card">
     <div class="card-header">
@@ -299,6 +388,8 @@
                         <th class="hide-mobile">Periode</th>
                         <th class="hide-mobile">Tanggal Daftar</th>
                         <th>Status Pembayaran</th>
+                        <th class="hide-mobile">Status Dokumen</th>
+                        <th class="hide-mobile">Status Kursus</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -337,6 +428,31 @@
                                 <span class="badge badge-slate">
                                     <span class="badge-dot"></span>Belum Bayar
                                 </span>
+                            @endif
+                        </td>
+                        <td class="hide-mobile">
+                            @php $sd = $item->status_dokumen ?? 'belum_diperiksa'; @endphp
+                            @if($sd === 'lengkap')
+                                <span class="badge badge-green"><span class="badge-dot"></span>Lengkap</span>
+                            @elseif($sd === 'tidak_lengkap')
+                                <span class="badge badge-amber" @if($item->catatan_dokumen) title="{{ Str::limit($item->catatan_dokumen, 120) }}" @endif>
+                                    <span class="badge-dot"></span>Tidak lengkap
+                                </span>
+                            @else
+                                <span class="badge badge-slate"><span class="badge-dot"></span>Belum dicek</span>
+                            @endif
+                        </td>
+                        <td class="hide-mobile">
+                            @if($item->status_kursus === 'lulus')
+                                <span class="badge badge-green"><span class="badge-dot"></span>Lulus</span>
+                            @elseif($item->status_kursus === 'sedang_berjalan')
+                                <span class="badge badge-amber"><span class="badge-dot"></span>Sedang berjalan</span>
+                            @elseif($item->status_kursus === 'terjadwal')
+                                <span class="badge badge-slate" style="background:#eff6ff;color:#1d4ed8"><span class="badge-dot" style="background:#3b82f6"></span>Terjadwal</span>
+                            @elseif($item->status_kursus === 'tidak_lulus')
+                                <span class="badge badge-slate" style="background:#fef2f2;color:#dc2626"><span class="badge-dot" style="background:#ef4444"></span>Tidak lulus</span>
+                            @else
+                                <span class="badge badge-slate"><span class="badge-dot"></span>—</span>
                             @endif
                         </td>
                         <td>

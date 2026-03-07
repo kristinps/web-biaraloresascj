@@ -40,6 +40,7 @@ Route::middleware('auth')->prefix('dashboard')->name('user.')->group(function ()
     Route::get('/dokumen', [UserDashboardController::class, 'dokumen'])->name('dokumen');
     Route::get('/jadwal-materi', [UserDashboardController::class, 'jadwalMateri'])->name('jadwal-materi');
     Route::get('/sertifikat', [UserDashboardController::class, 'sertifikat'])->name('sertifikat');
+    Route::get('/sertifikat/{pendaftaran}/download', [UserDashboardController::class, 'downloadSertifikat'])->name('sertifikat.download');
     Route::get('/pembayaran', [UserDashboardController::class, 'pembayaran'])->name('pembayaran');
     Route::get('/biaya', [UserDashboardController::class, 'biaya'])->name('biaya');
     Route::get('/profil', [UserProfileController::class, 'show'])->name('profil');

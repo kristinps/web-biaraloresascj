@@ -18,6 +18,9 @@
     .badge-slate { background:#f8fafc; color:#475569; }
     .empty-state { text-align:center; padding:56px 24px; color:#94a3b8; }
     .info-box { background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 20px; font-size:14px; color:#1e40af; margin-top:12px; }
+    .btn-download { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; background:linear-gradient(135deg,#15803d,#16a34a); color:#fff; border-radius:10px; font-size:13px; font-weight:600; text-decoration:none; margin-top:12px; box-shadow:0 2px 8px rgba(21,128,61,0.3); transition:transform 0.2s, box-shadow 0.2s; }
+    .btn-download:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(21,128,61,0.4); color:#fff; }
+    .btn-download svg { width:18px; height:18px; flex-shrink:0; }
 </style>
 @endpush
 
@@ -39,8 +42,12 @@
             <div>
                 @if($item->status_kursus === 'lulus')
                     <span class="badge badge-green">Lulus — Sertifikat tersedia</span>
+                    <a href="{{ route('user.sertifikat.download', $item) }}" class="btn-download">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Download Sertifikat
+                    </a>
                     <div class="info-box">
-                        Sertifikat kelulusan dapat diambil di kantor Biara Loresa SCJ. Hubungi kami untuk jadwal pengambilan.
+                        Anda juga dapat mengambil sertifikat fisik di kantor Biara Loresa SCJ. Hubungi kami untuk jadwal pengambilan.
                     </div>
                 @else
                     <span class="badge badge-slate">{{ $item->status_kursus ? ucfirst(str_replace('_', ' ', $item->status_kursus)) : 'Belum terjadwal' }}</span>

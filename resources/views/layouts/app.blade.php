@@ -50,7 +50,7 @@
                     @auth
                         <a href="{{ route('user.dashboard') }}" class="text-sm px-4 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-700 hover:bg-primary-50 transition-colors">Dashboard</a>
                     @else
-                        <a href="{{ route('user.login') }}" class="text-sm px-4 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-700 hover:bg-primary-50 transition-colors">Login ke Dashboard</a>
+                        <a href="{{ route('user.login') }}" class="text-sm px-4 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-700 hover:bg-primary-50 transition-colors">Login</a>
                     @endauth
                     <a href="{{ route('kontak') }}" class="bg-primary-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-primary-800 transition-colors font-medium">Kontak</a>
                 </div>
@@ -74,7 +74,7 @@
                     @auth
                         <a href="{{ route('user.dashboard') }}" class="nav-link text-sm px-2 py-1 font-medium text-primary-700">Dashboard</a>
                     @else
-                        <a href="{{ route('user.login') }}" class="nav-link text-sm px-2 py-1 font-medium text-primary-700">Login ke Dashboard</a>
+                        <a href="{{ route('user.login') }}" class="nav-link text-sm px-2 py-1 font-medium text-primary-700">Login</a>
                     @endauth
                     <a href="{{ route('kontak') }}" class="nav-link text-sm px-2 py-1">Kontak</a>
                 </div>
@@ -118,7 +118,7 @@
                         <li><a href="{{ route('berita') }}" class="text-sm hover:text-white transition-colors">Berita & Kegiatan</a></li>
                         <li><a href="{{ route('galeri') }}" class="text-sm hover:text-white transition-colors">Galeri Foto</a></li>
                         <li><a href="{{ route('kursus-pernikahan') }}" class="text-sm hover:text-white transition-colors">Kursus Pernikahan</a></li>
-                        <li><a href="{{ route('user.login') }}" class="text-sm hover:text-white transition-colors">Login ke Dashboard</a></li>
+                        <li><a href="{{ route('user.login') }}" class="text-sm hover:text-white transition-colors">Login</a></li>
                         <li><a href="{{ route('kontak') }}" class="text-sm hover:text-white transition-colors">Hubungi Kami</a></li>
                     </ul>
                 </div>
