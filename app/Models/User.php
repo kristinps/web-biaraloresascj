@@ -29,6 +29,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_admin',
         'password',
         'profile_photo',
+        'foto_pria',
+        'foto_wanita',
     ];
 
     public function profilePhotoUrl(): string
@@ -37,6 +39,16 @@ class User extends Authenticatable implements MustVerifyEmail
             return asset('storage/' . $this->profile_photo);
         }
         return '';
+    }
+
+    public function fotoPriaUrl(): string
+    {
+        return $this->foto_pria ? asset('storage/' . $this->foto_pria) : '';
+    }
+
+    public function fotoWanitaUrl(): string
+    {
+        return $this->foto_wanita ? asset('storage/' . $this->foto_wanita) : '';
     }
 
     /**

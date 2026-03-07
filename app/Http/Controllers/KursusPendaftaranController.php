@@ -134,6 +134,8 @@ class KursusPendaftaranController extends Controller
                 'password'          => Hash::make($plainPassword),
                 'is_admin'          => false,
                 'email_verified_at' => now(),
+                'foto_pria'         => $pendaftaran->foto_pria,
+                'foto_wanita'       => $pendaftaran->foto_wanita,
             ]
         );
 

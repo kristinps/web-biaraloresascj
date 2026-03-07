@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\KehadiranController as AdminKehadiranController;
 use App\Http\Controllers\Admin\KursusController as AdminKursusController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\UserProfileController;
 
 // ─── Login & Dashboard Peserta (biaraloresa.my.id/login, biaraloresa.my.id/dashboard)
 Route::get('/login', [UserAuthController::class, 'showLogin'])->name('user.login');
@@ -32,7 +33,20 @@ Route::get('/lupa-password', [UserAuthController::class, 'showForgotPassword'])-
 Route::post('/lupa-password', [UserAuthController::class, 'sendResetLink'])->middleware('throttle:5,1')->name('password.email');
 Route::get('/password/reset/{token}', [UserAuthController::class, 'showResetForm'])->name('password.reset');
 Route::post('/password/reset', [UserAuthController::class, 'resetPassword'])->middleware('throttle:5,1')->name('password.update');
-Route::get('/dashboard', [UserDashboardController::class, 'index'])->middleware('auth')->name('user.dashboard'); // Hanya user login
+
+Route::middleware('auth')->prefix('dashboard')->name('user.')->group(function () {
+    Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/status-pendaftaran', [UserDashboardController::class, 'statusPendaftaran'])->name('status-pendaftaran');
+    Route::get('/dokumen', [UserDashboardController::class, 'dokumen'])->name('dokumen');
+    Route::get('/jadwal-materi', [UserDashboardController::class, 'jadwalMateri'])->name('jadwal-materi');
+    Route::get('/sertifikat', [UserDashboardController::class, 'sertifikat'])->name('sertifikat');
+    Route::get('/pembayaran', [UserDashboardController::class, 'pembayaran'])->name('pembayaran');
+    Route::get('/biaya', [UserDashboardController::class, 'biaya'])->name('biaya');
+    Route::get('/profil', [UserProfileController::class, 'show'])->name('profil');
+    Route::post('/profil', [UserProfileController::class, 'update'])->name('profil.update');
+    Route::get('/ubah-password', [UserProfileController::class, 'showPassword'])->name('password');
+    Route::post('/ubah-password', [UserProfileController::class, 'updatePassword'])->name('password.update');
+});
 
 // ─── Admin
 Route::domain('admin.biaraloresa.my.id')->group(function () {
