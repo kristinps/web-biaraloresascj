@@ -10,11 +10,9 @@
     .card-header { padding:20px 24px; border-bottom:1px solid #f1f5f9; }
     .card-header h2 { font-size:15.5px; font-weight:700; color:#1e293b; }
     .card-header p { font-size:12.5px; color:#94a3b8; margin-top:2px; }
+    /* Tabel mengikuti tema beranda (style utama di layout dashboard) */
     table { width:100%; border-collapse:collapse; }
-    thead th { padding:12px 20px; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#94a3b8; background:#f8fafc; text-align:left; border-bottom:1px solid #f1f5f9; }
-    tbody tr { border-bottom:1px solid #f8fafc; }
-    tbody tr:hover { background:#f8fafc; }
-    td { padding:14px 20px; font-size:13.5px; color:#374151; vertical-align:middle; }
+    td { vertical-align:middle; }
     .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600; }
     .badge-green { background:#f0fdf4; color:#15803d; }
     .badge-amber { background:#fffbeb; color:#b45309; }
@@ -33,7 +31,7 @@
         <p>Status pembayaran tiap pendaftaran. Lunas = sudah dibayar dan dikonfirmasi.</p>
     </div>
     @if($pendaftaranList->count() > 0)
-        <div style="overflow-x:auto">
+        <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
@@ -65,7 +63,7 @@
                         </td>
                         <td>
                             @if($item->status_pembayaran === 'lunas')
-                                <a href="{{ route('kursus-pernikahan.sukses', $item->id) }}" style="font-size:13px;color:#6366f1;font-weight:600;text-decoration:none">Lihat detail</a>
+                                <a href="{{ route('kursus-pernikahan.sukses', $item->id) }}" class="table-action-btn">Lihat detail</a>
                             @else
                                 <a href="{{ route('pembayaran.show', $item->id) }}" class="btn-bayar">Bayar / Cek QRIS</a>
                             @endif

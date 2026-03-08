@@ -587,7 +587,7 @@ function checkForm() {
         btn.style.color       = '#fff';
         btn.style.cursor      = 'pointer';
         btn.classList.add('active:scale-95','hover:opacity-90');
-        btnText.textContent = 'Lanjut ke Pembayaran QRIS';
+        btnText.textContent = 'Kirim data · Lanjut ke Pembayaran QRIS';
     } else {
         btn.disabled = true;
         btn.style.background  = '#d1d5db';
@@ -608,6 +608,14 @@ REQUIRED_FIELDS.forEach(name => {
 
 // Jalankan sekali saat load (jika ada old values dari validasi server)
 document.addEventListener('DOMContentLoaded', checkForm);
+
+// Session keepalive: panggil setiap 10 menit agar sesi tidak habis saat mengisi formulir lama
+(function keepSessionAlive() {
+    var url = @json(route('session.keepalive'));
+    setInterval(function() {
+        fetch(url, { method: 'GET', credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } }).catch(function() {});
+    }, 10 * 60 * 1000);
+})();
 
 // ── Upload foto (dengan preview gambar) ─────────────────────
 function pickedFoto(input, id) {

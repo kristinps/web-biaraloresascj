@@ -49,6 +49,7 @@ class PembayaranController extends Controller
 
                 if (in_array($midtransStatus, ['settlement', 'capture'])) {
                     $pendaftaran->update(['status_pembayaran' => 'lunas']);
+                    $this->sendKonfirmasiPembayaranEmailIfNeeded($pendaftaran);
                     return redirect()->route('kursus-pernikahan.sukses', $id)
                         ->with('success', 'Pembayaran berhasil dikonfirmasi!');
                 }
@@ -75,6 +76,7 @@ class PembayaranController extends Controller
 
             if (in_array($status, ['settlement', 'capture'])) {
                 $pendaftaran->update(['status_pembayaran' => 'lunas']);
+                $this->sendKonfirmasiPembayaranEmailIfNeeded($pendaftaran);
                 return response()->json([
                     'status'       => 'lunas',
                     'redirect_url' => route('kursus-pernikahan.sukses', $id),
@@ -179,6 +181,12 @@ class PembayaranController extends Controller
         ]);
     }
 
+    private function sendKonfirmasiPembayaranEmailIfNeeded(PendaftaranPernikahan $pendaftaran): void
+    {
+        // Email konfirmasi pembayaran dinonaktifkan – tidak dikirim lagi
+        return;
+    }
+
     public function qrImage($id)
     {
         $pendaftaran = PendaftaranPernikahan::findOrFail($id);
@@ -212,6 +220,7 @@ class PembayaranController extends Controller
             if ($pendaftaran->status_pembayaran !== 'lunas') {
                 $pendaftaran->update(['status_pembayaran' => 'lunas']);
             }
+            $this->sendKonfirmasiPembayaranEmailIfNeeded($pendaftaran);
         }
 
         return redirect()->route('kursus-pernikahan.sukses', $id);
@@ -238,9 +247,9 @@ class PembayaranController extends Controller
 
             if ($transactionStatus === 'settlement' || ($transactionStatus === 'capture' && $fraudStatus === 'accept')) {
                 $update['status_pembayaran'] = 'lunas';
-                // Kirim email hanya jika status belum lunas sebelumnya
                 if ($pendaftaran->status_pembayaran !== 'lunas') {
                     $pendaftaran->update($update);
+                    $this->sendKonfirmasiPembayaranEmailIfNeeded($pendaftaran);
                     return response()->json(['message' => 'OK'], 200);
                 }
             } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {

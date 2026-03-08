@@ -5,6 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PeriodePernikahan;
 use App\Models\PendaftaranPernikahan;
+use App\Models\User;
+use App\Notifications\PeriodeBaruNotification;
+use App\Notifications\PeriodeBukaNotification;
+use App\Notifications\PeriodeDiperbaruiNotification;
+use App\Notifications\PeriodeDihapusNotification;
+use App\Notifications\PeriodeTutupNotification;
 use Illuminate\Http\Request;
 
 class PeriodeController extends Controller
@@ -13,13 +19,16 @@ class PeriodeController extends Controller
     {
         $periodeAktif  = PeriodePernikahan::aktif()->withCount('pendaftaran')->latest()->get();
         $periodeSelesai = PeriodePernikahan::selesai()->withCount('pendaftaran')->latest()->paginate(10);
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
 
-        return view('admin.periode.index', compact('periodeAktif', 'periodeSelesai'));
+        return view('admin.periode.index', compact('periodeAktif', 'periodeSelesai', 'routePrefix'));
     }
 
     public function create()
     {
-        return view('admin.periode.create');
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+
+        return view('admin.periode.create', compact('routePrefix'));
     }
 
     public function store(Request $request)
@@ -30,15 +39,20 @@ class PeriodeController extends Controller
             'catatan'       => 'nullable|string',
         ]);
 
-        PeriodePernikahan::create([
+        $periode = PeriodePernikahan::create([
             'nama'          => $request->nama,
             'tanggal_mulai' => $request->tanggal_mulai,
             'catatan'       => $request->catatan,
             'status'        => 'aktif',
         ]);
 
-        return redirect()->route('admin.periode.index')
-            ->with('success', 'Periode baru berhasil dibuat.');
+        $admins = User::whereIn('role', [User::ROLE_SUPER_ADMIN, User::ROLE_ADMIN])->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new PeriodeBaruNotification($periode));
+        }
+
+        return redirect()->route($this->periodeIndexRoute())
+            ->with('success', 'Periode baru berhasil dibuat. Email notifikasi telah dikirim ke admin.');
     }
 
     public function show(PeriodePernikahan $periode)
@@ -53,13 +67,16 @@ class PeriodeController extends Controller
             'menunggu'    => $periode->pendaftaran()->where('status_pembayaran', 'menunggu')->count(),
             'belum_bayar' => $periode->pendaftaran()->where('status_pembayaran', 'belum_bayar')->count(),
         ];
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
 
-        return view('admin.periode.show', compact('periode', 'pendaftaran', 'stats'));
+        return view('admin.periode.show', compact('periode', 'pendaftaran', 'stats', 'routePrefix'));
     }
 
     public function edit(PeriodePernikahan $periode)
     {
-        return view('admin.periode.edit', compact('periode'));
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+
+        return view('admin.periode.edit', compact('periode', 'routePrefix'));
     }
 
     public function update(Request $request, PeriodePernikahan $periode)
@@ -76,8 +93,13 @@ class PeriodeController extends Controller
             'catatan'       => $request->catatan,
         ]);
 
-        return redirect()->route('admin.periode.index')
-            ->with('success', 'Periode berhasil diperbarui.');
+        $peserta = $periode->pendaftaran()->get();
+        foreach ($peserta as $p) {
+            $p->notify(new PeriodeDiperbaruiNotification($periode));
+        }
+
+        return redirect()->route($this->periodeIndexRoute())
+            ->with('success', 'Periode berhasil diperbarui. Email notifikasi telah dikirim ke ' . $peserta->count() . ' peserta.');
     }
 
     public function tutup(PeriodePernikahan $periode)
@@ -91,8 +113,13 @@ class PeriodeController extends Controller
             'tanggal_selesai' => now()->toDateString(),
         ]);
 
-        return redirect()->route('admin.periode.index')
-            ->with('success', "Periode \"{$periode->nama}\" berhasil ditutup.");
+        $peserta = $periode->pendaftaran()->get();
+        foreach ($peserta as $p) {
+            $p->notify(new PeriodeTutupNotification($periode));
+        }
+
+        return redirect()->route($this->periodeIndexRoute())
+            ->with('success', "Periode \"{$periode->nama}\" berhasil ditutup. Email notifikasi telah dikirim ke " . $peserta->count() . " peserta.");
     }
 
     public function buka(PeriodePernikahan $periode)
@@ -106,8 +133,13 @@ class PeriodeController extends Controller
             'tanggal_selesai' => null,
         ]);
 
-        return redirect()->route('admin.periode.index')
-            ->with('success', "Periode \"{$periode->nama}\" berhasil diaktifkan kembali.");
+        $peserta = $periode->pendaftaran()->get();
+        foreach ($peserta as $p) {
+            $p->notify(new PeriodeBukaNotification($periode));
+        }
+
+        return redirect()->route($this->periodeIndexRoute())
+            ->with('success', "Periode \"{$periode->nama}\" berhasil diaktifkan kembali. Email notifikasi telah dikirim ke " . $peserta->count() . " peserta.");
     }
 
     public function assignPendaftaran(Request $request)
@@ -129,9 +161,20 @@ class PeriodeController extends Controller
             return back()->with('error', 'Periode tidak dapat dihapus karena masih memiliki data pendaftaran.');
         }
 
+        $namaPeriode = $periode->nama;
         $periode->delete();
 
-        return redirect()->route('admin.periode.index')
-            ->with('success', 'Periode berhasil dihapus.');
+        $admins = User::whereIn('role', [User::ROLE_SUPER_ADMIN, User::ROLE_ADMIN])->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new PeriodeDihapusNotification($namaPeriode));
+        }
+
+        return redirect()->route($this->periodeIndexRoute())
+            ->with('success', 'Periode berhasil dihapus. Email notifikasi telah dikirim ke admin.');
+    }
+
+    private function periodeIndexRoute(): string
+    {
+        return request()->routeIs('dashboard.*') ? 'dashboard.periode.index' : 'admin.periode.index';
     }
 }

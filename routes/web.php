@@ -34,12 +34,15 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
         Route::get('/admin', [DashboardController::class, 'admin'])->name('admin');
         Route::get('/pendaftaran', [AdminDashboardController::class, 'list'])->name('pendaftaran.index');
         Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->name('pendaftaran.show');
+        Route::get('/pendaftaran/{id}/dokumen', fn (int $id) => redirect()->route('dashboard.pendaftaran.show', $id))->name('pendaftaran.dokumen.redirect');
         Route::get('/periode', [PeriodeController::class, 'index'])->name('periode.index');
         Route::get('/periode/create', [PeriodeController::class, 'create'])->name('periode.create');
         Route::post('/periode', [PeriodeController::class, 'store'])->name('periode.store');
         Route::get('/periode/{periode}', [PeriodeController::class, 'show'])->name('periode.show');
         Route::get('/periode/{periode}/edit', [PeriodeController::class, 'edit'])->name('periode.edit');
         Route::put('/periode/{periode}', [PeriodeController::class, 'update'])->name('periode.update');
+        Route::get('/materi', [DashboardController::class, 'materiPilihPeriode'])->name('materi.periode-list');
+        Route::get('/kehadiran', [DashboardController::class, 'kehadiranPilihPeriode'])->name('kehadiran.periode-list');
         Route::get('/periode/{periode}/materi', [MateriKursusController::class, 'index'])->name('materi.index');
         Route::post('/periode/{periode}/materi', [MateriKursusController::class, 'store'])->name('materi.store');
         Route::put('/materi/{materi}', [MateriKursusController::class, 'update'])->name('materi.update');
@@ -104,6 +107,7 @@ Route::domain('admin.biaraloresa.my.id')->group(function () {
     Route::post('/logout',  [AdminAuthController::class, 'logout'])->middleware('admin')->name('admin.logout');
     Route::get('/pendaftaran', [AdminDashboardController::class, 'list'])->middleware('admin')->name('admin.pendaftaran.index');
     Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->middleware('admin')->name('admin.pendaftaran.show');
+    Route::put('/pendaftaran/{id}/dokumen', [DokumenController::class, 'updateStatus'])->middleware('admin')->name('admin.dokumen.update');
 });
 
 // ─── Halaman Publik
@@ -115,6 +119,10 @@ Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
 Route::get('/kontak', [KontakController::class, 'index'])->name('kontak');
 Route::post('/kontak', [KontakController::class, 'store'])->name('kontak.store');
 
+Route::get('/session/keepalive', function () {
+    return response()->noContent(204);
+})->name('session.keepalive');
+
 Route::get('/kursus-pernikahan', [KursusPendaftaranController::class, 'index'])->name('kursus-pernikahan');
 Route::post('/kursus-pernikahan', [KursusPendaftaranController::class, 'store'])->name('kursus-pernikahan.store');
 Route::get('/kursus-pernikahan/sukses/{id}', [KursusPendaftaranController::class, 'sukses'])->name('kursus-pernikahan.sukses');
@@ -123,5 +131,6 @@ Route::get('/kursus-pernikahan/sukses/{id}', [KursusPendaftaranController::class
 Route::get('/pembayaran/{id}', [PembayaranController::class, 'show'])->name('pembayaran.show');
 Route::get('/pembayaran/{id}/selesai', [PembayaranController::class, 'finish'])->name('pembayaran.finish');
 Route::get('/pembayaran/{id}/status', [PembayaranController::class, 'checkStatus'])->name('pembayaran.status');
+Route::post('/pembayaran/{id}/new-qr', [PembayaranController::class, 'newQr'])->name('pembayaran.new-qr');
 Route::get('/pembayaran/{id}/qr-image', [PembayaranController::class, 'qrImage'])->name('pembayaran.qr-image');
 Route::post('/pembayaran/callback', [PembayaranController::class, 'callback'])->name('pembayaran.callback');

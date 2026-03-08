@@ -47,6 +47,24 @@ class DashboardController extends Controller
         ));
     }
 
+    /** Halaman pilih periode untuk kelola materi (admin) */
+    public function materiPilihPeriode()
+    {
+        $periodeAktif = PeriodePernikahan::aktif()->withCount(['materi', 'pendaftaran'])->latest()->get();
+        $periodeSelesai = PeriodePernikahan::selesai()->withCount(['materi', 'pendaftaran'])->latest()->take(10)->get();
+
+        return view('dashboard.materi-periode', compact('periodeAktif', 'periodeSelesai'));
+    }
+
+    /** Halaman pilih periode untuk kelola kehadiran (admin) */
+    public function kehadiranPilihPeriode()
+    {
+        $periodeAktif = PeriodePernikahan::aktif()->withCount(['materi', 'pendaftaran'])->latest()->get();
+        $periodeSelesai = PeriodePernikahan::selesai()->withCount(['materi', 'pendaftaran'])->latest()->take(10)->get();
+
+        return view('dashboard.kehadiran-periode', compact('periodeAktif', 'periodeSelesai'));
+    }
+
     /** Dashboard untuk user: pesan masuk & info */
     public function user(Request $request)
     {

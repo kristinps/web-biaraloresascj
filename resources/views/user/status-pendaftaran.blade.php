@@ -54,31 +54,8 @@
         overflow-x: auto;
         border-radius: 0 0 20px 20px;
     }
+    /* Tabel mengikuti tema beranda (style utama di layout dashboard) */
     .status-pendaftaran-wrap table { width: 100%; border-collapse: collapse; }
-    .status-pendaftaran-wrap thead th {
-        padding: 14px 20px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #1e2685;
-        background: linear-gradient(180deg, #eef2ff 0%, #f0f4ff 100%);
-        text-align: left;
-        border-bottom: 2px solid #c7d2fe;
-    }
-    .status-pendaftaran-wrap thead th:first-child { padding-left: 28px; border-radius: 0; }
-    .status-pendaftaran-wrap tbody tr {
-        border-bottom: 1px solid #f1f5f9;
-        transition: background 0.2s ease;
-    }
-    .status-pendaftaran-wrap tbody tr:nth-child(even) { background: #fafbff; }
-    .status-pendaftaran-wrap tbody tr:hover { background: #f0f4ff !important; }
-    .status-pendaftaran-wrap tbody td {
-        padding: 16px 20px;
-        font-size: 13.5px;
-        color: #334155;
-        vertical-align: middle;
-    }
     .status-pendaftaran-wrap tbody td:first-child { padding-left: 28px; }
     .status-pendaftaran-wrap .td-id {
         color: #2230ce;

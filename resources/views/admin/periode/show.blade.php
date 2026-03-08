@@ -49,12 +49,9 @@
     .card-header { padding:18px 24px 14px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px; }
     .card-header h2 { font-size:15px;font-weight:700;color:#1e293b; }
 
+    /* Tabel mengikuti tema beranda (style utama di layout dashboard) */
     table { width:100%;border-collapse:collapse; }
-    thead th { padding:11px 20px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;background:#f8fafc;text-align:left;border-bottom:1px solid #f1f5f9; }
-    tbody tr { border-bottom:1px solid #f8fafc;transition:background 0.15s; }
-    tbody tr:hover { background:#f8fafc; }
-    tbody tr:last-child { border-bottom:none; }
-    td { padding:13px 20px;font-size:13.5px;color:#374151;vertical-align:middle; }
+    td { vertical-align:middle; }
     .td-num { color:#6366f1;font-weight:700;font-size:13px; }
     .td-names { font-weight:600;color:#1e293b; }
     .td-names small { display:block;font-size:12px;font-weight:400;color:#94a3b8; }
@@ -241,7 +238,7 @@
         <h2>Daftar Pendaftaran</h2>
     </div>
     @if($pendaftaran->count() > 0)
-        <div style="overflow-x:auto">
+        <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
@@ -300,7 +297,7 @@
             </table>
         </div>
         @if($pendaftaran->hasPages())
-        <div class="pagination-wrap">{{ $pendaftaran->links() }}</div>
+        <div class="dashboard-table-footer">{{ $pendaftaran->links() }}</div>
         @endif
     @else
         <div class="empty-state">

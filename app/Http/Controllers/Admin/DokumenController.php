@@ -24,12 +24,10 @@ class DokumenController extends Controller
             'catatan_dokumen' => $request->catatan_dokumen,
         ]);
 
-        if ($request->boolean('kirim_email')) {
-            $pendaftaran->notify(new DokumenStatusNotification(
-                $pendaftaran,
-                $request->catatan_dokumen ?? ''
-            ));
-        }
+        $pendaftaran->notify(new DokumenStatusNotification(
+            $pendaftaran,
+            $request->catatan_dokumen ?? ''
+        ));
 
         $label = match ($request->status_dokumen) {
             'lengkap'       => 'Dokumen dinyatakan lengkap',
@@ -37,8 +35,6 @@ class DokumenController extends Controller
             default         => 'Status dokumen diperbarui',
         };
 
-        $suffix = $request->boolean('kirim_email') ? ' dan email notifikasi telah dikirim.' : '.';
-
-        return back()->with('success', $label . $suffix);
+        return back()->with('success', $label . ' Email notifikasi telah dikirim ke peserta.');
     }
 }

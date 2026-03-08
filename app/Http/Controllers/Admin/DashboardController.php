@@ -21,19 +21,17 @@ class DashboardController extends Controller
             });
         }
 
-        if ($request->filled('status')) {
-            $query->where('status_pembayaran', $request->status);
-        }
-
         $pendaftaran = $query->paginate(15);
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
 
-        return view('admin.pendaftaran.index', compact('pendaftaran'));
+        return view('admin.pendaftaran.index', compact('pendaftaran', 'routePrefix'));
     }
 
     public function show($id)
     {
         $pendaftaran = PendaftaranPernikahan::findOrFail($id);
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
 
-        return view('admin.pendaftaran.show', compact('pendaftaran'));
+        return view('admin.pendaftaran.show', compact('pendaftaran', 'routePrefix'));
     }
 }

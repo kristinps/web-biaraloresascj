@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\KehadiranKursus;
 use App\Models\PendaftaranPernikahan;
 use App\Models\PeriodePernikahan;
+use App\Notifications\AbsensiDisimpanNotification;
+use App\Notifications\StatusKursusBerubahNotification;
 use Illuminate\Http\Request;
 
 class KehadiranController extends Controller
@@ -22,7 +24,9 @@ class KehadiranController extends Controller
                 $kehadiranMap[$k->pendaftaran_id][$k->materi_kursus_id] = $k;
             }
         }
-        return view('admin.kehadiran.index', compact('periode', 'materiList', 'pesertaList', 'kehadiranMap'));
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+
+        return view('admin.kehadiran.index', compact('periode', 'materiList', 'pesertaList', 'kehadiranMap', 'routePrefix'));
     }
 
     public function updateBulk(Request $request, PeriodePernikahan $periode)
@@ -40,13 +44,18 @@ class KehadiranController extends Controller
                 );
             }
         }
-        return back()->with('success', 'Data kehadiran berhasil disimpan.');
+        $peserta = $periode->pendaftaran()->get();
+        foreach ($peserta as $p) {
+            $p->notify(new AbsensiDisimpanNotification($periode));
+        }
+        return back()->with('success', 'Data kehadiran berhasil disimpan. Email notifikasi telah dikirim ke ' . $peserta->count() . ' peserta.');
     }
 
     public function updateStatusKursus(Request $request, PendaftaranPernikahan $pendaftaran)
     {
         $request->validate(['status_kursus' => ['required', 'in:terjadwal,sedang_berjalan,lulus,tidak_lulus']]);
         $pendaftaran->update(['status_kursus' => $request->status_kursus]);
-        return back()->with('success', 'Status kursus peserta berhasil diperbarui.');
+        $pendaftaran->notify(new StatusKursusBerubahNotification($pendaftaran, $request->status_kursus));
+        return back()->with('success', 'Status kursus peserta berhasil diperbarui. Email notifikasi telah dikirim ke peserta.');
     }
 }

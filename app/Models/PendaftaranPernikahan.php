@@ -27,7 +27,7 @@ class PendaftaranPernikahan extends Model
         'status', 'catatan',
         'status_dokumen', 'catatan_dokumen', 'status_kursus',
         'status_pembayaran', 'midtrans_order_id', 'midtrans_snap_token', 'midtrans_transaction_id',
-        'qris_url', 'qris_expired_at',
+        'qris_url', 'qris_expired_at', 'email_konfirmasi_pembayaran_sent_at',
     ];
 
     protected $casts = [
@@ -35,6 +35,7 @@ class PendaftaranPernikahan extends Model
         'tanggal_lahir_wanita' => 'date',
         'tanggal_pernikahan'   => 'date',
         'qris_expired_at'      => 'datetime',
+        'email_konfirmasi_pembayaran_sent_at' => 'datetime',
     ];
 
     public function routeNotificationForMail($notification): string

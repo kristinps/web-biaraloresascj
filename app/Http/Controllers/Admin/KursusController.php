@@ -7,6 +7,7 @@ use App\Models\PendaftaranPernikahan;
 use App\Models\PeriodePernikahan;
 use App\Notifications\JadwalKursusNotification;
 use App\Notifications\JadwalSelanjutnyaNotification;
+use App\Notifications\PindahJadwalNotification;
 use App\Notifications\SertifikatLulusNotification;
 use Illuminate\Http\Request;
 
@@ -45,7 +46,9 @@ class KursusController extends Controller
     public function pindahJadwal(Request $request, PendaftaranPernikahan $pendaftaran)
     {
         $request->validate(['periode_id_baru' => ['required', 'exists:periode_pernikahan,id']]);
+        $periodeBaru = PeriodePernikahan::findOrFail($request->periode_id_baru);
         $pendaftaran->update(['periode_id' => $request->periode_id_baru, 'status_kursus' => 'terjadwal']);
-        return back()->with('success', 'Peserta berhasil dipindahkan ke periode baru.');
+        $pendaftaran->notify(new PindahJadwalNotification($pendaftaran, $periodeBaru));
+        return back()->with('success', 'Peserta berhasil dipindahkan ke periode baru. Email notifikasi telah dikirim ke peserta.');
     }
 }

@@ -147,6 +147,9 @@
 @endpush
 
 @section('content')
+@php
+    $routePrefix = $routePrefix ?? (request()->routeIs('dashboard.*') ? 'dashboard' : 'admin');
+@endphp
 
 <a href="{{ route($routePrefix . '.pendaftaran.index') }}" class="back-link">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -211,7 +214,7 @@
     <div class="action-body">
         <form action="{{ $routePrefix === 'dashboard' ? route('dashboard.pendaftaran.dokumen', $pendaftaran->id) : route('admin.dokumen.update', $pendaftaran->id) }}" method="POST">
             @csrf
-            @if($routePrefix === 'dashboard') @method('PUT') @endif
+            @method('PUT')
             <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:start">
                 <div class="form-group" style="margin-bottom:0">
                     <label class="form-label">Status Dokumen</label>
@@ -228,10 +231,7 @@
                 </div>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px">
-                <div class="check-row">
-                    <input type="checkbox" name="kirim_email" id="kirim_email" value="1">
-                    <label for="kirim_email">Kirim notifikasi email ke peserta ({{ $pendaftaran->email }})</label>
-                </div>
+                <p style="font-size:12px;color:#64748b;margin:0;">Email notifikasi akan otomatis dikirim ke peserta ({{ $pendaftaran->email }})</p>
                 <button type="submit" class="btn-action btn-indigo">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25"/>

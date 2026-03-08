@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MateriKursus;
 use App\Models\PeriodePernikahan;
+use App\Notifications\MateriBaruNotification;
+use App\Notifications\MateriDihapusNotification;
+use App\Notifications\MateriDiperbaruiNotification;
 use App\Notifications\MateriKursusNotification;
 use App\Notifications\ZoomKursusNotification;
 use Illuminate\Http\Request;
@@ -16,7 +19,9 @@ class MateriKursusController extends Controller
     {
         $materiList    = $periode->materi()->get();
         $jumlahPeserta = $periode->pendaftaran()->count();
-        return view('admin.materi.index', compact('periode', 'materiList', 'jumlahPeserta'));
+        $routePrefix   = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+
+        return view('admin.materi.index', compact('periode', 'materiList', 'jumlahPeserta', 'routePrefix'));
     }
 
     public function store(Request $request, PeriodePernikahan $periode)
@@ -35,7 +40,7 @@ class MateriKursusController extends Controller
             $filePath = $request->file('file_materi')->store('materi-kursus', 'public');
         }
 
-        $periode->materi()->create([
+        $materi = $periode->materi()->create([
             'judul'               => $request->judul,
             'deskripsi'           => $request->deskripsi,
             'file_materi'         => $filePath,
@@ -44,7 +49,12 @@ class MateriKursusController extends Controller
             'urutan'              => $request->urutan,
         ]);
 
-        return back()->with('success', 'Materi kursus berhasil ditambahkan.');
+        $peserta = $periode->pendaftaran()->get();
+        foreach ($peserta as $p) {
+            $p->notify(new MateriBaruNotification($materi));
+        }
+
+        return back()->with('success', 'Materi kursus berhasil ditambahkan. Email notifikasi telah dikirim ke ' . $peserta->count() . ' peserta.');
     }
 
     public function update(Request $request, MateriKursus $materi)
@@ -73,15 +83,30 @@ class MateriKursusController extends Controller
             'urutan'              => $request->urutan,
         ]);
 
-        return back()->with('success', 'Materi kursus berhasil diperbarui.');
+        $peserta = $materi->periode->pendaftaran()->get();
+        foreach ($peserta as $p) {
+            $p->notify(new MateriDiperbaruiNotification($materi));
+        }
+
+        return back()->with('success', 'Materi kursus berhasil diperbarui. Email notifikasi telah dikirim ke ' . $peserta->count() . ' peserta.');
     }
 
     public function destroy(MateriKursus $materi)
     {
+        $periode = $materi->periode;
+        $judulMateri = $materi->judul;
+        $namaPeriode = $periode->nama;
+        $peserta = $periode->pendaftaran()->get();
+
         if ($materi->file_materi) Storage::disk('public')->delete($materi->file_materi);
         $periodeId = $materi->periode_id;
         $materi->delete();
-        return redirect()->route('admin.materi.index', $periodeId)->with('success', 'Materi kursus berhasil dihapus.');
+
+        foreach ($peserta as $p) {
+            $p->notify(new MateriDihapusNotification($judulMateri, $namaPeriode));
+        }
+
+        return redirect()->route('admin.materi.index', $periodeId)->with('success', 'Materi kursus berhasil dihapus. Email notifikasi telah dikirim ke ' . $peserta->count() . ' peserta.');
     }
 
     public function kirimMateri(MateriKursus $materi)

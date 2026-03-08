@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AdminDitambahkanEmail;
+use App\Mail\AdminDihapusEmail;
+use App\Mail\AdminDiupdateEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 
 class AdminCrudController extends Controller
@@ -41,7 +45,7 @@ class AdminCrudController extends Controller
             'role.in'       => 'Role tidak valid.',
         ]);
 
-        User::create([
+        $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
@@ -50,8 +54,10 @@ class AdminCrudController extends Controller
             'email_verified_at' => now(),
         ]);
 
+        Mail::to($user->email)->send(new AdminDitambahkanEmail($user, $request->password));
+
         return redirect()->route('dashboard.admin-crud.index')
-            ->with('success', 'Admin berhasil ditambahkan.');
+            ->with('success', 'Admin berhasil ditambahkan. Email notifikasi telah dikirim ke ' . $user->email . '.');
     }
 
     public function edit(User $user)
@@ -84,8 +90,10 @@ class AdminCrudController extends Controller
         }
         $user->update($data);
 
+        Mail::to($user->email)->send(new AdminDiupdateEmail($user));
+
         return redirect()->route('dashboard.admin-crud.index')
-            ->with('success', 'Data admin berhasil diperbarui.');
+            ->with('success', 'Data admin berhasil diperbarui. Email notifikasi telah dikirim ke ' . $user->email . '.');
     }
 
     public function destroy(User $user)
@@ -96,8 +104,11 @@ class AdminCrudController extends Controller
         if (! in_array($user->role, [User::ROLE_SUPER_ADMIN, User::ROLE_ADMIN], true)) {
             abort(404);
         }
+        $email = $user->email;
+        $nama = $user->name;
+        Mail::to($email)->send(new AdminDihapusEmail($email, $nama));
         $user->delete();
         return redirect()->route('dashboard.admin-crud.index')
-            ->with('success', 'Admin berhasil dihapus.');
+            ->with('success', 'Admin berhasil dihapus. Email pemberitahuan telah dikirim ke ' . $email . '.');
     }
 }

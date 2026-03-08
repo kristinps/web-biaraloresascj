@@ -20,7 +20,7 @@
         body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; display: flex; }
         .sidebar {
             width: var(--sidebar-w); min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 100;
-            background: linear-gradient(180deg, #1e2685 0%, #2230ce 50%, #2129a7 100%);
+            background: #1e2685;
             display: flex; flex-direction: column; transition: transform 0.3s ease;
         }
         .sidebar-brand { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -57,12 +57,12 @@
         .main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
         .content { flex: 1; padding: 28px; }
         .dashboard-banner-wrap {
-            position: relative; min-height: 100%; margin: -28px; padding: 28px; overflow: hidden;
+            position: relative; min-height: 100vh; min-height: 100dvh; margin: -28px; padding: 28px; overflow: hidden;
         }
         .dashboard-banner-wrap::before {
             content: ''; position: absolute; inset: 0;
             background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1920&h=1080&fit=crop');
-            background-size: cover; background-position: center; z-index: 0;
+            background-size: cover; background-position: center; background-repeat: no-repeat; z-index: 0;
         }
         .dashboard-banner-wrap::after { content: ''; position: absolute; inset: 0; background: var(--hero-overlay); z-index: 1; }
         .dashboard-banner-inner { position: relative; z-index: 2; }
@@ -87,6 +87,153 @@
         }
     </style>
     @stack('styles')
+    {{-- Tema beranda: tabel di setiap halaman wajib mengikuti style halaman beranda --}}
+    <style>
+        .dashboard-banner-inner .card {
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .dashboard-banner-inner table { width: 100%; border-collapse: collapse; }
+        .dashboard-banner-inner thead th {
+            padding: 12px 18px;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #2129a7;
+            background: linear-gradient(180deg, #f0f4ff 0%, #eef2ff 100%);
+            text-align: left;
+            border-bottom: 1px solid #bfd0ff;
+        }
+        .dashboard-banner-inner tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+        .dashboard-banner-inner tbody tr:hover { background: #f8faff; }
+        .dashboard-banner-inner tbody tr:last-child { border-bottom: none; }
+        .dashboard-banner-inner tbody td {
+            padding: 13px 18px;
+            font-size: 13.5px;
+            color: #374151;
+            vertical-align: middle;
+        }
+        .dashboard-banner-inner .table-wrap { overflow-x: auto; }
+        .dashboard-banner-inner .pagination-wrap,
+        .dashboard-banner-inner .dashboard-table-footer {
+            padding: 14px 20px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: flex-end;
+        }
+        /* Tombol aksi di semua tabel - tema beranda */
+        .dashboard-banner-inner tbody td:last-child {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+        .dashboard-banner-inner tbody td:last-child.text-right {
+            justify-content: flex-end;
+        }
+        .dashboard-banner-inner .table-action-btn,
+        .dashboard-banner-inner tbody .btn-detail {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            background: #f0f4ff;
+            color: #2129a7;
+            border: 1px solid #bfd0ff;
+        }
+        .dashboard-banner-inner .table-action-btn:hover,
+        .dashboard-banner-inner tbody .btn-detail:hover {
+            background: #dce6ff;
+            color: #1e2685;
+        }
+        .dashboard-banner-inner .table-action-btn svg,
+        .dashboard-banner-inner tbody .btn-detail svg {
+            width: 14px;
+            height: 14px;
+        }
+        .dashboard-banner-inner .table-action-btn-danger {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        .dashboard-banner-inner .table-action-btn-danger:hover {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .dashboard-banner-inner .table-action-btn-danger svg {
+            width: 14px;
+            height: 14px;
+        }
+        .dashboard-banner-inner tbody .btn-bayar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            text-decoration: none;
+            background: linear-gradient(135deg, #2230ce, #3d56f5);
+            color: #fff !important;
+            border: none;
+            transition: opacity 0.2s, box-shadow 0.2s;
+        }
+        .dashboard-banner-inner tbody .btn-bayar:hover {
+            opacity: 0.92;
+            box-shadow: 0 4px 12px rgba(34, 48, 206, 0.35);
+        }
+        .dashboard-banner-inner tbody .btn-pindah {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #fcd34d;
+            background: #fffbeb;
+            color: #b45309;
+            transition: background 0.2s, color 0.2s;
+        }
+        .dashboard-banner-inner tbody .btn-pindah:hover {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .dashboard-banner-inner tbody .btn-pindah svg {
+            width: 12px;
+            height: 12px;
+        }
+        .dashboard-banner-inner tbody .table-action-link {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #2129a7;
+            text-decoration: none;
+            padding: 6px 0;
+            transition: color 0.2s;
+        }
+        .dashboard-banner-inner tbody .table-action-link:hover {
+            color: #1e2685;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 
@@ -113,9 +260,13 @@
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 Manajemen Peserta
             </a>
-            <a href="{{ route('dashboard.periode.index') }}" class="nav-item {{ request()->routeIs('dashboard.materi.*') || request()->routeIs('dashboard.kehadiran.*') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.materi.periode-list') }}" class="nav-item {{ request()->routeIs('dashboard.materi.*') ? 'active' : '' }}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                Materi & Kehadiran
+                Materi
+            </a>
+            <a href="{{ route('dashboard.kehadiran.periode-list') }}" class="nav-item {{ request()->routeIs('dashboard.kehadiran.*') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                Kehadiran
             </a>
             @if(auth()->user()->isSuperAdmin())
             <div class="nav-section">Super Admin</div>
@@ -184,6 +335,19 @@
                         {{ session('error') }}
                     </div>
                 @endif
+                {{-- Bar atas: nama user + tombol Logout (semua role: admin, super_admin, peserta) --}}
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <p class="text-white/90 text-sm font-medium">
+                        Hai, <span class="font-semibold text-white">{{ auth()->user()->name ?? 'User' }}</span>
+                    </p>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-white text-primary-800 hover:bg-gray-50 transition-colors shadow-md border border-white/40">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            Logout
+                        </button>
+                    </form>
+                </div>
                 @yield('content')
             </div>
         </div>

@@ -24,16 +24,13 @@
     .save-btn:hover { opacity:0.88; }
     .save-btn svg { width:14px;height:14px; }
 
-    .table-wrap { overflow-x:auto; }
-
-    table.absensi { width:100%;border-collapse:collapse;min-width:600px; }
-    table.absensi thead th { padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:#94a3b8;background:#f8fafc;border-bottom:1px solid #f1f5f9;text-align:center;white-space:nowrap; }
-    table.absensi thead th.th-peserta { text-align:left;min-width:180px; }
-    table.absensi tbody tr { border-bottom:1px solid #f8fafc; }
-    table.absensi tbody tr:last-child { border-bottom:none; }
-    table.absensi tbody tr:hover { background:#fafafa; }
-    table.absensi td { padding:10px 12px;font-size:13px;color:#374151;vertical-align:middle;text-align:center; }
-    table.absensi td.td-peserta { text-align:left; }
+    .table-wrap { overflow-x: auto; }
+    /* Tema beranda dari layout; override khusus untuk grid absensi */
+    table.absensi { min-width: 600px; }
+    .dashboard-banner-inner table.absensi thead th { text-align: center; padding: 10px 12px; white-space: nowrap; }
+    .dashboard-banner-inner table.absensi thead th.th-peserta { text-align: left; min-width: 180px; }
+    .dashboard-banner-inner table.absensi tbody td { padding: 10px 12px; text-align: center; font-size: 13px; }
+    .dashboard-banner-inner table.absensi td.td-peserta { text-align: left; }
 
     .peserta-name  { font-size:13px;font-weight:600;color:#1e293b; }
     .peserta-email { font-size:11.5px;color:#94a3b8; }
