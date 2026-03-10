@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('materi_kursus', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('periode_id')->constrained('periode_pernikahan')->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('periode_id')->constrained('periode_pernikahan')->cascadeOnDelete();
             $table->string('judul');
             $table->text('deskripsi')->nullable();
             $table->string('file_materi')->nullable();

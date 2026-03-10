@@ -7,6 +7,9 @@
 @push('styles')
 <style>
     .dokumen-page { max-width: 900px; }
+    .dokumen-toast { border-radius: 10px; padding: 12px 16px; font-size: 13px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 10px; max-width: 100%; }
+    .dokumen-toast-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+    .dokumen-toast-success svg { color: #16a34a; flex-shrink: 0; }
     .dokumen-kotak {
         background: #fff;
         border-radius: 16px;
@@ -42,6 +45,7 @@
     .dokumen-summary-icon.purple { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
     .dokumen-summary-icon.green { background: linear-gradient(135deg, #22c55e, #4ade80); }
     .dokumen-summary-icon.amber { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+    .dokumen-summary-icon.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
     .dokumen-summary-body .val { font-size: 18px; font-weight: 800; color: #1e293b; line-height: 1; }
     .dokumen-summary-body .lbl { font-size: 11px; color: #64748b; margin-top: 0; font-weight: 500; }
 
@@ -81,6 +85,7 @@
     }
     .doc-card-status.lengkap { background: #f0fdf4; color: #15803d; }
     .doc-card-status.tidak_lengkap { background: #fffbeb; color: #b45309; }
+    .doc-card-status.sedang { background: #eff6ff; color: #1d4ed8; }
     .doc-card-status.belum { background: #f1f5f9; color: #475569; }
     .doc-card-catatan {
         font-size: 11.5px;
@@ -155,6 +160,41 @@
         border-color: transparent;
     }
     .doc-card-footer .btn-detail svg { width: 14px; height: 14px; }
+    .doc-perbaikan-wrap {
+        padding: 14px 18px;
+        border-top: 1px solid #f1f5f9;
+        background: #fffbeb;
+        border-left: 3px solid #f59e0b;
+    }
+    .doc-perbaikan-label { font-size: 12px; color: #92400e; margin: 0 0 10px 0; font-weight: 600; }
+    .doc-perbaikan-form { display: flex; flex-direction: column; gap: 10px; }
+    .doc-perbaikan-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 13px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 72px;
+    }
+    .doc-perbaikan-input:focus { outline: none; border-color: #6366f1; }
+    .doc-perbaikan-error { font-size: 12px; color: #dc2626; margin: -4px 0 0 0; }
+    .btn-kirim-perbaikan {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 18px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s, box-shadow 0.2s;
+    }
+    .btn-kirim-perbaikan:hover { opacity: 0.95; box-shadow: 0 4px 14px rgba(99,102,241,0.35); }
 
     .dokumen-empty {
         text-align: center;
@@ -199,6 +239,12 @@
 @endpush
 
 @section('content')
+@if(session('success'))
+    <div class="dokumen-toast dokumen-toast-success">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {{ session('success') }}
+    </div>
+@endif
 <div class="dokumen-page">
     <div class="dokumen-kotak">
     @if($pendaftaranList->count() > 0)
@@ -206,6 +252,7 @@
             $total = $pendaftaranList->count();
             $lengkap = $pendaftaranList->where('status_dokumen', 'lengkap')->count();
             $tidakLengkap = $pendaftaranList->where('status_dokumen', 'tidak_lengkap')->count();
+            $sedangDiperiksa = $pendaftaranList->where('status_dokumen', 'sedang_diperiksa')->count();
         @endphp
         <div class="dokumen-summary">
             <div class="dokumen-summary-card">
@@ -227,12 +274,21 @@
                 </div>
             </div>
             <div class="dokumen-summary-card">
+                <div class="dokumen-summary-icon blue">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="dokumen-summary-body">
+                    <div class="val">{{ $sedangDiperiksa }}</div>
+                    <div class="lbl">Sedang Diperiksa</div>
+                </div>
+            </div>
+            <div class="dokumen-summary-card">
                 <div class="dokumen-summary-icon amber">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L12.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
                 </div>
                 <div class="dokumen-summary-body">
                     <div class="val">{{ $tidakLengkap }}</div>
-                    <div class="lbl">Perlu Dilengkapi</div>
+                    <div class="lbl">Tidak Diterima</div>
                 </div>
             </div>
         </div>
@@ -243,14 +299,16 @@
                 <span class="doc-card-periode">{{ $item->periode ? $item->periode->nama : 'Tanpa periode' }}</span>
                 <h2 class="doc-card-title">{{ $item->nama_pria }} &amp; {{ $item->nama_wanita }}</h2>
                 @php $sd = $item->status_dokumen ?? 'belum_diperiksa'; @endphp
-                <span class="doc-card-status {{ $sd === 'lengkap' ? 'lengkap' : ($sd === 'tidak_lengkap' ? 'tidak_lengkap' : 'belum') }}">
+                <span class="doc-card-status {{ $sd === 'lengkap' ? 'lengkap' : ($sd === 'tidak_lengkap' ? 'tidak_lengkap' : ($sd === 'sedang_diperiksa' ? 'sedang' : 'belum')) }}">
                     @if($sd === 'lengkap')
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                        Lengkap
+                        Dokumen diterima
                     @elseif($sd === 'tidak_lengkap')
-                        Perlu dilengkapi
+                        Tidak diterima
+                    @elseif($sd === 'sedang_diperiksa')
+                        Sedang diperiksa
                     @else
-                        Belum dicek
+                        Menunggu
                     @endif
                 </span>
                 @if($sd === 'tidak_lengkap' && $item->catatan_dokumen)
@@ -290,6 +348,20 @@
                 </div>
                 @endforeach
             </div>
+            @if($sd === 'tidak_lengkap')
+            <div class="doc-perbaikan-wrap">
+                <p class="doc-perbaikan-label">Status dokumen Anda <strong>tidak diterima</strong>. Isi keterangan perbaikan lalu kirim ke admin.</p>
+                <form action="{{ route('dashboard.user.perbaikan-dokumen', $item->id) }}" method="POST" class="doc-perbaikan-form">
+                    @csrf
+                    <textarea name="perbaikan_dokumen" class="doc-perbaikan-input" rows="3" placeholder="Contoh: Sudah mengunggah ulang dokumen yang diminta / melengkapi data yang kurang." required maxlength="2000">{{ old('perbaikan_dokumen', $item->perbaikan_dokumen_user) }}</textarea>
+                    @error('perbaikan_dokumen')<p class="doc-perbaikan-error">{{ $message }}</p>@enderror
+                    <button type="submit" class="btn-kirim-perbaikan">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
+                        Kirim
+                    </button>
+                </form>
+            </div>
+            @endif
             <div class="doc-card-footer">
                 <a href="{{ route('kursus-pernikahan.sukses', $item->id) }}" class="btn-detail">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>

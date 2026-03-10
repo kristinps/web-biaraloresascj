@@ -121,8 +121,13 @@ class KursusPendaftaranController extends Controller
             }
         }
 
-        $validated['status_pembayaran'] = 'belum_bayar';
-        $validated['periode_id'] = PeriodePernikahan::periodeAktif()?->id;
+        // Status awal ketika pendaftaran baru dibuat
+        $validated['status_pembayaran']      = 'belum_bayar';
+        $validated['periode_id']             = null;      // Admin tentukan periode saat menyetujui pendaftaran
+        $validated['status_kursus']          = 'menunggu';
+        $validated['status_dokumen']         = 'sedang_diperiksa'; // sesuai requirement: status awal dokumen
+        $validated['catatan_dokumen']        = null;
+        $validated['perbaikan_dokumen_user'] = null;
 
         $plainPassword = Str::random(10);
         $name = ($validated['nama_pria'] ?? '') . ' & ' . ($validated['nama_wanita'] ?? '');

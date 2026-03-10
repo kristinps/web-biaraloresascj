@@ -12,8 +12,8 @@ class DokumenStatusNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $statusLabel = match ($this->pendaftaran->status_dokumen) {
-            'lengkap'       => 'Dokumen Lengkap',
-            'tidak_lengkap' => 'Dokumen Tidak Lengkap',
+            'lengkap'       => 'Dokumen Diterima',
+            'tidak_lengkap' => 'Dokumen Perlu Perbaikan',
             default         => 'Informasi Dokumen',
         };
         $mail = (new MailMessage)
@@ -21,9 +21,9 @@ class DokumenStatusNotification extends Notification
             ->greeting('Yth. ' . $this->pendaftaran->nama_pria . ' & ' . $this->pendaftaran->nama_wanita)
             ->line('Kami telah memeriksa kelengkapan dokumen persyaratan pendaftaran kursus pernikahan Anda.');
         if ($this->pendaftaran->status_dokumen === 'lengkap') {
-            $mail->line('**Status Dokumen: Lengkap**')->line('Dokumen Anda telah dinyatakan lengkap dan memenuhi persyaratan.');
+            $mail->line('**Status: Dokumen Diterima**')->line('Dokumen Anda telah disetujui dan dinyatakan lengkap.');
         } else {
-            $mail->line('**Status Dokumen: Tidak Lengkap**')->line('Terdapat dokumen yang belum lengkap atau perlu diperbaiki.');
+            $mail->line('**Status: Perlu Perbaikan**')->line('Terdapat dokumen yang perlu dilengkapi atau diperbaiki. Silakan masuk ke dashboard dan isi form perbaikan lalu klik Kirim.');
         }
         if ($this->pesan) $mail->line('---')->line('**Catatan dari Admin:**')->line($this->pesan);
         return $mail->line('Jika ada pertanyaan, silakan menghubungi kami.')->salutation('Hormat kami, **Biara Loresa SCJ**');

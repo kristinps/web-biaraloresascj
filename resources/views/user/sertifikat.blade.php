@@ -29,10 +29,13 @@
     <div class="card">
         <div class="card-header">
             <h2>Status Sertifikat</h2>
-            <p>Sertifikat kelulusan dapat diambil di kantor Biara Loresa SCJ setelah status kursus Lulus.</p>
+            <p>Status awal: belum ada sertifikat. Setelah admin mengunggah sertifikat kelulusan, kartu sertifikat akan tampil di bawah dan dapat diunduh.</p>
         </div>
         @foreach($pendaftaranList as $item)
-        <div class="cert-item {{ $item->status_kursus === 'lulus' ? 'lulus' : '' }}">
+        @php
+            $surat = $item->suratKelulusan ?? null;
+        @endphp
+        <div class="cert-item {{ $surat ? 'lulus' : '' }}">
             <div>
                 <strong style="color:#1e293b;font-size:15px">{{ $item->nama_pria }} &amp; {{ $item->nama_wanita }}</strong>
                 <div style="font-size:12.5px;color:#64748b;margin-top:2px">
@@ -40,17 +43,31 @@
                 </div>
             </div>
             <div>
-                @if($item->status_kursus === 'lulus')
-                    <span class="badge badge-green">Lulus — Sertifikat tersedia</span>
+                @if($surat)
+                    <span class="badge badge-green">Sertifikat tersedia</span>
+                    <p style="font-size:13px;color:#16a34a;margin-top:6px;font-weight:500">
+                        Selamat, sertifikat kelulusan kursus pernikahan Anda sudah terbit.
+                    </p>
                     <a href="{{ route($userRoutePrefix . '.sertifikat.download', $item) }}" class="btn-download">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         Download Sertifikat
                     </a>
                     <div class="info-box">
-                        Anda juga dapat mengambil sertifikat fisik di kantor Biara Loresa SCJ. Hubungi kami untuk jadwal pengambilan.
+                        Data sertifikat:
+                        <br>Nama: {{ $item->nama_pria }} &amp; {{ $item->nama_wanita }}
+                        <br>Email: {{ $item->email }}
+                        <br><span style="font-size:12px;color:#64748b">File sertifikat tersimpan dengan aman di sistem dan dapat diunduh kapan saja.</span>
                     </div>
                 @else
-                    <span class="badge badge-slate">{{ $item->status_kursus ? ucfirst(str_replace('_', ' ', $item->status_kursus)) : 'Belum terjadwal' }}</span>
+                    <span class="badge badge-slate">
+                        @if($item->status_kursus === 'lulus')
+                            Lulus — menunggu unggah sertifikat oleh admin
+                        @elseif($item->status_kursus)
+                            {{ ucfirst(str_replace('_', ' ', $item->status_kursus)) }}
+                        @else
+                            Belum terjadwal
+                        @endif
+                    </span>
                 @endif
             </div>
         </div>

@@ -111,6 +111,10 @@
                     <input type="text" name="judul" class="form-input" placeholder="Contoh: Komunikasi dalam Pernikahan" required>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Nama Pemateri <span style="color:#ef4444">*</span></label>
+                    <input type="text" name="nama_pemateri" class="form-input" placeholder="Nama lengkap pemateri" required>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Deskripsi</label>
                     <textarea name="deskripsi" class="form-textarea" placeholder="Deskripsi singkat materi..."></textarea>
                 </div>
@@ -154,6 +158,9 @@
                         <div class="materi-num">{{ $materi->urutan }}</div>
                         <div style="flex:1;min-width:0">
                             <div class="materi-title">{{ $materi->judul }}</div>
+                            @if($materi->nama_pemateri)
+                            <div class="materi-date">Pemateri: {{ $materi->nama_pemateri }}</div>
+                            @endif
                             @if($materi->tanggal_pelaksanaan)
                             <div class="materi-date">{{ $materi->tanggal_pelaksanaan->translatedFormat('d F Y') }}</div>
                             @endif
@@ -185,7 +192,7 @@
                         @endif
                     </div>
                     <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;border-top:1px solid #f1f5f9;padding-top:12px">
-                        <form action="{{ route($routePrefix . '.materi.kirim-materi', $materi) }}" method="POST" onsubmit="return confirm('Kirim email materi ini ke {{ $jumlahPeserta }} peserta?')">
+                        <form action="{{ route($routePrefix . '.materi.kirim', $materi) }}" method="POST" onsubmit="return confirm('Kirim email materi ini ke {{ $jumlahPeserta }} peserta?')">
                             @csrf
                             <button type="submit" class="action-btn ab-indigo">
                                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
@@ -228,6 +235,7 @@
                             <div class="modal-body">
                                 <div class="form-group"><label class="form-label">Urutan / Sesi ke-</label><input type="number" name="urutan" class="form-input" value="{{ $materi->urutan }}" min="1" max="99" required></div>
                                 <div class="form-group"><label class="form-label">Judul Materi</label><input type="text" name="judul" class="form-input" value="{{ $materi->judul }}" required></div>
+                                <div class="form-group"><label class="form-label">Nama Pemateri</label><input type="text" name="nama_pemateri" class="form-input" value="{{ $materi->nama_pemateri }}" required></div>
                                 <div class="form-group"><label class="form-label">Deskripsi</label><textarea name="deskripsi" class="form-textarea">{{ $materi->deskripsi }}</textarea></div>
                                 <div class="form-group"><label class="form-label">Tanggal Pelaksanaan</label><input type="date" name="tanggal_pelaksanaan" class="form-input" value="{{ $materi->tanggal_pelaksanaan?->format('Y-m-d') }}"></div>
                                 <div class="form-group">

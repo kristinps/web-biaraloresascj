@@ -28,6 +28,7 @@ class MateriKursusController extends Controller
     {
         $request->validate([
             'judul'               => ['required', 'string', 'max:255'],
+            'nama_pemateri'       => ['required', 'string', 'max:255'],
             'deskripsi'           => ['nullable', 'string'],
             'file_materi'         => ['nullable', 'file', 'mimes:pdf,doc,docx,ppt,pptx,zip', 'max:20480'],
             'zoom_link'           => ['nullable', 'url', 'max:500'],
@@ -42,6 +43,7 @@ class MateriKursusController extends Controller
 
         $materi = $periode->materi()->create([
             'judul'               => $request->judul,
+            'nama_pemateri'       => $request->nama_pemateri,
             'deskripsi'           => $request->deskripsi,
             'file_materi'         => $filePath,
             'zoom_link'           => $request->zoom_link,
@@ -61,6 +63,7 @@ class MateriKursusController extends Controller
     {
         $request->validate([
             'judul'               => ['required', 'string', 'max:255'],
+            'nama_pemateri'       => ['required', 'string', 'max:255'],
             'deskripsi'           => ['nullable', 'string'],
             'file_materi'         => ['nullable', 'file', 'mimes:pdf,doc,docx,ppt,pptx,zip', 'max:20480'],
             'zoom_link'           => ['nullable', 'url', 'max:500'],
@@ -76,6 +79,7 @@ class MateriKursusController extends Controller
 
         $materi->update([
             'judul'               => $request->judul,
+            'nama_pemateri'       => $request->nama_pemateri,
             'deskripsi'           => $request->deskripsi,
             'file_materi'         => $filePath,
             'zoom_link'           => $request->zoom_link,

@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>@yield('title', 'Dashboard') — Biara Loresa SCJ</title>
     <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -17,11 +17,12 @@
             --gold: #f0c14b;
             --hero-overlay: linear-gradient(135deg, rgba(30,38,133,0.88) 0%, rgba(61,86,245,0.65) 100%);
         }
-        body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; display: flex; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; display: flex; overflow-x: hidden; }
         .sidebar {
-            width: var(--sidebar-w); min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 100;
+            width: var(--sidebar-w); min-height: 100vh; min-height: 100dvh; position: fixed; top: 0; left: 0; z-index: 100;
             background: #1e2685;
             display: flex; flex-direction: column; transition: transform 0.3s ease;
+            max-width: 85vw;
         }
         .sidebar-brand { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .sidebar-brand .brand-icon {
@@ -54,10 +55,10 @@
         .sidebar-user .role { font-size: 11px; color: rgba(255,255,255,0.5); }
         .logout-btn { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.5); padding: 4px; border-radius: 6px; }
         .logout-btn:hover { color: #f87171; }
-        .main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
-        .content { flex: 1; padding: 28px; }
+        .main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; min-width: 0; display: flex; flex-direction: column; }
+        .content { flex: 1; padding: 28px; min-width: 0; overflow-x: hidden; }
         .dashboard-banner-wrap {
-            position: relative; min-height: 100vh; min-height: 100dvh; margin: -28px; padding: 28px; overflow: hidden;
+            position: relative; min-height: 100vh; min-height: 100dvh; margin: -28px; padding: 28px; overflow-x: hidden; overflow-y: auto;
         }
         .dashboard-banner-wrap::before {
             content: ''; position: absolute; inset: 0;
@@ -76,14 +77,35 @@
         .toast-success { background: rgba(240,253,244,0.98); border-color: #bbf7d0; color: #15803d; }
         .toast-success svg { color: #16a34a; }
         .toast-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
-        .menu-toggle { display: none; position: fixed; top: 12px; left: 12px; z-index: 60; width: 44px; height: 44px; border-radius: 12px; border: none; cursor: pointer; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15); align-items: center; justify-content: center; }
+        .menu-toggle { display: none; position: fixed; top: 12px; left: 12px; z-index: 102; width: 44px; height: 44px; border-radius: 12px; border: none; cursor: pointer; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15); align-items: center; justify-content: center; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.open { display: block; opacity: 1; }
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
+            .sidebar { transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.15); }
             .sidebar.open { transform: translateX(0); }
             .main { margin-left: 0; }
             .menu-toggle { display: flex; }
-            .content { padding: 20px 16px; }
-            .dashboard-banner-wrap { margin: -20px -16px; padding: 20px 16px; }
+            .content { padding: 16px 12px; padding-top: 56px; }
+            .dashboard-banner-wrap { margin: -16px -12px; margin-top: -56px; padding: 16px 12px; padding-top: 56px; }
+            .dashboard-banner-inner .card { border-radius: 14px; }
+            .dashboard-banner-inner thead th { padding: 10px 14px; font-size: 11px; }
+            .dashboard-banner-inner tbody td { padding: 10px 14px; font-size: 13px; }
+            .dashboard-banner-inner .table-wrap table { min-width: 520px; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .content { padding: 22px 20px; }
+            .dashboard-banner-wrap { margin: -22px -20px; padding: 22px 20px; }
+        }
+        @media (min-width: 1280px) {
+            .dashboard-banner-inner { max-width: 1280px; }
         }
     </style>
     @stack('styles')
@@ -116,7 +138,12 @@
             color: #374151;
             vertical-align: middle;
         }
-        .dashboard-banner-inner .table-wrap { overflow-x: auto; }
+        .dashboard-banner-inner .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -1px;
+        }
+        .dashboard-banner-inner .table-wrap table { min-width: 640px; }
         .dashboard-banner-inner .pagination-wrap,
         .dashboard-banner-inner .dashboard-table-footer {
             padding: 14px 20px;
@@ -237,6 +264,7 @@
 </head>
 <body>
 
+<div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true" onclick="closeSidebar()"></div>
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
         <div class="brand-icon">
@@ -252,9 +280,13 @@
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                 Dashboard
             </a>
-            <a href="{{ route('dashboard.pendaftaran.index') }}" class="nav-item {{ request()->routeIs('dashboard.pendaftaran.*') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.pendaftaran.index') }}" class="nav-item {{ request()->routeIs('dashboard.pendaftaran.index') || request()->routeIs('dashboard.pendaftaran.show') || request()->routeIs('dashboard.pendaftaran.masuk') ? 'active' : '' }}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
                 Pendaftaran
+            </a>
+            <a href="{{ route('dashboard.pendaftaran.dokumen-list') }}" class="nav-item {{ request()->routeIs('dashboard.pendaftaran.dokumen-list') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                Dokumen Pendaftaran
             </a>
             <a href="{{ route('dashboard.periode.index') }}" class="nav-item {{ request()->routeIs('dashboard.periode.*') ? 'active' : '' }}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -268,6 +300,22 @@
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                 Kehadiran
             </a>
+            @if(\Illuminate\Support\Facades\Route::has('dashboard.biaya.index'))
+                <a href="{{ route('dashboard.biaya.index') }}" class="nav-item {{ request()->routeIs('dashboard.biaya.*') ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 12v-2m0 2c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Biaya
+                </a>
+            @endif
+            @if(\Illuminate\Support\Facades\Route::has('dashboard.sertifikat.index'))
+                <a href="{{ route('dashboard.sertifikat.index') }}" class="nav-item {{ request()->routeIs('dashboard.sertifikat.*') ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M9 4.5h10.125A1.125 1.125 0 0120.25 5.625V18.75A1.125 1.125 0 0119.125 19.875H4.875A1.125 1.125 0 013.75 18.75V5.625A1.125 1.125 0 014.875 4.5H9z"/>
+                    </svg>
+                    Sertifikat
+                </a>
+            @endif
             @if(auth()->user()->isSuperAdmin())
             <div class="nav-section">Super Admin</div>
             <a href="{{ route('dashboard.admin-crud.index') }}" class="nav-item {{ request()->routeIs('dashboard.admin-crud.*') ? 'active' : '' }}">
@@ -284,7 +332,9 @@
             <a href="{{ route('dashboard.user.status-pendaftaran') }}" class="nav-item {{ request()->routeIs('dashboard.user.status-pendaftaran') ? 'active' : '' }}">Status Pendaftaran</a>
             <a href="{{ route('dashboard.user.dokumen') }}" class="nav-item {{ request()->routeIs('dashboard.user.dokumen') ? 'active' : '' }}">Status Dokumen</a>
             <a href="{{ route('dashboard.user.jadwal-materi') }}" class="nav-item {{ request()->routeIs('dashboard.user.jadwal-materi') ? 'active' : '' }}">Jadwal Materi</a>
-            <a href="{{ route('dashboard.user.biaya') }}" class="nav-item {{ request()->routeIs('dashboard.user.biaya') ? 'active' : '' }}">Biaya</a>
+            @if(\Illuminate\Support\Facades\Route::has('dashboard.user.biaya'))
+                <a href="{{ route('dashboard.user.biaya') }}" class="nav-item {{ request()->routeIs('dashboard.user.biaya') ? 'active' : '' }}">Biaya</a>
+            @endif
             <a href="{{ route('dashboard.user.sertifikat') }}" class="nav-item {{ request()->routeIs('dashboard.user.sertifikat') ? 'active' : '' }}">Surat Kelulusan</a>
             <div class="nav-section">Akun</div>
             <a href="{{ route('dashboard.user.profil') }}" class="nav-item {{ request()->routeIs('dashboard.user.profil') ? 'active' : '' }}">Profil</a>
@@ -319,7 +369,7 @@
 </aside>
 
 <div class="main">
-    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Buka menu">☰</button>
     <main class="content">
         <div class="dashboard-banner-wrap">
             <div class="dashboard-banner-inner">
@@ -336,13 +386,13 @@
                     </div>
                 @endif
                 {{-- Bar atas: nama user + tombol Logout (semua role: admin, super_admin, peserta) --}}
-                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                    <p class="text-white/90 text-sm font-medium">
+                <div class="dashboard-top-bar flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <p class="text-white/90 text-sm font-medium truncate max-w-[180px] sm:max-w-none">
                         Hai, <span class="font-semibold text-white">{{ auth()->user()->name ?? 'User' }}</span>
                     </p>
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                    <form method="POST" action="{{ route('logout') }}" class="inline flex-shrink-0">
                         @csrf
-                        <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-white text-primary-800 hover:bg-gray-50 transition-colors shadow-md border border-white/40">
+                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-sm font-semibold bg-white text-primary-800 hover:bg-gray-50 transition-colors shadow-md border border-white/40">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                             Logout
                         </button>
@@ -354,5 +404,21 @@
     </main>
 </div>
 @stack('scripts')
+<script>
+function toggleSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('open', sidebar.classList.contains('open'));
+    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+}
+function closeSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
+</script>
 </body>
 </html>

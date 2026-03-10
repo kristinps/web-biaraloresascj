@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>@yield('title', 'Dashboard') — Admin Biara Loresa SCJ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,13 +29,16 @@
             color: var(--text);
             min-height: 100vh;
             display: flex;
+            overflow-x: hidden;
         }
 
         /* ─── Sidebar ─── */
         .sidebar {
             width: var(--sidebar-w);
+            max-width: 85vw;
             background: #1e2685;
             min-height: 100vh;
+            min-height: 100dvh;
             position: fixed;
             top: 0; left: 0;
             display: flex;
@@ -202,6 +205,13 @@
         .content {
             flex: 1;
             padding: 28px;
+            min-width: 0;
+        }
+
+        .content-inner {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         /* ─── Toast alert ─── */
@@ -237,8 +247,31 @@
         }
         .menu-toggle svg { width: 22px; height: 22px; }
 
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15,23,42,0.45);
+            z-index: 90;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.open {
+            display: block;
+            opacity: 1;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-wrap table {
+            min-width: 640px;
+        }
+
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
+            .sidebar { transform: translateX(-100%); box-shadow: 4px 0 24px rgba(15,23,42,0.35); }
             .sidebar.open { transform: translateX(0); }
             .main { margin-left: 0; }
             .menu-toggle { display: flex; }
@@ -249,6 +282,8 @@
     @stack('styles')
 </head>
 <body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()" aria-hidden="true"></div>
 
 {{-- Sidebar --}}
 <aside class="sidebar" id="sidebar">
@@ -267,12 +302,19 @@
         <div class="nav-section">Kursus Pernikahan</div>
 
         <a href="{{ route('admin.pendaftaran.index') }}"
-           class="nav-item {{ request()->routeIs('admin.pendaftaran.*') ? 'active' : '' }}">
+           class="nav-item {{ request()->routeIs('admin.pendaftaran.index') || request()->routeIs('admin.pendaftaran.show') || request()->routeIs('admin.pendaftaran.masuk') ? 'active' : '' }}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                       d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
             </svg>
             Daftar Pendaftaran
+        </a>
+        <a href="{{ route('admin.pendaftaran.dokumen-list') }}"
+           class="nav-item {{ request()->routeIs('admin.pendaftaran.dokumen-list') ? 'active' : '' }}">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+            </svg>
+            Dokumen Pendaftaran
         </a>
 
         <div class="nav-section">Sistem</div>
@@ -326,6 +368,7 @@
     </header>
 
     <main class="content">
+        <div class="content-inner">
         @if(session('success'))
             <div class="toast toast-success">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -344,12 +387,20 @@
         @endif
 
         @yield('content')
+        </div>
     </main>
 </div>
 
 <script>
 function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    if (!sidebar) return;
+    var isOpen = sidebar.classList.toggle('open');
+    if (overlay) {
+        overlay.classList.toggle('open', isOpen);
+    }
+    document.body.style.overflow = isOpen ? 'hidden' : '';
 }
 </script>
 @stack('scripts')

@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class PeriodePernikahan extends Model
 {
+    use HasUuids;
+
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $table = 'periode_pernikahan';
 
     protected $fillable = ['nama', 'tanggal_mulai', 'tanggal_selesai', 'status', 'catatan'];

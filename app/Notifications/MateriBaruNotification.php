@@ -26,7 +26,14 @@ class MateriBaruNotification extends Notification
             ->subject('Materi Kursus Baru: ' . $this->materi->judul . ' | Biara Loresa SCJ')
             ->greeting('Yth. ' . $notifiable->nama_pria . ' & ' . $notifiable->nama_wanita)
             ->line('Materi kursus baru telah ditambahkan untuk periode Anda: **' . $this->materi->judul . '**.')
-            ->line('Link Zoom dan file materi akan dikirim melalui email terpisah apabila admin mengirimkannya.')
+            ->when($this->materi->nama_pemateri, function (MailMessage $mail) {
+                return $mail->line('Pemateri: **' . $this->materi->nama_pemateri . '**');
+            })
+            ->when($this->materi->tanggal_pelaksanaan, function (MailMessage $mail) {
+                return $mail->line('Tanggal pelaksanaan: **' . $this->materi->tanggal_pelaksanaan->format('d M Y') . '**');
+            })
+            ->line('Anda dapat melihat jadwal lengkap materi melalui dashboard peserta.')
+            ->action('Buka Jadwal Materi di Dashboard', route('dashboard.user.jadwal-materi'))
             ->line('Jika ada pertanyaan, silakan hubungi kami.')
             ->salutation('Hormat kami, **Biara Loresa SCJ**');
     }

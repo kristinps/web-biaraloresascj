@@ -3,10 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Notifications\Notifiable;
 
 class PendaftaranPernikahan extends Model
 {
+    use HasUuids;
+
+    public $incrementing = false;
+    protected $keyType = 'string';
     use Notifiable;
 
     protected $table = 'pendaftaran_pernikahan';
@@ -25,7 +30,7 @@ class PendaftaranPernikahan extends Model
         'surat_baptis_pria', 'surat_baptis_wanita',
         'surat_pengantar_kombas_pria', 'surat_pengantar_kombas_wanita',
         'status', 'catatan',
-        'status_dokumen', 'catatan_dokumen', 'status_kursus',
+        'status_dokumen', 'catatan_dokumen', 'perbaikan_dokumen_user', 'status_kursus',
         'status_pembayaran', 'midtrans_order_id', 'midtrans_snap_token', 'midtrans_transaction_id',
         'qris_url', 'qris_expired_at', 'email_konfirmasi_pembayaran_sent_at',
     ];

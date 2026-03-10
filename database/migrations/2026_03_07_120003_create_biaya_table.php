@@ -9,11 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('biaya', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('jenis', 30)->default('pendaftaran'); // pendaftaran, tambahan
             $table->unsignedBigInteger('nominal')->default(0);
             $table->string('keterangan')->nullable();
-            $table->foreignId('periode_id')->nullable()->constrained('periode_pernikahan')->nullOnDelete();
+            $table->foreignUuid('periode_id')->nullable()->constrained('periode_pernikahan')->nullOnDelete();
             $table->boolean('aktif')->default(true);
             $table->timestamps();
         });

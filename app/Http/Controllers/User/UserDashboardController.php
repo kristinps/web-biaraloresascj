@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\PendaftaranPernikahan;
 use App\Models\SuratKelulusan;
+use App\Models\BiayaTagihan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,13 +46,45 @@ class UserDashboardController extends Controller
 
     public function biaya()
     {
-        return view('user.biaya');
+        $pendaftaranList = $this->getPendaftaranList();
+        $pendaftaranIds = $pendaftaranList->pluck('id');
+
+        $tagihanBiaya = BiayaTagihan::with(['biaya.periode', 'pendaftaran'])
+            ->whereIn('pendaftaran_id', $pendaftaranIds)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('user.biaya', compact('pendaftaranList', 'tagihanBiaya'));
     }
 
     public function sertifikat()
     {
         $pendaftaranList = $this->getPendaftaranList();
         return view('user.sertifikat', compact('pendaftaranList'));
+    }
+
+    /** User kirim perbaikan dokumen (setelah admin tolak) → status jadi sedang_diperiksa */
+    public function submitPerbaikanDokumen(Request $request, int $id)
+    {
+        $user = Auth::user();
+        $pendaftaran = PendaftaranPernikahan::findOrFail($id);
+        if ($pendaftaran->email !== $user->email) {
+            abort(403);
+        }
+
+        $request->validate([
+            'perbaikan_dokumen' => ['required', 'string', 'max:2000'],
+        ], [
+            'perbaikan_dokumen.required' => 'Isi deskripsi perbaikan atau data yang dilengkapi.',
+        ]);
+
+        $pendaftaran->update([
+            'perbaikan_dokumen_user' => $request->perbaikan_dokumen,
+            'status_dokumen'         => 'sedang_diperiksa',
+        ]);
+
+        return redirect()->route('dashboard.user.dokumen')
+            ->with('success', 'Perbaikan dokumen telah dikirim. Admin akan memeriksa kembali.');
     }
 
     public function downloadSertifikat(PendaftaranPernikahan $pendaftaran)

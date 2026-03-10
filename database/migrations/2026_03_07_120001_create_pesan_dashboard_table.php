@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pesan_dashboard', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('dari_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('dari_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('judul');
             $table->text('isi');
             $table->timestamp('dibaca_at')->nullable();

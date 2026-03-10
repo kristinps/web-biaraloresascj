@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('surat_kelulusan', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pendaftaran_id')->constrained('pendaftaran_pernikahan')->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('pendaftaran_id')->constrained('pendaftaran_pernikahan')->cascadeOnDelete();
             $table->string('file');
             $table->string('nama_surat')->nullable();
             $table->timestamps();

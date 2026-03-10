@@ -90,6 +90,51 @@
     .doc-link:hover { background: #e0e7ff; }
     .doc-link svg { width: 13px; height: 13px; }
 
+    .doc-table { width: 100%; border-collapse: collapse; }
+    .doc-table thead th {
+        padding: 10px 18px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+        background: #f9fafb;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .doc-table tbody td {
+        padding: 10px 18px;
+        font-size: 12.5px;
+        color: #1f2933;
+        border-bottom: 1px solid #f3f4f6;
+        vertical-align: middle;
+    }
+    .doc-table tbody tr:hover { background: #f9fafb; }
+    .doc-table .doc-name { font-weight: 600; color: #111827; }
+    .doc-table .doc-empty { color: #9ca3af; font-style: italic; }
+    .doc-aksi {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        background: #f9fafb;
+        transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+    .icon-btn svg { width: 15px; height: 15px; }
+    .icon-btn-approve { color: #16a34a; background: #ecfdf3; }
+    .icon-btn-approve:hover { background: #bbf7d0; box-shadow: 0 2px 8px rgba(22,163,74,0.25); transform: translateY(-1px); }
+    .icon-btn-reject { color: #dc2626; background: #fef2f2; }
+    .icon-btn-reject:hover { background: #fecaca; box-shadow: 0 2px 8px rgba(220,38,38,0.25); transform: translateY(-1px); }
+
     /* Dokumen & kursus status badges */
     .dok-badge { display:inline-flex;align-items:center;gap:7px;padding:5px 13px;border-radius:99px;font-size:12.5px;font-weight:700; }
     .dok-badge-dot { width:7px;height:7px;border-radius:50%; }
@@ -191,9 +236,11 @@
         <div style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             @php $statusDok = $pendaftaran->status_dokumen ?? 'belum_diperiksa'; @endphp
             @if($statusDok === 'lengkap')
-                <span class="dok-badge dok-lengkap"><span class="dok-badge-dot"></span>Dokumen Lengkap</span>
+                <span class="dok-badge dok-lengkap"><span class="dok-badge-dot"></span>Dokumen Diterima</span>
             @elseif($statusDok === 'tidak_lengkap')
-                <span class="dok-badge dok-tidak"><span class="dok-badge-dot"></span>Tidak Lengkap</span>
+                <span class="dok-badge dok-tidak"><span class="dok-badge-dot"></span>Perlu Perbaikan</span>
+            @elseif($statusDok === 'sedang_diperiksa')
+                <span class="dok-badge dok-periksa"><span class="dok-badge-dot"></span>Sedang Diperiksa</span>
             @else
                 <span class="dok-badge dok-periksa"><span class="dok-badge-dot"></span>Belum Diperiksa</span>
             @endif
@@ -220,8 +267,9 @@
                     <label class="form-label">Status Dokumen</label>
                     <select name="status_dokumen" class="form-select">
                         <option value="belum_diperiksa" {{ $statusDok === 'belum_diperiksa' ? 'selected' : '' }}>Belum Diperiksa</option>
-                        <option value="lengkap"         {{ $statusDok === 'lengkap'         ? 'selected' : '' }}>✅ Lengkap</option>
-                        <option value="tidak_lengkap"   {{ $statusDok === 'tidak_lengkap'   ? 'selected' : '' }}>⚠️ Tidak Lengkap</option>
+                        <option value="sedang_diperiksa" {{ $statusDok === 'sedang_diperiksa' ? 'selected' : '' }}>Sedang Diperiksa</option>
+                        <option value="lengkap"         {{ $statusDok === 'lengkap'         ? 'selected' : '' }}>✅ Dokumen Diterima</option>
+                        <option value="tidak_lengkap"   {{ $statusDok === 'tidak_lengkap'   ? 'selected' : '' }}>⚠️ Tidak Lengkap / Perlu Perbaikan</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom:0">
@@ -336,23 +384,56 @@
                         ['label' => 'Surat Pengantar Kombas Wanita','file' => $pendaftaran->surat_pengantar_kombas_wanita],
                     ];
                 @endphp
-                @foreach($docs as $doc)
-                <div class="info-row">
-                    <span class="info-label">{{ $doc['label'] }}</span>
-                    <span class="info-value">
-                        @if($doc['file'])
-                            <a href="{{ asset('storage/' . $doc['file']) }}" target="_blank" class="doc-link">
-                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
-                                </svg>
-                                Lihat Dokumen
-                            </a>
-                        @else
-                            <span class="muted">Tidak diunggah</span>
-                        @endif
-                    </span>
+                <div style="overflow-x:auto">
+                    <table class="doc-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Dokumen</th>
+                                <th>File Dokumen</th>
+                                <th style="width:120px">Aksi Dokumen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($docs as $doc)
+                            <tr>
+                                <td class="doc-name">{{ $doc['label'] }}</td>
+                                <td>
+                                    @if($doc['file'])
+                                        <a href="{{ asset('storage/' . $doc['file']) }}" target="_blank" class="doc-link">
+                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                                            </svg>
+                                            Lihat Dokumen
+                                        </a>
+                                    @else
+                                        <span class="muted doc-empty">Tidak diunggah</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="doc-aksi">
+                                        <form method="POST" action="{{ $routePrefix === 'dashboard' ? route('dashboard.pendaftaran.dokumen-setuju', $pendaftaran->id) : route('admin.pendaftaran.dokumen-setuju', $pendaftaran->id) }}" onsubmit="return confirm('Setuju semua dokumen untuk pendaftaran ini? Email notifikasi akan dikirim ke peserta.');">
+                                            @csrf
+                                            <button type="submit" class="icon-btn icon-btn-approve" title="Setuju (dokumen diterima)">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ $routePrefix === 'dashboard' ? route('dashboard.pendaftaran.dokumen-tolak', $pendaftaran->id) : route('admin.pendaftaran.dokumen-tolak', $pendaftaran->id) }}" onsubmit="return confirm('Tolak dokumen pendaftaran ini? Peserta akan melihat status Tidak Diterima dan dapat mengirim perbaikan.');">
+                                            @csrf
+                                            <button type="submit" class="icon-btn icon-btn-reject" title="Tolak (dokumen tidak diterima)">
+                                                <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                @endforeach
             </div>
         </div>
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\KursusPendaftaranController;
+use App\Http\Controllers\BiayaPembayaranController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Admin\MateriKursusController;
 use App\Http\Controllers\Admin\KehadiranController;
 use App\Http\Controllers\Admin\DokumenController;
 use App\Http\Controllers\Admin\KursusController;
+use App\Http\Controllers\Admin\SuratKelulusanController;
 
 // ─── Login & Logout (domain utama: biaraloresa.my.id)
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -33,7 +35,13 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::middleware('role:super_admin,admin')->group(function () {
         Route::get('/admin', [DashboardController::class, 'admin'])->name('admin');
         Route::get('/pendaftaran', [AdminDashboardController::class, 'list'])->name('pendaftaran.index');
+        Route::get('/pendaftaran-masuk', [AdminDashboardController::class, 'listMasuk'])->name('pendaftaran.masuk');
         Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->name('pendaftaran.show');
+        Route::get('/pendaftaran/{id}/setuju', [AdminDashboardController::class, 'showSetuju'])->name('pendaftaran.setuju');
+        Route::post('/pendaftaran/{id}/setuju', [AdminDashboardController::class, 'setuju'])->name('pendaftaran.setuju.store');
+        Route::get('/pendaftaran-dokumen', [DokumenController::class, 'listDokumen'])->name('pendaftaran.dokumen-list');
+        Route::match(['GET', 'POST'], '/pendaftaran/{id}/dokumen-setuju', [DokumenController::class, 'setuju'])->name('pendaftaran.dokumen-setuju');
+        Route::match(['GET', 'POST'], '/pendaftaran/{id}/dokumen-tolak', [DokumenController::class, 'tolak'])->name('pendaftaran.dokumen-tolak');
         Route::get('/pendaftaran/{id}/dokumen', fn (int $id) => redirect()->route('dashboard.pendaftaran.show', $id))->name('pendaftaran.dokumen.redirect');
         Route::get('/periode', [PeriodeController::class, 'index'])->name('periode.index');
         Route::get('/periode/create', [PeriodeController::class, 'create'])->name('periode.create');
@@ -60,6 +68,22 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
         Route::post('/periode/{periode}/kirim-sertifikat', [KursusController::class, 'kirimSertifikat'])->name('kursus.kirim-sertifikat');
         Route::post('/periode/{periode}/kirim-jadwal-selanjutnya', [KursusController::class, 'kirimJadwalSelanjutnya'])->name('kursus.kirim-jadwal-selanjutnya');
         Route::put('/pendaftaran/{pendaftaran}/pindah-jadwal', [KursusController::class, 'pindahJadwal'])->name('kursus.pindah-jadwal');
+
+        // Biaya tambahan per periode
+        Route::get('/biaya', [\App\Http\Controllers\Admin\BiayaController::class, 'index'])->name('biaya.index');
+        Route::get('/biaya/create', [\App\Http\Controllers\Admin\BiayaController::class, 'create'])->name('biaya.create');
+        Route::post('/biaya', [\App\Http\Controllers\Admin\BiayaController::class, 'store'])->name('biaya.store');
+
+        // Sertifikat kelulusan
+        Route::prefix('sertifikat')->name('sertifikat.')->group(function () {
+            Route::get('/', [SuratKelulusanController::class, 'index'])->name('index');
+            Route::get('/create', [SuratKelulusanController::class, 'create'])->name('create');
+            Route::post('/', [SuratKelulusanController::class, 'store'])->name('store');
+            Route::get('/{surat}', [SuratKelulusanController::class, 'show'])->name('show');
+            Route::get('/{surat}/edit', [SuratKelulusanController::class, 'edit'])->name('edit');
+            Route::put('/{surat}', [SuratKelulusanController::class, 'update'])->name('update');
+            Route::delete('/{surat}', [SuratKelulusanController::class, 'destroy'])->name('destroy');
+        });
     });
 
     // Hanya Super Admin: CRUD admin
@@ -80,8 +104,13 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
         Route::get('/jadwal-materi', [UserDashboardController::class, 'jadwalMateri'])->name('user.jadwal-materi');
         Route::get('/pembayaran', [UserDashboardController::class, 'pembayaran'])->name('user.pembayaran');
         Route::get('/biaya', [UserDashboardController::class, 'biaya'])->name('user.biaya');
+        Route::get('/biaya/{tagihan}', [BiayaPembayaranController::class, 'show'])->name('user.biaya.show');
+        Route::get('/biaya/{tagihan}/status', [BiayaPembayaranController::class, 'checkStatus'])->name('user.biaya.status');
+        Route::post('/biaya/{tagihan}/new-qr', [BiayaPembayaranController::class, 'newQr'])->name('user.biaya.new-qr');
+        Route::get('/biaya/{tagihan}/qr-image', [BiayaPembayaranController::class, 'qrImage'])->name('user.biaya.qr-image');
         Route::get('/sertifikat', [UserDashboardController::class, 'sertifikat'])->name('user.sertifikat');
         Route::get('/sertifikat/{pendaftaran}/download', [UserDashboardController::class, 'downloadSertifikat'])->name('user.sertifikat.download');
+        Route::post('/perbaikan-dokumen/{id}', [UserDashboardController::class, 'submitPerbaikanDokumen'])->name('user.perbaikan-dokumen');
         Route::get('/profil', [UserProfileController::class, 'show'])->name('user.profil');
         Route::put('/profil', [UserProfileController::class, 'update'])->name('user.profil.update');
         Route::get('/password', [UserProfileController::class, 'showPassword'])->name('user.password');
@@ -106,7 +135,13 @@ Route::domain('admin.biaraloresa.my.id')->group(function () {
 
     Route::post('/logout',  [AdminAuthController::class, 'logout'])->middleware('admin')->name('admin.logout');
     Route::get('/pendaftaran', [AdminDashboardController::class, 'list'])->middleware('admin')->name('admin.pendaftaran.index');
+    Route::get('/pendaftaran-masuk', [AdminDashboardController::class, 'listMasuk'])->middleware('admin')->name('admin.pendaftaran.masuk');
     Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->middleware('admin')->name('admin.pendaftaran.show');
+    Route::get('/pendaftaran-dokumen', [DokumenController::class, 'listDokumen'])->middleware('admin')->name('admin.pendaftaran.dokumen-list');
+    Route::match(['GET', 'POST'], '/pendaftaran/{id}/dokumen-setuju', [DokumenController::class, 'setuju'])->middleware('admin')->name('admin.pendaftaran.dokumen-setuju');
+    Route::match(['GET', 'POST'], '/pendaftaran/{id}/dokumen-tolak', [DokumenController::class, 'tolak'])->middleware('admin')->name('admin.pendaftaran.dokumen-tolak');
+    Route::get('/pendaftaran/{id}/setuju', [AdminDashboardController::class, 'showSetuju'])->middleware('admin')->name('admin.pendaftaran.setuju');
+    Route::post('/pendaftaran/{id}/setuju', [AdminDashboardController::class, 'setuju'])->middleware('admin')->name('admin.pendaftaran.setuju.store');
     Route::put('/pendaftaran/{id}/dokumen', [DokumenController::class, 'updateStatus'])->middleware('admin')->name('admin.dokumen.update');
 });
 

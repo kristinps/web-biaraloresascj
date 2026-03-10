@@ -1,0 +1,370 @@
+@extends('layouts.app')
+
+@section('title', 'Pembayaran Biaya Tambahan - Kursus Pernikahan')
+
+@section('content')
+<div class="min-h-screen py-12 px-4" style="background:linear-gradient(135deg,#f0f4ff 0%,#fff0f6 100%)">
+    <div class="max-w-md mx-auto">
+
+        {{-- Header --}}
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 shadow-lg"
+                 style="background:linear-gradient(135deg,#1e2685,#16a34a)">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 12v-2m0 2c-1.11 0-2.08-.402-2.599-1M21 12A9 9 0 113 12a9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-1">Pembayaran Biaya Tambahan</h1>
+            <p class="text-gray-500 text-sm">Kursus Pernikahan · Biara Loresa SCJ</p>
+        </div>
+
+        {{-- Alert error --}}
+        @if(session('error'))
+        <div class="mb-5 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3">
+            <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+            <p class="text-red-700 text-sm">{{ session('error') }}</p>
+        </div>
+        @endif
+
+        {{-- Card utama --}}
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+
+            {{-- Gradient top bar --}}
+            <div class="h-1.5" style="background:linear-gradient(90deg,#1e2685,#22c55e,#16a34a)"></div>
+
+            <div class="p-6">
+
+                {{-- Info pendaftar --}}
+                <div class="flex items-center gap-3 mb-5 p-3 rounded-xl" style="background:#f5f3ff">
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                         style="background:#ede9fe">
+                        <svg class="w-4 h-4" style="color:#7c3aed" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs text-gray-400">Calon Mempelai</p>
+                        <p class="text-sm font-semibold text-gray-800 truncate">
+                            {{ $tagihan->pendaftaran->nama_pria }} &amp; {{ $tagihan->pendaftaran->nama_wanita }}
+                        </p>
+                        @if($tagihan->biaya && $tagihan->biaya->periode)
+                            <p class="text-xs text-gray-500">
+                                Periode: {{ $tagihan->biaya->periode->nama }}
+                            </p>
+                        @endif
+                    </div>
+                    <code class="text-xs font-mono px-2 py-1 rounded-lg flex-shrink-0"
+                          style="background:#ede9fe;color:#7c3aed">
+                        #{{ str_pad($tagihan->id, 5, '0', STR_PAD_LEFT) }}
+                    </code>
+                </div>
+
+                {{-- Total --}}
+                <div class="flex items-center justify-between mb-5 px-4 py-3 rounded-xl"
+                     style="background:linear-gradient(135deg,#faf5ff,#f5f3ff);border:1.5px solid #e9d5ff">
+                    <span class="text-sm font-medium text-gray-600">Total Biaya Tambahan</span>
+                    <span class="text-xl font-extrabold" style="color:#7c3aed">
+                        Rp {{ number_format($tagihan->biaya->nominal ?? 0, 0, ',', '.') }}
+                    </span>
+                </div>
+
+                {{-- QR Code --}}
+                <div class="text-center mb-5">
+                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">
+                        Scan QR Code di bawah ini
+                    </p>
+
+                    @if($tagihan->qris_url)
+                    <div class="relative inline-block">
+                        {{-- Border dekoratif --}}
+                        <div class="absolute -inset-2 rounded-2xl opacity-30"
+                             style="background:linear-gradient(135deg,#1e2685,#22c55e,#16a34a)"></div>
+                        <div id="qr-container" class="relative bg-white rounded-xl p-4 shadow-lg">
+                            {{-- QR Image diambil melalui proxy server kita --}}
+                            <img src="{{ route('dashboard.user.biaya.qr-image', $tagihan->id) }}"
+                                 alt="QR Code QRIS Pembayaran"
+                                 class="w-60 h-60 mx-auto object-contain"
+                                 id="qr-image"
+                                 onerror="this.style.display='none'; document.getElementById('qr-fallback').style.display='flex';">
+                            <div id="qr-fallback" style="display:none"
+                                 class="w-60 h-60 flex flex-col items-center justify-center text-gray-400">
+                                <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                                <p class="text-xs text-center">QR Code tidak tersedia.<br/>Coba muat ulang halaman.</p>
+                            </div>
+                            {{-- Overlay regenerasi --}}
+                            <div id="qr-overlay" style="display:none"
+                                 class="absolute inset-0 bg-white/90 rounded-xl flex flex-col items-center justify-center z-10">
+                                <svg class="w-8 h-8 animate-spin mb-2" style="color:#7c3aed" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                <p class="text-xs font-semibold" style="color:#7c3aed">Memuat QR baru…</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Label QRIS --}}
+                    <div class="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold"
+                         style="background:#ecfdf5;color:#065f46;border:1.5px solid #6ee7b7">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        QRIS · Semua e-wallet &amp; mobile banking
+                    </div>
+                    @else
+                    <div class="w-56 h-56 mx-auto flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 text-gray-400">
+                        <svg class="w-10 h-10 mb-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        <p class="text-xs text-center">Memuat QR Code…</p>
+                    </div>
+                    @endif
+                </div>
+
+                {{-- Panduan singkat --}}
+                <div class="rounded-xl p-4 mb-5 text-xs" style="background:#fffbeb;border:1.5px solid #fde68a">
+                    <p class="font-bold text-amber-700 mb-2">Cara Pembayaran:</p>
+                    <ol class="space-y-1 text-amber-600 list-decimal list-inside">
+                        <li>Buka aplikasi GoPay, OVO, DANA, ShopeePay, atau mobile banking</li>
+                        <li>Pilih menu <strong>Scan QR / QRIS</strong></li>
+                        <li>Scan kode QR di atas</li>
+                        <li>Konfirmasi pembayaran <strong>Biaya Tambahan</strong></li>
+                        <li>Klik tombol <strong>"Saya Sudah Bayar"</strong> di bawah</li>
+                    </ol>
+                </div>
+
+                {{-- Tombol cek status --}}
+                <button id="btn-check-status"
+                    onclick="cekStatusPembayaran()"
+                    class="w-full py-3.5 px-6 rounded-2xl font-bold text-white text-sm shadow-md transition-all active:scale-95 hover:opacity-90 flex items-center justify-center gap-2"
+                    style="background:linear-gradient(135deg,#1e2685 0%,#22c55e 50%,#16a34a 100%)">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span id="btn-check-text">Saya Sudah Bayar — Cek Status</span>
+                </button>
+
+                {{-- Status result --}}
+                <div id="status-result" class="mt-3 hidden"></div>
+
+                {{-- Masa berlaku --}}
+                <p id="expiry-label" class="text-center text-xs text-gray-400 mt-3">
+                    @if($tagihan->qris_expired_at)
+                    QR berlaku hingga: <strong>{{ $tagihan->qris_expired_at->locale('id')->isoFormat('D MMM YYYY, HH:mm') }} WIB</strong>
+                    &nbsp;·&nbsp;<span id="countdown" class="font-mono"></span>
+                    @endif
+                </p>
+            </div>
+        </div>
+
+        {{-- Footer --}}
+        <p class="text-center text-xs text-gray-400 mt-5">
+            Pembayaran diproses aman oleh <strong class="text-gray-600">Midtrans</strong> ·
+            <a href="{{ route('kontak') }}" class="underline hover:text-gray-600">Butuh bantuan?</a>
+        </p>
+
+    </div>
+</div>
+
+<script>
+const statusUrl = @json(route('dashboard.user.biaya.status', $tagihan->id));
+const newQrUrl  = @json(route('dashboard.user.biaya.new-qr', $tagihan->id));
+const finishUrl = @json(route('dashboard.user.biaya'));
+const csrfToken = @json(csrf_token());
+
+let expiryDate   = @json($tagihan->qris_expired_at?->toIso8601String());
+let polling      = null;
+let countdownInt = null;
+let regenerating = false;
+
+// ── Countdown timer ────────────────────────────────────────────────────────
+function startCountdown() {
+    clearInterval(countdownInt);
+    if (!expiryDate) return;
+
+    const el = document.getElementById('countdown');
+    countdownInt = setInterval(() => {
+        const diff = Math.floor((new Date(expiryDate) - Date.now()) / 1000);
+        if (!el) return;
+        if (diff <= 0) {
+            el.textContent = '(kedaluwarsa)';
+            el.style.color = '#dc2626';
+            clearInterval(countdownInt);
+            return;
+        }
+        const h = Math.floor(diff / 3600);
+        const m = Math.floor((diff % 3600) / 60);
+        const s = diff % 60;
+        el.textContent = h > 0
+            ? `(${h}j ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}d)`
+            : `(${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}d)`;
+        el.style.color = diff < 300 ? '#dc2626' : '#6b7280';
+    }, 1000);
+}
+
+// ── Auto-regenerate QR tanpa reload halaman ────────────────────────────────
+async function regenerateQr() {
+    if (regenerating) return;
+    regenerating = true;
+
+    const overlay   = document.getElementById('qr-overlay');
+    const statusRes = document.getElementById('status-result');
+    const btn       = document.getElementById('btn-check-status');
+    const btnText   = document.getElementById('btn-check-text');
+
+    if (overlay) overlay.style.display = 'flex';
+    if (btn) btn.disabled = true;
+    if (btnText) btnText.textContent = 'Memuat QR baru…';
+
+    try {
+        const res  = await fetch(newQrUrl, {
+            method:  'POST',
+            headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+        });
+        const data = await res.json();
+
+        if (data.status === 'lunas') {
+            window.location.href = data.redirect_url || finishUrl;
+            return;
+        }
+
+        if (data.success) {
+            const img = document.getElementById('qr-image');
+            if (img) {
+                img.style.display = 'block';
+                img.src = data.qr_image_url;
+                const fb = document.getElementById('qr-fallback');
+                if (fb) fb.style.display = 'none';
+            }
+
+            expiryDate = data.expired_at;
+            const expiryLabel = document.getElementById('expiry-label');
+            if (expiryLabel) {
+                expiryLabel.innerHTML = `QR berlaku hingga: <strong>${data.expired_label} WIB</strong> &nbsp;·&nbsp;<span id="countdown" class="font-mono"></span>`;
+            }
+            startCountdown();
+
+            if (statusRes) {
+                statusRes.className = 'mt-3 p-3 rounded-xl text-sm text-center hidden';
+                statusRes.textContent = '';
+            }
+        } else {
+            showStatusMsg('error', '⚠ Gagal membuat QR baru. Coba lagi.');
+        }
+    } catch {
+        showStatusMsg('error', '⚠ Koneksi gagal saat memuat QR baru.');
+    } finally {
+        if (overlay) overlay.style.display = 'none';
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.textContent = 'Saya Sudah Bayar — Cek Status';
+        regenerating = false;
+    }
+}
+
+// ── Tampilkan pesan status ─────────────────────────────────────────────────
+function showStatusMsg(type, text) {
+    const el = document.getElementById('status-result');
+    if (!el) return;
+
+    const styles = {
+        success: { bg: '#ecfdf5', color: '#065f46', border: '1.5px solid #6ee7b7' },
+        warning: { bg: '#fffbeb', color: '#92400e', border: '1.5px solid #fde68a' },
+        error:   { bg: '#fef2f2', color: '#991b1b', border: '1.5px solid #fecaca' },
+        neutral: { bg: '#f3f4f6', color: '#374151', border: '1.5px solid #e5e7eb' },
+    };
+    const s = styles[type] || styles.neutral;
+    el.className   = 'mt-3 p-3 rounded-xl text-sm text-center';
+    el.style.background = s.bg;
+    el.style.color      = s.color;
+    el.style.border     = s.border;
+    el.textContent = text;
+    el.classList.remove('hidden');
+}
+
+// ── Tombol "Saya Sudah Bayar" ──────────────────────────────────────────────
+async function cekStatusPembayaran() {
+    const btn     = document.getElementById('btn-check-status');
+    const btnText = document.getElementById('btn-check-text');
+    btn.disabled     = true;
+    btnText.textContent = 'Mengecek status…';
+
+    try {
+        const res  = await fetch(statusUrl);
+        const data = await res.json();
+        await handleStatus(data);
+    } catch {
+        showStatusMsg('error', '⚠ Gagal memeriksa status. Coba lagi.');
+        btn.disabled = false;
+        btnText.textContent = 'Cek Status Lagi';
+    }
+}
+
+// ── Handler status terpusat ────────────────────────────────────────────────
+async function handleStatus(data) {
+    const btn     = document.getElementById('btn-check-status');
+    const btnText = document.getElementById('btn-check-text');
+
+    if (data.status === 'lunas') {
+        clearInterval(polling);
+        clearInterval(countdownInt);
+        showStatusMsg('success', '✓ Pembayaran biaya tambahan berhasil dikonfirmasi! Mengalihkan…');
+        setTimeout(() => { window.location.href = data.redirect_url || finishUrl; }, 1500);
+        return;
+    }
+
+    if (data.status === 'pending' || data.status === 'menunggu') {
+        showStatusMsg('warning', '⏳ Pembayaran belum terkonfirmasi. Silakan scan QR terlebih dahulu.');
+        btn.disabled = false;
+        btnText.textContent = 'Cek Status Lagi';
+        return;
+    }
+
+    if (data.status === 'expire' || data.status === 'cancel' || data.status === 'deny' || data.status === 'gagal') {
+        showStatusMsg('warning', '🔄 QR kedaluwarsa atau dibatalkan. Membuat QR baru secara otomatis…');
+        await regenerateQr();
+        return;
+    }
+
+    // belum_bayar / unknown
+    showStatusMsg('neutral', 'Belum ada pembayaran yang masuk. Silakan scan QR di atas.');
+    btn.disabled = false;
+    btnText.textContent = 'Cek Status Lagi';
+}
+
+// ── Auto-poll setiap 5 detik ───────────────────────────────────────────────
+function startPolling() {
+    polling = setInterval(async () => {
+        if (regenerating) return;
+        try {
+            const res  = await fetch(statusUrl);
+            const data = await res.json();
+
+            if (data.status === 'lunas') {
+                clearInterval(polling);
+                clearInterval(countdownInt);
+                window.location.href = data.redirect_url || finishUrl;
+                return;
+            }
+
+            if (data.status === 'expire' || data.status === 'cancel' || data.status === 'deny') {
+                clearInterval(polling);
+                await regenerateQr();
+                startPolling();
+            }
+        } catch { /* abaikan error jaringan sementara */ }
+    }, 5000);
+}
+
+startPolling();
+startCountdown();
+</script>
+@endsection
+

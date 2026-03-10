@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('pendaftaran_pernikahan', 'user_id')) {
             Schema::table('pendaftaran_pernikahan', function (Blueprint $table) {
-                $table->foreignId('user_id')->nullable()->after('id')->constrained('users')->nullOnDelete();
+                $table->foreignUuid('user_id')->nullable()->after('id')->constrained('users')->nullOnDelete();
             });
         }
     }

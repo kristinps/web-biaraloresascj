@@ -36,12 +36,14 @@ class PeriodeController extends Controller
         $request->validate([
             'nama'          => 'required|string|max:255',
             'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
             'catatan'       => 'nullable|string',
         ]);
 
         $periode = PeriodePernikahan::create([
             'nama'          => $request->nama,
             'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
             'catatan'       => $request->catatan,
             'status'        => 'aktif',
         ]);
@@ -84,12 +86,14 @@ class PeriodeController extends Controller
         $request->validate([
             'nama'          => 'required|string|max:255',
             'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
             'catatan'       => 'nullable|string',
         ]);
 
         $periode->update([
             'nama'          => $request->nama,
             'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
             'catatan'       => $request->catatan,
         ]);
 

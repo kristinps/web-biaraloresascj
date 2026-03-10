@@ -136,6 +136,20 @@
     }
     .btn-detail:hover { background: #dce6ff; color: #1e2685; box-shadow: 0 2px 8px rgba(34,48,206,0.15); }
     .btn-detail svg { width: 15px; height: 15px; }
+    .btn-approve {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 9px 14px; border-radius: 10px;
+        background: linear-gradient(135deg, #059669, #10b981);
+        color: #fff;
+        font-size: 13px; font-weight: 600;
+        text-decoration: none;
+        border: none;
+        margin-left: 6px;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+        transition: opacity 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+    .btn-approve:hover { opacity: 0.95; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4); transform: translateY(-1px); }
+    .btn-approve svg { width: 14px; height: 14px; }
     .empty-state {
         text-align: center;
         padding: 64px 28px;
@@ -167,6 +181,225 @@
     }
     .pagination-info { font-size: 13px; color: #64748b; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .section-title {
+        margin-top: 28px;
+        margin-bottom: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+    .section-title h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.01em;
+    }
+    .section-title small {
+        display: block;
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 2px;
+    }
+    .btn-primary-soft {
+        padding: 9px 16px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, #2230ce, #3d56f5);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(34,48,206,0.28);
+    }
+    .btn-primary-soft svg { width: 16px; height: 16px; }
+    .badge-status {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .badge-status-aktif {
+        background: #dcfce7;
+        color: #15803d;
+    }
+    .badge-status-selesai {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+    .table-periode table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table-periode th,
+    .table-periode td {
+        padding: 10px 16px;
+        font-size: 13px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+    .table-periode th {
+        background: #f9fafb;
+        font-weight: 600;
+        color: #6b7280;
+    }
+    .table-periode tbody tr:hover {
+        background: #f9fafb;
+    }
+    .btn-link {
+        font-size: 12px;
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+        margin-right: 8px;
+    }
+    .btn-link-danger {
+        color: #b91c1c;
+    }
+    .subsection-title {
+        margin-top: 24px;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #0f172a;
+    }
+    .table-peserta-small {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    .table-peserta-small th,
+    .table-peserta-small td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: middle;
+    }
+    .table-peserta-small th {
+        background: #f9fafb;
+        font-weight: 600;
+        color: #6b7280;
+        text-align: left;
+    }
+    .btn-check {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        border: none;
+        background: #22c55e;
+        color: #fff;
+        cursor: pointer;
+    }
+    .btn-check svg {
+        width: 18px;
+        height: 18px;
+    }
+    .btn-check[disabled] {
+        opacity: 0.4;
+        cursor: default;
+    }
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 120;
+    }
+    .modal-backdrop.open {
+        display: flex;
+    }
+    .modal {
+        background: #ffffff;
+        border-radius: 18px;
+        max-width: 460px;
+        width: 100%;
+        padding: 22px 22px 20px;
+        box-shadow: 0 18px 45px rgba(15,23,42,0.35);
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+    .modal-header h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .modal-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #9ca3af;
+    }
+    .modal-close svg {
+        width: 18px;
+        height: 18px;
+    }
+    .modal-body {
+        margin-bottom: 12px;
+    }
+    .form-group {
+        margin-bottom: 10px;
+    }
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 4px;
+    }
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        padding: 8px 11px;
+        font-size: 13px;
+        font-family: 'Inter', sans-serif;
+    }
+    .form-group textarea {
+        min-height: 70px;
+        resize: vertical;
+    }
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 4px;
+    }
+    .btn-secondary {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        font-size: 13px;
+        color: #4b5563;
+        cursor: pointer;
+    }
+    .btn-primary {
+        padding: 8px 18px;
+        border-radius: 999px;
+        border: none;
+        background: #2230ce;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
     @media (max-width: 768px) {
         .hide-mobile { display: none !important; }
         .filter-bar { padding: 14px 16px; }
@@ -252,7 +485,13 @@
                         <td class="hide-mobile">
                             @php
                                 $sk = $item->status_kursus ?? 'terjadwal';
-                                $skLabel = match($sk) { 'lulus' => 'Lulus', 'tidak_lulus' => 'Tidak lulus', 'sedang_berjalan' => 'Berjalan', default => 'Terjadwal' };
+                                $skLabel = match($sk) {
+                                    'lulus' => 'Lulus',
+                                    'tidak_lulus' => 'Tidak lulus',
+                                    'sedang_berjalan' => 'Berjalan',
+                                    'menunggu' => 'Menunggu',
+                                    default => 'Terjadwal',
+                                };
                             @endphp
                             <span class="badge badge-{{ $sk }}">{{ $skLabel }}</span>
                         </td>
@@ -264,6 +503,14 @@
                                 </svg>
                                 Detail
                             </a>
+                            @if(($item->status_kursus ?? '') === 'menunggu')
+                                <a href="{{ route($routePrefix . '.pendaftaran.setuju', $item->id) }}" class="btn-approve" title="Terima pendaftaran & pilih periode">
+                                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Terima
+                                </a>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
@@ -287,4 +534,250 @@
     @endif
 </div>
 
+{{-- Section Periode --}}
+<div class="section-title">
+    <div>
+        <h2>Periode Kursus</h2>
+        <small>Kelola periode aktif dan riwayat periode yang sudah selesai.</small>
+    </div>
+    <button type="button" class="btn-primary-soft" onclick="openPeriodeModal()">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+        </svg>
+        Tambah Periode
+    </button>
+</div>
+
+<div class="card table-periode">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama Periode</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Akhir</th>
+                    <th>Status</th>
+                    <th>Jumlah Pendaftar</th>
+                    <th style="width:220px">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse(($periodeAktif ?? collect()) as $periode)
+                    <tr>
+                        <td>{{ $periode->nama }}</td>
+                        <td>{{ $periode->tanggal_mulai ? $periode->tanggal_mulai->format('d M Y') : '–' }}</td>
+                        <td>{{ $periode->tanggal_selesai ? $periode->tanggal_selesai->format('d M Y') : '–' }}</td>
+                        <td>
+                            <span class="badge-status badge-status-{{ $periode->status }}">
+                                {{ strtoupper($periode->status) }}
+                            </span>
+                        </td>
+                        <td>{{ $periode->pendaftaran_count }}</td>
+                        <td>
+                            <a href="{{ route($routePrefix . '.periode.show', $periode->id) }}" class="btn-link">Detail</a>
+                            <a href="{{ route($routePrefix . '.periode.edit', $periode->id) }}" class="btn-link">Edit</a>
+                            <form action="{{ route($routePrefix . '.periode.tutup', $periode->id) }}" method="POST" style="display:inline">
+                                @csrf
+                                <button type="submit" class="btn-link btn-link-danger" onclick="return confirm('Tutup periode ini?')">
+                                    Tutup Periode
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" style="text-align:center;color:#6b7280;padding:18px 0;">
+                            Belum ada periode aktif.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="subsection-title">Periode Selesai</div>
+<div class="card table-periode" style="margin-top:6px;">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama Periode</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Akhir</th>
+                    <th>Status</th>
+                    <th>Jumlah Pendaftar</th>
+                    <th style="width:200px">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse(($periodeSelesai ?? collect()) as $periode)
+                    <tr>
+                        <td>{{ $periode->nama }}</td>
+                        <td>{{ $periode->tanggal_mulai ? $periode->tanggal_mulai->format('d M Y') : '–' }}</td>
+                        <td>{{ $periode->tanggal_selesai ? $periode->tanggal_selesai->format('d M Y') : '–' }}</td>
+                        <td>
+                            <span class="badge-status badge-status-{{ $periode->status }}">
+                                {{ strtoupper($periode->status) }}
+                            </span>
+                        </td>
+                        <td>{{ $periode->pendaftaran_count }}</td>
+                        <td>
+                            <a href="{{ route($routePrefix . '.periode.show', $periode->id) }}" class="btn-link">Detail</a>
+                            <form action="{{ route($routePrefix . '.periode.buka', $periode->id) }}" method="POST" style="display:inline">
+                                @csrf
+                                <button type="submit" class="btn-link">Buka Kembali</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" style="text-align:center;color:#6b7280;padding:18px 0;">
+                            Belum ada periode selesai.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{-- Section Pendaftaran per Periode Aktif --}}
+<div class="subsection-title">Pendaftaran pada Periode Aktif</div>
+@forelse(($periodeAktif ?? collect()) as $periode)
+    <div class="card" style="margin-top:8px;margin-bottom:10px;">
+        <div style="padding:12px 18px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div>
+                <div style="font-weight:600;font-size:14px;color:#111827;">{{ $periode->nama }}</div>
+                <div style="font-size:12px;color:#6b7280;">
+                    {{ $periode->tanggal_mulai ? $periode->tanggal_mulai->format('d M Y') : '–' }}
+                    @if($periode->tanggal_selesai)
+                        – {{ $periode->tanggal_selesai->format('d M Y') }}
+                    @endif
+                    · {{ $periode->pendaftaran_count }} pendaftar
+                </div>
+            </div>
+        </div>
+        <div class="table-wrap" style="padding:10px 16px 14px;">
+            @php
+                $pesertaPeriode = $periode->pendaftaran ?? collect();
+            @endphp
+            @if($pesertaPeriode->isEmpty())
+                <div style="font-size:13px;color:#6b7280;padding:8px 0;">
+                    Belum ada peserta terdaftar pada periode ini.
+                </div>
+            @else
+                <table class="table-peserta-small">
+                    <thead>
+                        <tr>
+                            <th>Peserta</th>
+                            <th class="hide-mobile">Status Kursus</th>
+                            <th style="width:120px">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($pesertaPeriode as $peserta)
+                            @php
+                                $sk = $peserta->status_kursus ?? 'terjadwal';
+                                $skLabel = match($sk) {
+                                    'lulus' => 'Lulus',
+                                    'tidak_lulus' => 'Tidak lulus',
+                                    'sedang_berjalan' => 'Berjalan',
+                                    'menunggu' => 'Menunggu',
+                                    default => 'Terjadwal',
+                                };
+                            @endphp
+                            <tr>
+                                <td>
+                                    <div class="td-names">
+                                        {{ $peserta->nama_pria }} &amp; {{ $peserta->nama_wanita }}
+                                        <small>{{ $peserta->email }}</small>
+                                    </div>
+                                </td>
+                                <td class="hide-mobile">
+                                    <span class="badge badge-{{ $sk }}">{{ $skLabel }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ route($routePrefix . '.pendaftaran.show', $peserta->id) }}" class="btn-detail" style="padding:7px 12px;font-size:12px;">
+                                        Detail
+                                    </a>
+                                    <form action="{{ route($routePrefix . '.pendaftaran.setuju', $peserta->id) }}" method="GET" style="display:inline">
+                                        <button type="submit" class="btn-check" title="Centang / proses pendaftaran" {{ ($peserta->status_kursus ?? '') === 'menunggu' ? '' : 'disabled' }}>
+                                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
+        </div>
+    </div>
+@empty
+    <div class="card" style="margin-top:6px;">
+        <div style="padding:14px 18px;font-size:13px;color:#6b7280;">
+            Belum ada periode aktif sehingga tidak ada daftar peserta per periode.
+        </div>
+    </div>
+@endforelse
+
+{{-- Modal Tambah Periode --}}
+<div class="modal-backdrop" id="periodeModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="periodeModalTitle">
+        <div class="modal-header">
+            <h3 id="periodeModalTitle">Tambah Periode</h3>
+            <button type="button" class="modal-close" onclick="closePeriodeModal()" aria-label="Tutup">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <form method="POST" action="{{ route($routePrefix . '.periode.store') }}">
+            @csrf
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nama_periode">Nama Periode</label>
+                    <input type="text" id="nama_periode" name="nama" required placeholder="Contoh: Periode Maret 2026">
+                </div>
+                <div class="form-group">
+                    <label for="tanggal_mulai">Tanggal Mulai</label>
+                    <input type="date" id="tanggal_mulai" name="tanggal_mulai" required>
+                </div>
+                <div class="form-group">
+                    <label for="tanggal_selesai">Tanggal Akhir (opsional)</label>
+                    <input type="date" id="tanggal_selesai" name="tanggal_selesai">
+                </div>
+                <div class="form-group">
+                    <label for="catatan">Catatan / Keterangan</label>
+                    <textarea id="catatan" name="catatan" placeholder="Tambahkan catatan khusus untuk periode ini (opsional)"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closePeriodeModal()">Batal</button>
+                <button type="submit" class="btn-primary">Simpan / Buat</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
+
+@push('scripts')
+<script>
+    function openPeriodeModal() {
+        var el = document.getElementById('periodeModal');
+        if (el) {
+            el.classList.add('open');
+        }
+    }
+    function closePeriodeModal() {
+        var el = document.getElementById('periodeModal');
+        if (el) {
+            el.classList.remove('open');
+        }
+    }
+</script>
+@endpush

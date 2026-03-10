@@ -217,11 +217,13 @@
                         <td class="hide-mobile">
                             @php $sd = $item->status_dokumen ?? 'belum_diperiksa'; @endphp
                             @if($sd === 'lengkap')
-                                <span class="badge badge-green"><span class="badge-dot"></span>Lengkap</span>
+                                <span class="badge badge-green"><span class="badge-dot"></span>Dokumen diterima</span>
                             @elseif($sd === 'tidak_lengkap')
-                                <span class="badge badge-amber"><span class="badge-dot"></span>Tidak lengkap</span>
+                                <span class="badge badge-amber"><span class="badge-dot"></span>Tidak diterima</span>
+                            @elseif($sd === 'sedang_diperiksa')
+                                <span class="badge badge-blue"><span class="badge-dot"></span>Sedang diperiksa</span>
                             @else
-                                <span class="badge badge-slate"><span class="badge-dot"></span>Belum dicek</span>
+                                <span class="badge badge-slate"><span class="badge-dot"></span>Menunggu</span>
                             @endif
                         </td>
                         <td class="hide-mobile">

@@ -6,119 +6,295 @@
 
 @push('styles')
 <style>
-    /* Background seperti beranda: gambar + overlay */
+    /* Background mengikuti tema dashboard */
     .profil-bg {
-        margin: -28px; padding: 16px;
-        min-height: auto; position: relative; overflow: hidden;
+        margin: -28px;
+        padding: 20px 28px 28px;
+        position: relative;
+        overflow: hidden;
+        min-height: auto;
     }
     .profil-bg .profil-bg-image {
-        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        position: absolute; inset: 0;
         background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1920&h=1080&fit=crop');
-        background-size: cover; background-position: center; background-repeat: no-repeat;
+        background-size: cover; background-position: center;
     }
     .profil-bg .profil-bg-overlay {
-        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-        background: linear-gradient(135deg, rgba(30,38,133,0.88) 0%, rgba(61,86,245,0.75) 100%);
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(30,38,133,0.88) 0%, rgba(61,86,245,0.78) 100%);
     }
     @media (max-width: 768px) {
-        .profil-bg { margin: -20px -16px; padding: 12px 16px; }
+        .profil-bg { margin: -20px -16px; padding: 16px; }
     }
 
-    .profil-page { max-width: 420px; margin: 0 auto; position: relative; z-index: 10; }
-    .profil-page .card {
-        background: #fff; border-radius: 0.75rem; overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e5e7eb;
-    }
-    .profil-page .card-body { padding: 1rem 1.25rem; }
-
-    .profil-title {
-        font-family: Georgia, 'Times New Roman', serif; font-size: 1.25rem; font-weight: 700; color: #1e293b;
-        margin: 0 0 0.25rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;
+    .profil-page {
+        position: relative;
+        z-index: 10;
+        max-width: 760px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
     }
 
-    .form-row {
-        display: flex; flex-direction: column; gap: 0; margin-bottom: 0.75rem;
+    .profil-card {
+        background: #ffffff;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 15px -5px rgba(15,23,42,0.25);
+        overflow: hidden;
     }
+    .profil-card-header {
+        padding: 16px 20px 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .profil-card-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 2px;
+    }
+    .profil-card-subtitle {
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+    .profil-card-body {
+        padding: 16px 20px 20px;
+    }
+
+    /* Kartu profil pasangan: dua lingkaran + ikon hati di tengah */
+    .couple-photos-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 26px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+    .couple-photo-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        min-width: 120px;
+    }
+    .couple-photo-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #2230ce;
+    }
+    .avatar-circle {
+        width: 110px;
+        height: 110px;
+        border-radius: 999px;
+        overflow: hidden;
+        position: relative;
+        border: 3px solid #e2e8f0;
+        box-shadow: 0 4px 14px rgba(15,23,42,0.25);
+        background: radial-gradient(circle at 30% 20%, #fef3c7, #2563eb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .avatar-initial {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+    .avatar-circle.male {
+        background: radial-gradient(circle at 30% 20%, #dbeafe, #1d4ed8);
+    }
+    .avatar-circle.female {
+        background: radial-gradient(circle at 30% 20%, #fee2e2, #db2777);
+    }
+
+    .heart-between {
+        width: 54px;
+        height: 54px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #f97316, #ec4899);
+        box-shadow: 0 4px 16px rgba(251,113,133,0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .heart-between svg {
+        width: 26px;
+        height: 26px;
+        color: #fefce8;
+    }
+
+    .couple-names-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    @media (max-width: 640px) {
+        .couple-names-row {
+            grid-template-columns: minmax(0,1fr);
+        }
+    }
+    .name-block {
+        text-align: center;
+        padding: 6px 8px;
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        border: 1px solid #e2e8f0;
+    }
+    .name-block-title {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 2px;
+    }
+    .name-block-main {
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: #0f172a;
+    }
+    .name-block-sub {
+        font-size: 0.72rem;
+        color: #6b7280;
+        margin-top: 1px;
+    }
+
+    .profil-form-grid {
+        display: grid;
+        grid-template-columns: minmax(0,1.4fr) minmax(0,1.2fr);
+        gap: 14px;
+        margin-top: 10px;
+    }
+    @media (max-width: 768px) {
+        .profil-form-grid { grid-template-columns: minmax(0,1fr); }
+    }
+
     .form-group {
-        margin-bottom: 0.75rem;
+        margin-bottom: 10px;
     }
     .form-group:last-of-type { margin-bottom: 0; }
-    .form-group label {
-        display: block; font-size: 0.75rem; font-weight: 600; color: #334155; margin-bottom: 0.375rem;
+    .form-label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 4px;
     }
-    .form-group input[type="text"],
-    .form-group input[type="email"] {
-        width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.375rem;
-        font-size: 0.875rem; color: #1e293b; background: #fff; box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
+    .form-label span.muted {
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: #94a3b8;
+        margin-left: 4px;
     }
-    .form-group input::placeholder { color: #94a3b8; }
-    .form-group input:focus {
-        outline: none; border-color: #2230ce; box-shadow: 0 0 0 2px rgba(34,48,206,0.12);
+    .form-control {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 0.5rem;
+        border: 1px solid #cbd5e1;
+        font-size: 0.85rem;
+        color: #0f172a;
+        background: #ffffff;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     }
-    .form-group .err { margin-top: 0.25rem; }
-    .form-group .form-hint { font-size: 0.7rem; color: #94a3b8; margin-top: 0.2rem; }
+    .form-control:focus {
+        outline: none;
+        border-color: #2230ce;
+        box-shadow: 0 0 0 2px rgba(34,48,206,0.13);
+        background: #f9fafb;
+    }
+    .form-control[readonly],
+    .form-control[disabled] {
+        background: #f1f5f9;
+        color: #64748b;
+        cursor: not-allowed;
+    }
+    .err {
+        font-size: 0.75rem;
+        color: #dc2626;
+        margin-top: 3px;
+        display: block;
+    }
+    .form-hint {
+        font-size: 0.72rem;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
 
-    .foto-bar {
-        font-size: 0.6875rem; font-weight: 600; color: #475569;
-        margin: 0.5rem 0 0.5rem; padding-bottom: 0.375rem; border-bottom: 1px solid #e2e8f0;
+    .profil-actions {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-end;
     }
-    .foto-bar strong { color: #1e40af; }
+    .btn-primary-small {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: #ffffff;
+        box-shadow: 0 3px 8px rgba(79,70,229,0.35);
+        transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-primary-small:hover {
+        opacity: 0.94;
+        transform: translateY(-1px);
+    }
 
-    .foto-pasangan-wrap {
-        padding: 0.75rem; border-radius: 0.5rem; background: #f0f4ff;
-        border: 1px solid #bfd0ff; display: flex; align-items: flex-start; justify-content: center; gap: 0.75rem; flex-wrap: wrap;
+    /* Kartu ubah password di halaman profil */
+    .password-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        gap: 10px;
     }
-    .foto-pasangan-item { text-align: center; flex: 1; min-width: 80px; }
-    .foto-pasangan-item .label {
-        font-size: 0.625rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.375rem;
-        color: #2230ce; text-transform: uppercase;
+    @media (max-width: 640px) {
+        .password-grid {
+            grid-template-columns: minmax(0,1fr);
+        }
     }
-
-    .upload-zone {
-        display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-        padding: 0.5rem; border: 2px dashed #bfd0ff; border-radius: 0.375rem; cursor: pointer; transition: all 0.2s;
-        min-height: 72px; background: #fff;
+    .password-grid .form-group {
+        margin-bottom: 0;
     }
-    .upload-zone:hover { border-color: #2230ce; background: #f0f4ff; }
-    .upload-zone .icon-wrap {
-        width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        margin-bottom: 0.25rem; background: #dce6ff;
+    .password-actions {
+        margin-top: 14px;
+        display: flex;
+        justify-content: flex-end;
     }
-    .upload-zone .icon-wrap svg { width: 1rem; height: 1rem; color: #2230ce; }
-    .upload-zone .text { font-size: 0.6875rem; font-weight: 600; color: #2b3fe8; }
-    .upload-zone .hint { font-size: 0.625rem; color: #6080ff; margin-top: 0.125rem; }
-    .upload-zone input[type="file"] { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
-
-    .foto-preview-wrap { position: relative; display: inline-block; }
-    .foto-preview-wrap img {
-        width: 64px; height: 85px; object-fit: cover; display: block;
-        border: 2px solid #bfd0ff; box-shadow: 0 2px 8px rgba(34,48,206,0.1); border-radius: 0.375rem;
+    .btn-primary-password {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 18px;
+        font-size: 0.84rem;
+        font-weight: 600;
+        border-radius: 0.75rem;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(14,165,233,0.35);
+        transition: opacity 0.2s, transform 0.1s;
     }
-    .foto-preview-wrap::after {
-        content: ''; position: absolute; inset: -3px; border: 1px solid rgba(240,193,75,0.5);
-        border-radius: 0.5rem; pointer-events: none;
+    .btn-primary-password:hover {
+        opacity: 0.95;
+        transform: translateY(-1px);
     }
-    .foto-preview-wrap .size-badge {
-        position: absolute; top: -6px; right: -6px; background: #f0c14b; color: #1e2685;
-        font-size: 0.5rem; font-weight: 700; padding: 2px 5px; border-radius: 0.25rem; z-index: 3;
-    }
-    .foto-preview-wrap .change-link {
-        position: absolute; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer; z-index: 2;
-    }
-    .foto-preview-wrap .change-link:hover ~ img { box-shadow: 0 0 0 2px #2230ce; }
-    .foto-preview-wrap img { position: relative; z-index: 1; }
-
-    .btn-row { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-    .profil-page .btn-primary {
-        display: inline-flex; align-items: center; padding: 0.4rem 0.75rem;
-        background: #2230ce; color: #fff; border: none; border-radius: 0.375rem;
-        font-size: 0.8125rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
-    }
-    .profil-page .btn-primary:hover { background: #2129a7; }
-    .profil-page .btn-secondary { font-size: 0.75rem; font-weight: 600; color: #2b3fe8; text-decoration: none; }
-    .profil-page .btn-secondary:hover { color: #1e2685; text-decoration: underline; }
-    .err { font-size: 0.75rem; color: #dc2626; margin-top: 0.25rem; display: block; }
 </style>
 @endpush
 
@@ -126,59 +302,180 @@
 <div class="profil-bg">
     <div class="profil-bg-image" aria-hidden="true"></div>
     <div class="profil-bg-overlay" aria-hidden="true"></div>
+
     <div class="profil-page">
-    <div class="card">
-        <div class="card-body">
-            <h2 class="profil-title">Profil Saya</h2>
-            <form method="POST" action="{{ route($userRoutePrefix . '.profil.update') }}" id="form-profil">
-                @csrf
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Nama Lengkap</label>
-                        <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required autofocus placeholder="Masukkan nama lengkap Anda">
-                        @error('name') <span class="err">{{ $message }}</span> @enderror
+        {{-- KARTU 1: PROFIL + DUA LINGKARAN FOTO --}}
+        <div class="profil-card">
+            <div class="profil-card-header">
+                <div class="profil-card-title">Kartu Profil</div>
+                <div class="profil-card-subtitle">
+                    Foto pasangan, nama akun, dan email terdaftar.
+                </div>
+            </div>
+            <div class="profil-card-body">
+                {{-- Dua lingkaran foto: pria & wanita, dengan ikon hati di tengah --}}
+                <div class="couple-photos-row">
+                    <div class="couple-photo-item">
+                        <div class="couple-photo-label">Calon Mempelai Pria</div>
+                        <div class="avatar-circle male">
+                            @if(!empty($fotoPriaUrl))
+                                <img src="{{ $fotoPriaUrl }}" alt="Foto calon mempelai pria">
+                            @else
+                                <span class="avatar-initial">P</span>
+                            @endif
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Alamat Email</label>
-                        <input type="text" value="{{ $user->email }}" readonly disabled class="input-readonly" style="background:#f1f5f9;color:#64748b;cursor:not-allowed">
-                        <p class="form-hint">Email tidak dapat diubah.</p>
+
+                    <div class="heart-between" aria-hidden="true">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 3 12.904 3 10.125 3 7.5 4.714 5.25 7.125 5.25 8.8 5.25 10.07 6.21 10.91 7.27c.84-1.06 2.11-2.02 3.785-2.02 2.412 0 4.125 2.25 4.125 4.875 0 2.779-1.688 5.235-3.989 7.382a25.18 25.18 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.003-.003.002a.75.75 0 01-.704 0l-.003-.002z"/>
+                        </svg>
+                    </div>
+
+                    <div class="couple-photo-item">
+                        <div class="couple-photo-label">Calon Mempelai Wanita</div>
+                        <div class="avatar-circle female">
+                            @if(!empty($fotoWanitaUrl))
+                                <img src="{{ $fotoWanitaUrl }}" alt="Foto calon mempelai wanita">
+                            @else
+                                <span class="avatar-initial">W</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
-                <div class="foto-bar"><strong>Pas Foto</strong> — Hanya tampilan (tidak dapat diubah)</div>
-                <div class="foto-pasangan-wrap">
-                    <div class="foto-pasangan-item">
-                        <p class="label">Calon Mempelai Pria</p>
-                        @if(!empty($fotoPriaUrl))
-                            <div class="foto-preview-wrap pria">
-                                <img src="{{ $fotoPriaUrl }}" alt="Foto calon mempelai pria" style="width:64px;height:85px;object-fit:cover;border-radius:0.375rem;border:2px solid #bfd0ff">
-                                <span class="size-badge">3×4</span>
-                            </div>
-                        @else
-                            <div class="upload-zone" style="cursor:default;opacity:0.8"><span class="text">—</span></div>
-                        @endif
+                {{-- Nama & data lain di bawah masing-masing foto (placeholder, diisi dari data pendaftaran bila tersedia) --}}
+                <div class="couple-names-row">
+                    <div class="name-block">
+                        <div class="name-block-title">Calon Mempelai Pria</div>
+                        <div class="name-block-main">
+                            {{ $pendaftaranPriaNama ?? '—' }}
+                        </div>
+                        <div class="name-block-sub">
+                            {{ $pendaftaranPriaInfo ?? 'Data pendaftaran pria' }}
+                        </div>
                     </div>
-                    <div class="foto-pasangan-item">
-                        <p class="label">Calon Mempelai Wanita</p>
-                        @if(!empty($fotoWanitaUrl))
-                            <div class="foto-preview-wrap wanita">
-                                <img src="{{ $fotoWanitaUrl }}" alt="Foto calon mempelai wanita" style="width:64px;height:85px;object-fit:cover;border-radius:0.375rem;border:2px solid #bfd0ff">
-                                <span class="size-badge">3×4</span>
-                            </div>
-                        @else
-                            <div class="upload-zone" style="cursor:default;opacity:0.8"><span class="text">—</span></div>
-                        @endif
+                    <div class="name-block">
+                        <div class="name-block-title">Calon Mempelai Wanita</div>
+                        <div class="name-block-main">
+                            {{ $pendaftaranWanitaNama ?? '—' }}
+                        </div>
+                        <div class="name-block-sub">
+                            {{ $pendaftaranWanitaInfo ?? 'Data pendaftaran wanita' }}
+                        </div>
                     </div>
                 </div>
 
-                <div class="btn-row">
-                    <button type="submit" class="btn-primary">Simpan Perubahan</button>
-                    <a href="{{ route($userRoutePrefix . '.password') }}" class="btn-secondary">Ubah kata sandi</a>
+                {{-- Form nama & email akun --}}
+                <form method="POST" action="{{ route($userRoutePrefix . '.profil.update') }}">
+                    @csrf
+                    <div class="profil-form-grid">
+                        <div>
+                            <div class="form-group">
+                                <label for="name" class="form-label">Nama Akun (peserta)</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    class="form-control"
+                                    value="{{ old('name', $user->name) }}"
+                                    placeholder="Masukkan nama lengkap Anda"
+                                    required
+                                    autofocus
+                                >
+                                @error('name')
+                                    <span class="err">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Email Terdaftar
+                                    <span class="muted">(tidak dapat diubah)</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    value="{{ $user->email }}"
+                                    readonly
+                                    disabled
+                                >
+                                <p class="form-hint">Email ini dipakai untuk login dan notifikasi.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profil-actions">
+                        <button type="submit" class="btn-primary-small">
+                            Simpan Profil
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- KARTU 2: UBAH PASSWORD DI HALAMAN PROFIL --}}
+        <div class="profil-card">
+            <div class="profil-card-header">
+                <div class="profil-card-title">Ubah Password</div>
+                <div class="profil-card-subtitle">
+                    Ganti password akun Anda dengan aman.
                 </div>
-            </form>
+            </div>
+            <div class="profil-card-body">
+                <form method="POST" action="{{ route($userRoutePrefix . '.password.update') }}">
+                    @csrf
+                    <div class="password-grid">
+                        <div class="form-group">
+                            <label for="password_current" class="form-label">Password lama</label>
+                            <input
+                                type="password"
+                                id="password_current"
+                                name="password_current"
+                                class="form-control"
+                                autocomplete="current-password"
+                                required
+                            >
+                            @error('password_current')
+                                <span class="err">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password baru</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-control"
+                                autocomplete="new-password"
+                                required
+                            >
+                            @error('password')
+                                <span class="err">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="password_confirmation" class="form-label">Konfirmasi password baru</label>
+                            <input
+                                type="password"
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                class="form-control"
+                                autocomplete="new-password"
+                                required
+                            >
+                        </div>
+                    </div>
+                    <div class="password-actions">
+                        <button type="submit" class="btn-primary-password">
+                            Simpan Password
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 @endsection

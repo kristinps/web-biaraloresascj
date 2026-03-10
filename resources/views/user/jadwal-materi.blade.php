@@ -179,10 +179,16 @@
                             <p>Periode {{ $item->periode->tanggal_mulai ? $item->periode->tanggal_mulai->locale('id')->isoFormat('D MMM YYYY') : '' }} s.d. {{ $item->periode->tanggal_selesai ? $item->periode->tanggal_selesai->locale('id')->isoFormat('D MMM YYYY') : '' }}</p>
                         </div>
                         <div class="materi-list">
-                            @forelse(($item->periode->materi ?? collect()) as $m)
+                            @php
+                                $materiTerkirim = ($item->periode->materi ?? collect())->where('terkirim_materi', true);
+                            @endphp
+                            @forelse($materiTerkirim as $m)
                             <div class="materi-item">
                                 <div style="flex:1;min-width:0">
                                     <div class="judul">{{ $m->judul }}</div>
+                                    @if($m->nama_pemateri)
+                                        <div class="tanggal">👤 Pemateri: {{ $m->nama_pemateri }}</div>
+                                    @endif
                                     @if($m->tanggal_pelaksanaan)
                                         <div class="tanggal">📅 {{ $m->tanggal_pelaksanaan->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</div>
                                     @endif
@@ -199,7 +205,7 @@
                             </div>
                             @empty
                             <div class="empty-state" style="padding:32px 0">
-                                <p>Jadwal materi untuk periode ini belum diunggah.</p>
+                                <p>Belum ada materi yang dikirim untuk periode ini.</p>
                             </div>
                             @endforelse
                         </div>

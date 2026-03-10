@@ -17,9 +17,15 @@ class MateriKursusNotification extends Notification
             ->greeting('Yth. ' . $this->pendaftaran->nama_pria . ' & ' . $this->pendaftaran->nama_wanita)
             ->line('Materi kursus pernikahan tersedia untuk Anda.')
             ->line('**Materi ke-' . $this->materi->urutan . ': ' . $this->materi->judul . '**');
+        if ($this->materi->nama_pemateri) $mail->line('**Pemateri:** ' . $this->materi->nama_pemateri);
         if ($this->materi->tanggal_pelaksanaan) $mail->line('**Tanggal:** ' . $this->materi->tanggal_pelaksanaan->format('d M Y'));
         if ($this->materi->deskripsi) $mail->line($this->materi->deskripsi);
-        if ($this->materi->file_materi) $mail->action('Unduh Materi', asset('storage/' . $this->materi->file_materi));
-        return $mail->line('Mohon pelajari materi ini sebelum sesi berlangsung.')->salutation('Hormat kami, **Biara Loresa SCJ**');
+        if ($this->materi->file_materi) {
+            $mail->action('Unduh Materi', asset('storage/' . $this->materi->file_materi));
+        }
+        $mail->action('Lihat Jadwal Materi di Dashboard', route('dashboard.user.jadwal-materi'));
+        return $mail
+            ->line('Mohon pelajari materi ini sebelum sesi berlangsung.')
+            ->salutation('Hormat kami, **Biara Loresa SCJ**');
     }
 }
