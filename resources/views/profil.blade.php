@@ -4,162 +4,370 @@
 
 @section('content')
 
-{{-- Page Header --}}
-<div class="bg-gradient-to-br from-primary-900 to-primary-700 text-white py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-primary-300 font-semibold tracking-widest uppercase text-sm mb-2">Siapa Kami</p>
-        <h1 class="text-4xl md:text-5xl font-serif font-bold">Profil Komunitas</h1>
-        <p class="text-primary-200 mt-4 max-w-2xl mx-auto">Mengenal lebih dekat Biara Loresa SCJ dan misi pelayanannya</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 home-enter" data-home-animate>
+    <div class="profil-content">
+
+            {{-- Header halaman --}}
+            <header class="profil-header home-enter" data-home-animate data-delay="1">
+                <p class="profil-header-label">Siapa Kami</p>
+                <h1 class="profil-header-title">Profil Komunitas</h1>
+                <p class="profil-header-subtitle">Mengenal lebih dekat Biara Loresa SCJ dan misi pelayanannya</p>
+            </header>
+
+            {{-- Section: Sejarah --}}
+            <section class="profil-section home-enter" data-home-animate data-delay="2">
+                <div class="profil-grid profil-grid--2">
+                    <div class="profil-card">
+                        <p class="profil-card-label">Sejarah</p>
+                        <h2 class="profil-card-title">Berdirinya Biara Loresa SCJ</h2>
+                        <div class="profil-body">
+                            <p>
+                                Biara Loresa SCJ didirikan pada tahun 1999 sebagai bagian dari ekspansi misi
+                                Serikat Imam-imam Hati Kudus Yesus (SCJ) di Kalimantan. Nama "Loresa" diambil
+                                dari salah satu tokoh setempat yang berjasa dalam perkembangan Gereja Katolik
+                                di wilayah ini.
+                            </p>
+                            <p>
+                                Kongregasi SCJ sendiri didirikan oleh Pater Leon Dehon pada tahun 1878 di
+                                Saint-Quentin, Perancis. Spiritualitas kongregasi berpusat pada Hati Kudus
+                                Yesus yang menjadi simbol kasih Allah yang tak terbatas bagi umat manusia.
+                            </p>
+                            <p>
+                                Sejak berdiri, Biara Loresa SCJ telah menjadi pusat pembinaan calon-calon
+                                imam dan bruder SCJ, serta pusat pelayanan pastoral bagi umat Katolik
+                                di wilayah Kalimantan Timur dan sekitarnya.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="profil-card profil-card--image">
+                        <div class="profil-image-wrap">
+                            <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=700&h=500&fit=crop"
+                                 alt="Sejarah Biara" class="profil-image">
+                            <span class="profil-badge">Sejak 1999</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {{-- Section: Visi & Misi --}}
+            <section class="profil-section home-enter" data-home-animate data-delay="3">
+                <header class="profil-section-header">
+                    <p class="profil-section-label">Arah Pelayanan</p>
+                    <h2 class="profil-section-title">Visi & Misi</h2>
+                </header>
+                <div class="profil-grid profil-grid--2">
+                    <div class="profil-card">
+                        <div class="profil-card-head">
+                            <span class="profil-card-icon profil-card-icon--blue" aria-hidden="true"></span>
+                            <h3 class="profil-card-title profil-card-title--inline">Visi</h3>
+                        </div>
+                        <p class="profil-body">
+                            Menjadi komunitas religius yang hidup sungguh-sungguh dari kasih Hati Kudus Yesus,
+                            menjadi tanda kasih Allah yang nyata di tengah masyarakat, dan mewartakan keselamatan
+                            Kristus kepada semua orang tanpa terkecuali.
+                        </p>
+                    </div>
+                    <div class="profil-card">
+                        <div class="profil-card-head">
+                            <span class="profil-card-icon profil-card-icon--green" aria-hidden="true"></span>
+                            <h3 class="profil-card-title profil-card-title--inline">Misi</h3>
+                        </div>
+                        <ul class="profil-list">
+                            <li>Membina calon imam dan bruder SCJ yang berkualitas dan bersemangat misionaris</li>
+                            <li>Melayani umat melalui karya pastoral di paroki-paroki dan wilayah terpencil</li>
+                            <li>Menjalankan karya sosial untuk membantu masyarakat yang membutuhkan</li>
+                            <li>Membangun dialog dan kerjasama antar umat beragama</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            {{-- Section: Pimpinan --}}
+            <section class="profil-section home-enter" data-home-animate data-delay="4">
+                <header class="profil-section-header">
+                    <p class="profil-section-label">Kepemimpinan</p>
+                    <h2 class="profil-section-title">Pimpinan Komunitas</h2>
+                    <p class="profil-section-desc">Para imam yang memimpin dan melayani komunitas Biara Loresa SCJ</p>
+                </header>
+                <div class="profil-grid profil-grid--pimpinan">
+                    @foreach($pimpinan as $person)
+                    <div class="profil-card profil-card--pimpinan">
+                        <div class="profil-pimpinan-photo-wrap">
+                            <img src="{{ $person['foto'] }}" alt="{{ $person['nama'] }}" class="profil-pimpinan-photo">
+                            <span class="profil-pimpinan-badge" aria-hidden="true">
+                                <svg class="profil-pimpinan-badge-icon" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M11 2v6H5v2h6v12h2V10h6V8h-6V2z"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <h3 class="profil-card-title profil-card-title--center">{{ $person['nama'] }}</h3>
+                        <p class="profil-pimpinan-role">{{ $person['jabatan'] }}</p>
+                    </div>
+                    @endforeach
+                </div>
+            </section>
+
+            {{-- Section: Fasilitas --}}
+            <section class="profil-section home-enter" data-home-animate data-delay="5">
+                <header class="profil-section-header">
+                    <p class="profil-section-label">Sarana & Prasarana</p>
+                    <h2 class="profil-section-title">Fasilitas Biara</h2>
+                </header>
+                <div class="profil-grid profil-grid--fasilitas">
+                    @php
+                    $fasilitas = [
+                        ['nama' => 'Kapel', 'ikon' => '⛪'],
+                        ['nama' => 'Perpustakaan', 'ikon' => '📚'],
+                        ['nama' => 'Taman Meditasi', 'ikon' => '🌿'],
+                        ['nama' => 'Aula Serbaguna', 'ikon' => '🏛️'],
+                        ['nama' => 'Asrama', 'ikon' => '🏠'],
+                        ['nama' => 'Lapangan Olahraga', 'ikon' => '⚽'],
+                    ];
+                    @endphp
+                    @foreach($fasilitas as $item)
+                    <div class="profil-card profil-card--fasilitas">
+                        <span class="profil-fasilitas-icon" aria-hidden="true">{{ $item['ikon'] }}</span>
+                        <span class="profil-fasilitas-label">{{ $item['nama'] }}</span>
+                    </div>
+                    @endforeach
+                </div>
+            </section>
+
     </div>
 </div>
 
-{{-- Sejarah --}}
-<section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <p class="text-primary-600 font-semibold tracking-widest uppercase text-sm mb-2">Sejarah</p>
-                <h2 class="section-title">Berdirinya Biara Loresa SCJ</h2>
-                <div class="space-y-4 text-gray-600 leading-relaxed">
-                    <p>
-                        Biara Loresa SCJ didirikan pada tahun 1999 sebagai bagian dari ekspansi misi 
-                        Serikat Imam-imam Hati Kudus Yesus (SCJ) di Kalimantan. Nama "Loresa" diambil 
-                        dari salah satu tokoh setempat yang berjasa dalam perkembangan Gereja Katolik 
-                        di wilayah ini.
-                    </p>
-                    <p>
-                        Kongregasi SCJ sendiri didirikan oleh Pater Leon Dehon pada tahun 1878 di 
-                        Saint-Quentin, Perancis. Spiritualitas kongregasi berpusat pada Hati Kudus 
-                        Yesus yang menjadi simbol kasih Allah yang tak terbatas bagi umat manusia.
-                    </p>
-                    <p>
-                        Sejak berdiri, Biara Loresa SCJ telah menjadi pusat pembinaan calon-calon 
-                        imam dan bruder SCJ, serta pusat pelayanan pastoral bagi umat Katolik 
-                        di wilayah Kalimantan Timur dan sekitarnya.
-                    </p>
-                </div>
-            </div>
-            <div class="relative">
-                <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=700&h=500&fit=crop" 
-                     alt="Sejarah Biara" class="w-full rounded-2xl shadow-xl">
-                <div class="absolute top-4 left-4 bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
-                    Sejak 1999
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+@push('styles')
+<style>
+/* ---- Layout: padding/radius untuk .profil-card (glass dari layout) ---- */
+.profil-card { padding: 1.25rem; border-radius: 1rem; }
+.profil-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
 
-{{-- Visi Misi --}}
-<section class="py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <p class="text-primary-600 font-semibold tracking-widest uppercase text-sm mb-2">Arah Pelayanan</p>
-            <h2 class="section-title">Visi & Misi</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-white rounded-2xl p-8 shadow-md border-l-4 border-primary-600">
-                <div class="flex items-center mb-5">
-                    <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mr-4">
-                        <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-serif font-bold text-gray-800">Visi</h3>
-                </div>
-                <p class="text-gray-600 leading-relaxed">
-                    Menjadi komunitas religius yang hidup sungguh-sungguh dari kasih Hati Kudus Yesus, 
-                    menjadi tanda kasih Allah yang nyata di tengah masyarakat, dan mewartakan keselamatan 
-                    Kristus kepada semua orang tanpa terkecuali.
-                </p>
-            </div>
-            <div class="bg-white rounded-2xl p-8 shadow-md border-l-4 border-gold-500">
-                <div class="flex items-center mb-5">
-                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mr-4">
-                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-serif font-bold text-gray-800">Misi</h3>
-                </div>
-                <ul class="space-y-3 text-gray-600">
-                    <li class="flex items-start">
-                        <span class="text-primary-600 mr-2 mt-1">✦</span>
-                        Membina calon imam dan bruder SCJ yang berkualitas dan bersemangat misionaris
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-primary-600 mr-2 mt-1">✦</span>
-                        Melayani umat melalui karya pastoral di paroki-paroki dan wilayah terpencil
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-primary-600 mr-2 mt-1">✦</span>
-                        Menjalankan karya sosial untuk membantu masyarakat yang membutuhkan
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-primary-600 mr-2 mt-1">✦</span>
-                        Membangun dialog dan kerjasama antar umat beragama
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</section>
+/* ---- Page header ---- */
+.profil-header {
+    margin-bottom: 0.5rem;
+}
+.profil-header-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    margin: 0 0 0.25rem 0;
+}
+.profil-header-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.5rem 0;
+}
+.profil-header-subtitle {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.9);
+    margin: 0;
+}
 
-{{-- Pimpinan --}}
-<section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <p class="text-primary-600 font-semibold tracking-widest uppercase text-sm mb-2">Kepemimpinan</p>
-            <h2 class="section-title">Pimpinan Komunitas</h2>
-            <p class="section-subtitle">Para imam yang memimpin dan melayani komunitas Biara Loresa SCJ</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            @foreach($pimpinan as $person)
-            <div class="text-center group">
-                <div class="relative inline-block mb-4">
-                    <img src="{{ $person['foto'] }}" alt="{{ $person['nama'] }}" 
-                         class="w-32 h-32 rounded-full mx-auto object-cover shadow-lg group-hover:shadow-xl transition-shadow border-4 border-primary-100">
-                    <div class="absolute bottom-0 right-0 w-8 h-8 bg-primary-700 rounded-full flex items-center justify-center border-2 border-white">
-                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M11 2v6H5v2h6v12h2V10h6V8h-6V2z"/>
-                        </svg>
-                    </div>
-                </div>
-                <h3 class="font-serif font-bold text-gray-800 text-lg">{{ $person['nama'] }}</h3>
-                <p class="text-primary-600 text-sm font-medium mt-1">{{ $person['jabatan'] }}</p>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
+/* ---- Section ---- */
+.profil-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+.profil-section-header {
+    text-align: center;
+}
+.profil-section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    margin: 0 0 0.25rem 0;
+}
+.profil-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.25rem 0;
+}
+.profil-section-desc {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.85);
+    margin: 0;
+}
 
-{{-- Fasilitas --}}
-<section class="py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <p class="text-primary-600 font-semibold tracking-widest uppercase text-sm mb-2">Sarana & Prasarana</p>
-            <h2 class="section-title">Fasilitas Biara</h2>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            @php
-            $fasilitas = [
-                ['nama' => 'Kapel', 'ikon' => '⛪'],
-                ['nama' => 'Perpustakaan', 'ikon' => '📚'],
-                ['nama' => 'Taman Meditasi', 'ikon' => '🌿'],
-                ['nama' => 'Aula Serbaguna', 'ikon' => '🏛️'],
-                ['nama' => 'Asrama', 'ikon' => '🏠'],
-                ['nama' => 'Lapangan Olahraga', 'ikon' => '⚽'],
-            ];
-            @endphp
-            @foreach($fasilitas as $item)
-            <div class="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
-                <div class="text-4xl mb-3">{{ $item['ikon'] }}</div>
-                <div class="text-sm font-semibold text-gray-700">{{ $item['nama'] }}</div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
+/* ---- Grid ---- */
+.profil-grid {
+    display: grid;
+    gap: 1.25rem;
+}
+.profil-grid--2 {
+    grid-template-columns: 1fr 1fr;
+}
+.profil-grid--pimpinan {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    max-width: 900px;
+    margin: 0 auto;
+}
+.profil-grid--fasilitas {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
 
+/* ---- Card (base): glass dari layout; di sini hanya tipografi ---- */
+.profil-card-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    margin: 0 0 0.5rem 0;
+}
+.profil-card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 1rem 0;
+}
+.profil-card-title--inline { margin-bottom: 0; }
+.profil-card-title--center { text-align: center; margin-bottom: 0.25rem; }
+.profil-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.profil-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+.profil-card-icon--blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.profil-card-icon--green { background: linear-gradient(135deg, #10b981, #059669); }
+
+/* ---- Card: body & list ---- */
+.profil-body {
+    color: rgba(255,255,255,0.95);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+}
+.profil-body p + p { margin-top: 1rem; }
+.profil-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: rgba(255,255,255,0.95);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+.profil-list li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+.profil-list li:last-child { margin-bottom: 0; }
+.profil-list li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: rgba(139, 92, 246, 0.9);
+}
+
+/* ---- Card: image ---- */
+.profil-card--image { padding: 0; overflow: hidden; }
+.profil-image-wrap {
+    position: relative;
+    display: block;
+}
+.profil-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.profil-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(30, 38, 133, 0.9);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* ---- Card: pimpinan ---- */
+.profil-card--pimpinan {
+    text-align: center;
+    padding: 1.5rem;
+}
+.profil-pimpinan-photo-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+}
+.profil-pimpinan-photo {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(148,163,184,0.5);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.profil-pimpinan-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 2rem;
+    height: 2rem;
+    background: #4f46e5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255,255,255,0.9);
+}
+.profil-pimpinan-badge-icon { width: 1rem; height: 1rem; color: #fff; }
+.profil-pimpinan-role {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.85);
+    margin: 0;
+}
+
+/* ---- Card: fasilitas ---- */
+.profil-card--fasilitas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.profil-fasilitas-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+.profil-fasilitas-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .profil-content { gap: 2rem; }
+    .profil-grid--2,
+    .profil-grid--pimpinan { grid-template-columns: 1fr; }
+    .profil-grid--fasilitas { grid-template-columns: repeat(2, 1fr); }
+    .profil-grid--pimpinan { max-width: 100%; }
+}
+</style>
+@endpush
 @endsection

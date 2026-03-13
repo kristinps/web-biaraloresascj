@@ -28,8 +28,13 @@ class DashboardController extends Controller
         $pending = PendaftaranPernikahan::where('status', 'pending')->count();
         $proses = PendaftaranPernikahan::where('status', 'proses')->count();
         $selesai = PendaftaranPernikahan::where('status', 'selesai')->count();
-        $periodeAktif = PeriodePernikahan::aktif()->count();
+        $periodeAktifCount = PeriodePernikahan::aktif()->count();
+        $periodeSelesaiCount = PeriodePernikahan::selesai()->count();
         $periodeTotal = PeriodePernikahan::count();
+
+        $pesertaTanpaPeriode = PendaftaranPernikahan::whereNull('periode_id')->count();
+        $pesertaPeriodeAktif = PendaftaranPernikahan::whereHas('periode', fn ($q) => $q->aktif())->count();
+        $pesertaPeriodeSelesai = PendaftaranPernikahan::whereHas('periode', fn ($q) => $q->selesai())->count();
 
         $chartStatus = [
             'pending' => $pending,
@@ -41,9 +46,50 @@ class DashboardController extends Controller
             'sudah_bayar' => PendaftaranPernikahan::where('status_pembayaran', 'sudah_bayar')->count(),
         ];
 
+        $chartPeriodePeserta = [
+            'labels' => ['Tanpa Periode', 'Periode Aktif', 'Periode Selesai'],
+            'values' => [$pesertaTanpaPeriode, $pesertaPeriodeAktif, $pesertaPeriodeSelesai],
+        ];
+
+        // Grafik 2: jumlah peserta aktif per periode aktif
+        $periodeAktifList = PeriodePernikahan::aktif()
+            ->withCount('pendaftaran')
+            ->orderBy('tanggal_mulai')
+            ->get();
+        $chartPesertaPerPeriodeAktif = [
+            'labels' => $periodeAktifList->pluck('nama')->toArray(),
+            'values' => $periodeAktifList->pluck('pendaftaran_count')->toArray(),
+        ];
+
+        // Grafik 3: jumlah peserta selesai per periode selesai
+        $periodeSelesaiList = PeriodePernikahan::selesai()
+            ->withCount('pendaftaran')
+            ->orderBy('tanggal_selesai')
+            ->get();
+        $chartPesertaPerPeriodeSelesai = [
+            'labels' => $periodeSelesaiList->pluck('nama')->toArray(),
+            'values' => $periodeSelesaiList->pluck('pendaftaran_count')->toArray(),
+        ];
+
+        // Grafik lingkaran: jumlah periode aktif (satu slice per periode aktif)
+        $chartPeriodeAktif = [
+            'labels' => $periodeAktifList->pluck('nama')->toArray(),
+            'values' => array_fill(0, $periodeAktifList->count(), 1),
+        ];
+
+        // Grafik lingkaran: jumlah periode selesai (satu slice per periode selesai)
+        $chartPeriodeSelesai = [
+            'labels' => $periodeSelesaiList->pluck('nama')->toArray(),
+            'values' => array_fill(0, $periodeSelesaiList->count(), 1),
+        ];
+
         return view('dashboard.admin', compact(
             'totalPendaftaran', 'pending', 'proses', 'selesai',
-            'periodeAktif', 'periodeTotal', 'chartStatus', 'chartPembayaran'
+            'periodeAktifCount', 'periodeSelesaiCount', 'periodeTotal',
+            'pesertaTanpaPeriode', 'pesertaPeriodeAktif', 'pesertaPeriodeSelesai',
+            'chartStatus', 'chartPembayaran', 'chartPeriodePeserta',
+            'chartPesertaPerPeriodeAktif', 'chartPesertaPerPeriodeSelesai',
+            'chartPeriodeAktif', 'chartPeriodeSelesai'
         ));
     }
 

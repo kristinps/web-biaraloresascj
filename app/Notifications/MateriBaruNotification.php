@@ -33,7 +33,7 @@ class MateriBaruNotification extends Notification
                 return $mail->line('Tanggal pelaksanaan: **' . $this->materi->tanggal_pelaksanaan->format('d M Y') . '**');
             })
             ->line('Anda dapat melihat jadwal lengkap materi melalui dashboard peserta.')
-            ->action('Buka Jadwal Materi di Dashboard', route('dashboard.user.jadwal-materi'))
+            ->action('Buka Dashboard', route('dashboard.user'))
             ->line('Jika ada pertanyaan, silakan hubungi kami.')
             ->salutation('Hormat kami, **Biara Loresa SCJ**');
     }

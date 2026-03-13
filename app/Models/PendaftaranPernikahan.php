@@ -30,12 +30,17 @@ class PendaftaranPernikahan extends Model
         'surat_baptis_pria', 'surat_baptis_wanita',
         'surat_pengantar_kombas_pria', 'surat_pengantar_kombas_wanita',
         'status', 'catatan',
-        'status_dokumen', 'catatan_dokumen', 'perbaikan_dokumen_user', 'status_kursus',
+        'status_dokumen', 'catatan_dokumen', 'perbaikan_dokumen_user', 'dokumen_status_verifikasi', 'status_kursus',
         'status_pembayaran', 'midtrans_order_id', 'midtrans_snap_token', 'midtrans_transaction_id',
-        'qris_url', 'qris_expired_at', 'email_konfirmasi_pembayaran_sent_at',
+        'qris_url', 'qris_expired_at', 'email_konfirmasi_pembayaran_sent_at', 'plain_password_for_email',
+    ];
+
+    protected $hidden = [
+        'plain_password_for_email',
     ];
 
     protected $casts = [
+        'dokumen_status_verifikasi' => 'array',
         'tanggal_lahir_pria'   => 'date',
         'tanggal_lahir_wanita' => 'date',
         'tanggal_pernikahan'   => 'date',
@@ -66,5 +71,32 @@ class PendaftaranPernikahan extends Model
     public function namaLengkap(): string
     {
         return $this->nama_pria . ' & ' . $this->nama_wanita;
+    }
+
+    /** Daftar field dokumen dengan label */
+    public static function dokumenFields(): array
+    {
+        return [
+            'ktp_pria' => 'KTP Calon Pria',
+            'ktp_wanita' => 'KTP Calon Wanita',
+            'foto_pria' => 'Foto Calon Pria',
+            'foto_wanita' => 'Foto Calon Wanita',
+            'surat_baptis_pria' => 'Surat Baptis Pria',
+            'surat_baptis_wanita' => 'Surat Baptis Wanita',
+            'surat_pengantar_kombas_pria' => 'Surat Pengantar Kombas Pria',
+            'surat_pengantar_kombas_wanita' => 'Surat Pengantar Kombas Wanita',
+        ];
+    }
+
+    /**
+     * Status verifikasi dokumen per field.
+     *
+     * true  => dokumen sudah dinyatakan diterima admin
+     * false => belum dinyatakan diterima (sedang diperiksa / perlu perbaikan / belum ada file)
+     */
+    public function getStatusDokumen(string $field): bool
+    {
+        $status = $this->dokumen_status_verifikasi[$field] ?? null;
+        return filter_var($status, FILTER_VALIDATE_BOOLEAN);
     }
 }

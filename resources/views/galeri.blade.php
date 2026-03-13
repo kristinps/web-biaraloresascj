@@ -5,8 +5,8 @@
 @section('content')
 
 {{-- Page Header --}}
-<div class="bg-gradient-to-br from-primary-900 to-primary-700 text-white py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<div class="py-20 home-enter" data-home-animate data-delay="1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
         <p class="text-primary-300 font-semibold tracking-widest uppercase text-sm mb-2">Foto & Dokumentasi</p>
         <h1 class="text-4xl md:text-5xl font-serif font-bold">Galeri</h1>
         <p class="text-primary-200 mt-4 max-w-2xl mx-auto">Kilas balik momen-momen berharga kehidupan dan pelayanan komunitas</p>
@@ -14,28 +14,28 @@
 </div>
 
 {{-- Filter --}}
-<div class="bg-white shadow-sm sticky top-16 z-40">
+<div class="home-enter" data-home-animate data-delay="2">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex flex-wrap gap-2 justify-center" id="filter-buttons">
-            <button onclick="filterGaleri('semua')" class="filter-btn active px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-primary-700 text-white">
+        <div class="flex flex-wrap gap-2 justify-center home-glass-card rounded-full px-4 py-3" id="filter-buttons">
+            <button onclick="filterGaleri('semua')" class="filter-btn active px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-white/20 text-white">
                 Semua
             </button>
-            <button onclick="filterGaleri('Bangunan')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-gray-100 text-gray-600 hover:bg-primary-100 hover:text-primary-700">
+            <button onclick="filterGaleri('Bangunan')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-white/5 text-primary-100 hover:bg-white/10 hover:text-white">
                 Bangunan
             </button>
-            <button onclick="filterGaleri('Liturgi')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-gray-100 text-gray-600 hover:bg-primary-100 hover:text-primary-700">
+            <button onclick="filterGaleri('Liturgi')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-white/5 text-primary-100 hover:bg-white/10 hover:text-white">
                 Liturgi
             </button>
-            <button onclick="filterGaleri('Komunitas')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-gray-100 text-gray-600 hover:bg-primary-100 hover:text-primary-700">
+            <button onclick="filterGaleri('Komunitas')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-white/5 text-primary-100 hover:bg-white/10 hover:text-white">
                 Komunitas
             </button>
-            <button onclick="filterGaleri('Fasilitas')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-gray-100 text-gray-600 hover:bg-primary-100 hover:text-primary-700">
+            <button onclick="filterGaleri('Fasilitas')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-white/5 text-primary-100 hover:bg-white/10 hover:text-white">
                 Fasilitas
             </button>
-            <button onclick="filterGaleri('Taman')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-gray-100 text-gray-600 hover:bg-primary-100 hover:text-primary-700">
+            <button onclick="filterGaleri('Taman')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-white/5 text-primary-100 hover:bg-white/10 hover:text-white">
                 Taman
             </button>
-            <button onclick="filterGaleri('Pembinaan')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-gray-100 text-gray-600 hover:bg-primary-100 hover:text-primary-700">
+            <button onclick="filterGaleri('Pembinaan')" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors bg-white/5 text-primary-100 hover:bg-white/10 hover:text-white">
                 Pembinaan
             </button>
         </div>
@@ -43,7 +43,7 @@
 </div>
 
 {{-- Galeri Grid --}}
-<section class="py-12 bg-gray-50">
+<section class="py-12 home-enter" data-home-animate data-delay="3">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="galeri-grid">
             @foreach($galeri as $foto)
@@ -82,11 +82,11 @@ function filterGaleri(kategori) {
     const buttons = document.querySelectorAll('.filter-btn');
     
     buttons.forEach(btn => {
-        btn.classList.remove('bg-primary-700', 'text-white');
-        btn.classList.add('bg-gray-100', 'text-gray-600');
+        btn.classList.remove('bg-white/20', 'text-white');
+        btn.classList.add('bg-white/5', 'text-primary-100');
     });
-    event.target.classList.remove('bg-gray-100', 'text-gray-600');
-    event.target.classList.add('bg-primary-700', 'text-white');
+    event.target.classList.remove('bg-white/5', 'text-primary-100');
+    event.target.classList.add('bg-white/20', 'text-white');
     
     items.forEach(item => {
         if (kategori === 'semua' || item.dataset.kategori === kategori) {

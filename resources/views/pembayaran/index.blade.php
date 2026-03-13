@@ -29,6 +29,25 @@
         </div>
         @endif
 
+        @if(isset($qris_error) && $qris_error)
+        <div class="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+            <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-amber-800 text-sm flex-1">{{ $qris_error }}</p>
+            </div>
+            <a href="{{ route('pembayaran.show', $pendaftaran->id) }}"
+               class="mt-3 inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl font-semibold text-sm transition-all active:scale-[0.98]"
+               style="background:linear-gradient(135deg,#1e2685,#be185d);color:white;">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Coba lagi
+            </a>
+        </div>
+        @endif
+
         {{-- Card utama --}}
         <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
 
@@ -52,10 +71,7 @@
                             {{ $pendaftaran->nama_pria }} &amp; {{ $pendaftaran->nama_wanita }}
                         </p>
                     </div>
-                    <code class="text-xs font-mono px-2 py-1 rounded-lg flex-shrink-0"
-                          style="background:#ede9fe;color:#7c3aed">
-                        #{{ str_pad($pendaftaran->id, 5, '0', STR_PAD_LEFT) }}
-                    </code>
+                 
                 </div>
 
                 {{-- Total --}}
@@ -67,10 +83,7 @@
 
                 {{-- QR Code --}}
                 <div class="text-center mb-5">
-                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">
-                        Scan QR Code di bawah ini
-                    </p>
-
+                 
                     @if($pendaftaran->qris_url)
                     <div class="relative inline-block">
                         {{-- Border dekoratif --}}
@@ -110,6 +123,19 @@
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
                         QRIS · Semua e-wallet &amp; mobile banking
+                    </div>
+                    @elseif(isset($snap_token) && $snap_token && isset($snap_client_key) && $snap_client_key)
+                    {{-- Fallback: tampilkan QRIS via Midtrans Snap --}}
+                    <div id="snap-qris-container" class="space-y-3">
+                        <p class="text-xs text-gray-500">QRIS ditampilkan melalui Midtrans. Klik tombol di bawah untuk membuka halaman pembayaran.</p>
+                        <button type="button" id="btn-bayar-midtrans"
+                            class="w-full py-3.5 px-6 rounded-2xl font-bold text-white text-sm shadow-md transition-all active:scale-95 hover:opacity-90 flex items-center justify-center gap-2"
+                            style="background:linear-gradient(135deg,#1e2685 0%,#7c3aed 50%,#be185d 100%)">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.24M16.24 12l1.07-1.07M12 12l-1.07 1.07M12 12V8.93"/>
+                            </svg>
+                            Tampilkan QR Code Midtrans (QRIS)
+                        </button>
                     </div>
                     @else
                     <div class="w-56 h-56 mx-auto flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 text-gray-400">
@@ -166,6 +192,10 @@
 
     </div>
 </div>
+
+@if(isset($snap_token) && $snap_token && isset($snap_client_key) && $snap_client_key)
+<script type="text/javascript" src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ $snap_client_key }}"></script>
+@endif
 
 <script>
 const statusUrl = @json(route('pembayaran.status', $pendaftaran->id));
@@ -358,5 +388,18 @@ function startPolling() {
 
 startPolling();
 startCountdown();
+
+@if(isset($snap_token) && $snap_token && isset($snap_client_key) && $snap_client_key)
+(function() {
+    const snapToken = @json($snap_token);
+    document.getElementById('btn-bayar-midtrans')?.addEventListener('click', function() {
+        if (typeof snap !== 'undefined') {
+            snap.pay(snapToken);
+        } else {
+            alert('Midtrans belum siap. Silakan muat ulang halaman.');
+        }
+    });
+})();
+@endif
 </script>
 @endsection

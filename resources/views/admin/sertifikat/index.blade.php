@@ -234,7 +234,7 @@
                         </td>
                         <td>
                             @if($surat->file)
-                                <a href="{{ route('dashboard.user.sertifikat.download', $surat->pendaftaran_id) }}" target="_blank">
+                                <a href="{{ route('dashboard.user') }}" target="_blank">
                                     Unduh Sertifikat
                                 </a>
                             @else

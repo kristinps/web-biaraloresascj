@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\InformasiPendaftaranDanAkun;
 use App\Models\PendaftaranPernikahan;
 use App\Models\PeriodePernikahan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class KursusPendaftaranController extends Controller
@@ -48,14 +45,14 @@ class KursusPendaftaranController extends Controller
             'email'                => 'required|email|max:255',
             'nomor_hp'             => 'required|string|max:20',
 
-            'ktp_pria'                     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'ktp_wanita'                   => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'foto_pria'                    => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'foto_wanita'                  => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'surat_baptis_pria'            => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'surat_baptis_wanita'          => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'surat_pengantar_kombas_pria'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'surat_pengantar_kombas_wanita'=> 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'ktp_pria'                     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:1048576',
+            'ktp_wanita'                   => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:1048576',
+            'foto_pria'                    => 'nullable|file|mimes:jpg,jpeg,png|max:1048576',
+            'foto_wanita'                  => 'nullable|file|mimes:jpg,jpeg,png|max:1048576',
+            'surat_baptis_pria'            => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:1048576',
+            'surat_baptis_wanita'          => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:1048576',
+            'surat_pengantar_kombas_pria'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:1048576',
+            'surat_pengantar_kombas_wanita'=> 'nullable|file|mimes:jpg,jpeg,png,pdf|max:1048576',
         ], [
             // Pria
             'nama_pria.required'                  => 'Nama lengkap calon pria wajib diisi.',
@@ -91,21 +88,21 @@ class KursusPendaftaranController extends Controller
             'nomor_hp.required'                    => 'Nomor HP/WhatsApp wajib diisi.',
             // Dokumen
             'ktp_pria.mimes'                       => 'KTP calon pria harus berformat JPG, PNG, atau PDF.',
-            'ktp_pria.max'                         => 'Ukuran file KTP calon pria maksimal 2 MB.',
+            'ktp_pria.max'                         => 'Ukuran file KTP calon pria maksimal 1 GB.',
             'ktp_wanita.mimes'                     => 'KTP calon wanita harus berformat JPG, PNG, atau PDF.',
-            'ktp_wanita.max'                       => 'Ukuran file KTP calon wanita maksimal 2 MB.',
+            'ktp_wanita.max'                       => 'Ukuran file KTP calon wanita maksimal 1 GB.',
             'foto_pria.mimes'                      => 'Foto calon pria harus berformat JPG atau PNG.',
-            'foto_pria.max'                        => 'Ukuran file foto calon pria maksimal 2 MB.',
+            'foto_pria.max'                        => 'Ukuran file foto calon pria maksimal 1 GB.',
             'foto_wanita.mimes'                    => 'Foto calon wanita harus berformat JPG atau PNG.',
-            'foto_wanita.max'                      => 'Ukuran file foto calon wanita maksimal 2 MB.',
+            'foto_wanita.max'                      => 'Ukuran file foto calon wanita maksimal 1 GB.',
             'surat_baptis_pria.mimes'              => 'Surat baptis calon pria harus berformat JPG, PNG, atau PDF.',
-            'surat_baptis_pria.max'                => 'Ukuran file surat baptis calon pria maksimal 2 MB.',
+            'surat_baptis_pria.max'                => 'Ukuran file surat baptis calon pria maksimal 1 GB.',
             'surat_baptis_wanita.mimes'            => 'Surat baptis calon wanita harus berformat JPG, PNG, atau PDF.',
-            'surat_baptis_wanita.max'              => 'Ukuran file surat baptis calon wanita maksimal 2 MB.',
+            'surat_baptis_wanita.max'              => 'Ukuran file surat baptis calon wanita maksimal 1 GB.',
             'surat_pengantar_kombas_pria.mimes'    => 'Surat pengantar kombas calon pria harus berformat JPG, PNG, atau PDF.',
-            'surat_pengantar_kombas_pria.max'      => 'Ukuran file surat pengantar kombas calon pria maksimal 2 MB.',
+            'surat_pengantar_kombas_pria.max'      => 'Ukuran file surat pengantar kombas calon pria maksimal 1 GB.',
             'surat_pengantar_kombas_wanita.mimes'  => 'Surat pengantar kombas calon wanita harus berformat JPG, PNG, atau PDF.',
-            'surat_pengantar_kombas_wanita.max'    => 'Ukuran file surat pengantar kombas calon wanita maksimal 2 MB.',
+            'surat_pengantar_kombas_wanita.max'    => 'Ukuran file surat pengantar kombas calon wanita maksimal 1 GB.',
         ]);
 
         $dokumenFields = [
@@ -146,25 +143,31 @@ class KursusPendaftaranController extends Controller
         $validated['user_id'] = $user->id;
         $pendaftaran = PendaftaranPernikahan::create($validated);
 
+        // Simpan kata sandi sementara; akan dikirim via email setelah pembayaran lunas
+        $pendaftaran->update(['plain_password_for_email' => $plainPassword]);
+
         session([
             'pendaftaran_akun_password' => $plainPassword,
             'pendaftaran_akun_id'       => $pendaftaran->id,
         ]);
         Auth::login($user, false);
 
-        try {
-            Mail::to($pendaftaran->email)->send(new InformasiPendaftaranDanAkun($pendaftaran, $plainPassword));
-        } catch (\Exception $e) {
-            Log::error('Gagal kirim email informasi pendaftaran & akun ID ' . $pendaftaran->id . ': ' . $e->getMessage());
-        }
+        // Email tidak dikirim di sini; hanya dikirim setelah pembayaran berhasil (status lunas)
 
         return redirect()->route('pembayaran.show', ['id' => $pendaftaran->id])
-            ->with('success', 'Biodata berhasil disimpan. Informasi akun login dan pembayaran telah dikirim ke email Anda. Silakan selesaikan pembayaran.');
+            ->with('success', 'Biodata berhasil disimpan. Silakan selesaikan pembayaran. Pendaftaran dan informasi akun akan dikirim ke email Anda setelah pembayaran berhasil.');
     }
 
     public function sukses(Request $request, $id)
     {
         $pendaftaran = PendaftaranPernikahan::findOrFail($id)->load('periode');
+
+        // Halaman sukses hanya untuk pendaftaran yang pembayarannya sudah lunas
+        if ($pendaftaran->status_pembayaran !== 'lunas') {
+            return redirect()->route('pembayaran.show', $id)
+                ->with('error', 'Silakan selesaikan pembayaran terlebih dahulu.');
+        }
+
         $akun_password = (session('pendaftaran_akun_id') == (int) $id) ? session('pendaftaran_akun_password') : null;
         return view('kursus-pernikahan.sukses', compact('pendaftaran', 'akun_password'));
     }

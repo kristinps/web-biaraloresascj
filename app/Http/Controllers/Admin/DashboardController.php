@@ -12,7 +12,7 @@ class DashboardController extends Controller
 {
     public function list(Request $request)
     {
-        $query = PendaftaranPernikahan::latest();
+        $query = PendaftaranPernikahan::whereNull('periode_id')->latest();
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -24,6 +24,9 @@ class DashboardController extends Controller
         }
 
         $pendaftaran = $query->paginate(15);
+
+        // Data periode untuk select di modal tombol Centang
+        $periodes = PeriodePernikahan::aktif()->orderByDesc('tanggal_mulai')->get();
 
         // Data periode untuk ringkasan di bagian bawah halaman
         $periodeAktif = PeriodePernikahan::aktif()
@@ -46,8 +49,38 @@ class DashboardController extends Controller
             'pendaftaran',
             'routePrefix',
             'periodeAktif',
-            'periodeSelesai'
+            'periodeSelesai',
+            'periodes'
         ));
+    }
+
+    /** Assign periode ke pendaftaran (tombol Centang) */
+    public function assignPeriode(Request $request, $id)
+    {
+        $pendaftaran = PendaftaranPernikahan::findOrFail($id);
+        if ($pendaftaran->periode_id) {
+            $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+            return redirect()->route($routePrefix . '.pendaftaran.index')
+                ->with('error', 'Pendaftaran ini sudah memiliki periode.');
+        }
+
+        $request->validate([
+            'periode_id' => 'required|exists:periode_pernikahan,id',
+        ], [
+            'periode_id.required' => 'Pilih periode untuk peserta.',
+            'periode_id.exists'   => 'Periode tidak valid.',
+        ]);
+
+        $pendaftaran->update([
+            'periode_id'    => $request->periode_id,
+            'status_kursus' => 'terjadwal',
+        ]);
+
+        $pendaftaran->notify(new StatusKursusBerubahNotification($pendaftaran, 'terjadwal'));
+
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+        return redirect()->route($routePrefix . '.pendaftaran.index')
+            ->with('success', 'Periode berhasil dipilih. Peserta terdaftar pada periode yang dipilih dan email notifikasi telah dikirim.');
     }
 
     /** Daftar pendaftaran masuk (status menunggu persetujuan admin) */
@@ -74,8 +107,11 @@ class DashboardController extends Controller
     {
         $pendaftaran = PendaftaranPernikahan::findOrFail($id);
         $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+        $periodes = !$pendaftaran->periode_id
+            ? \App\Models\PeriodePernikahan::aktif()->orderByDesc('tanggal_mulai')->get()
+            : collect();
 
-        return view('admin.pendaftaran.show', compact('pendaftaran', 'routePrefix'));
+        return view('admin.pendaftaran.show', compact('pendaftaran', 'routePrefix', 'periodes'));
     }
 
     /** Form pilih periode untuk menyetujui pendaftaran */

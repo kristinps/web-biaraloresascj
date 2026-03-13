@@ -7,12 +7,9 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\KontakController;
 use App\Http\Controllers\KursusPendaftaranController;
-use App\Http\Controllers\BiayaPembayaranController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\User\UserDashboardController;
-use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PeriodeController;
@@ -21,6 +18,8 @@ use App\Http\Controllers\Admin\KehadiranController;
 use App\Http\Controllers\Admin\DokumenController;
 use App\Http\Controllers\Admin\KursusController;
 use App\Http\Controllers\Admin\SuratKelulusanController;
+use App\Http\Controllers\User\UserDashboardController;
+use App\Http\Controllers\UserProfileController;
 
 // ─── Login & Logout (domain utama: biaraloresa.my.id)
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -39,9 +38,12 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
         Route::get('/pendaftaran/{id}', [AdminDashboardController::class, 'show'])->name('pendaftaran.show');
         Route::get('/pendaftaran/{id}/setuju', [AdminDashboardController::class, 'showSetuju'])->name('pendaftaran.setuju');
         Route::post('/pendaftaran/{id}/setuju', [AdminDashboardController::class, 'setuju'])->name('pendaftaran.setuju.store');
+        Route::post('/pendaftaran/{id}/assign-periode', [AdminDashboardController::class, 'assignPeriode'])->name('pendaftaran.assign-periode');
         Route::get('/pendaftaran-dokumen', [DokumenController::class, 'listDokumen'])->name('pendaftaran.dokumen-list');
         Route::match(['GET', 'POST'], '/pendaftaran/{id}/dokumen-setuju', [DokumenController::class, 'setuju'])->name('pendaftaran.dokumen-setuju');
         Route::match(['GET', 'POST'], '/pendaftaran/{id}/dokumen-tolak', [DokumenController::class, 'tolak'])->name('pendaftaran.dokumen-tolak');
+        Route::post('/pendaftaran/{pendaftaran}/dokumen/{field}/setuju-item', [DokumenController::class, 'setujuPerDokumen'])->name('pendaftaran.dokumen-item-setuju');
+        Route::post('/pendaftaran/{pendaftaran}/dokumen/{field}/tolak-item', [DokumenController::class, 'tolakPerDokumen'])->name('pendaftaran.dokumen-item-tolak');
         Route::get('/pendaftaran/{id}/dokumen', fn (int $id) => redirect()->route('dashboard.pendaftaran.show', $id))->name('pendaftaran.dokumen.redirect');
         Route::get('/periode', [PeriodeController::class, 'index'])->name('periode.index');
         Route::get('/periode/create', [PeriodeController::class, 'create'])->name('periode.create');
@@ -56,6 +58,7 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
         Route::put('/materi/{materi}', [MateriKursusController::class, 'update'])->name('materi.update');
         Route::get('/periode/{periode}/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
         Route::put('/pendaftaran/{id}/dokumen', [DokumenController::class, 'updateStatus'])->name('pendaftaran.dokumen');
+        Route::put('/pendaftaran/{id}/dokumen-status', [DokumenController::class, 'updateStatusPerDokumen'])->name('pendaftaran.dokumen-status');
         Route::put('/pendaftaran/{pendaftaran}/status-kursus', [KehadiranController::class, 'updateStatusKursus'])->name('pendaftaran.status-kursus');
         Route::post('/materi/{materi}/kirim-materi', [MateriKursusController::class, 'kirimMateri'])->name('materi.kirim');
         Route::post('/materi/{materi}/kirim-zoom', [MateriKursusController::class, 'kirimZoom'])->name('materi.kirim-zoom');
@@ -96,27 +99,51 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
         Route::delete('/{user}', [\App\Http\Controllers\Admin\AdminCrudController::class, 'destroy'])->name('destroy');
     });
 
-    // User (peserta): dashboard pesan, status, dokumen, jadwal, biaya, surat, profil, password
+    // User (peserta): hanya halaman dashboard
     Route::middleware('role:user')->group(function () {
         Route::get('/user', [DashboardController::class, 'user'])->name('user');
-        Route::get('/status-pendaftaran', [UserDashboardController::class, 'statusPendaftaran'])->name('user.status-pendaftaran');
-        Route::get('/dokumen', [UserDashboardController::class, 'dokumen'])->name('user.dokumen');
-        Route::get('/jadwal-materi', [UserDashboardController::class, 'jadwalMateri'])->name('user.jadwal-materi');
-        Route::get('/pembayaran', [UserDashboardController::class, 'pembayaran'])->name('user.pembayaran');
-        Route::get('/biaya', [UserDashboardController::class, 'biaya'])->name('user.biaya');
-        Route::get('/biaya/{tagihan}', [BiayaPembayaranController::class, 'show'])->name('user.biaya.show');
-        Route::get('/biaya/{tagihan}/status', [BiayaPembayaranController::class, 'checkStatus'])->name('user.biaya.status');
-        Route::post('/biaya/{tagihan}/new-qr', [BiayaPembayaranController::class, 'newQr'])->name('user.biaya.new-qr');
-        Route::get('/biaya/{tagihan}/qr-image', [BiayaPembayaranController::class, 'qrImage'])->name('user.biaya.qr-image');
-        Route::get('/sertifikat', [UserDashboardController::class, 'sertifikat'])->name('user.sertifikat');
-        Route::get('/sertifikat/{pendaftaran}/download', [UserDashboardController::class, 'downloadSertifikat'])->name('user.sertifikat.download');
-        Route::post('/perbaikan-dokumen/{id}', [UserDashboardController::class, 'submitPerbaikanDokumen'])->name('user.perbaikan-dokumen');
-        Route::get('/profil', [UserProfileController::class, 'show'])->name('user.profil');
-        Route::put('/profil', [UserProfileController::class, 'update'])->name('user.profil.update');
-        Route::get('/password', [UserProfileController::class, 'showPassword'])->name('user.password');
-        Route::put('/password', [UserProfileController::class, 'updatePassword'])->name('user.password.update');
+        Route::post('/user/pesan/{pesan}/selesai', [DashboardController::class, 'markPesanSelesai'])
+            ->name('user.pesan.selesai');
     });
 });
+
+// ─── Dashboard Peserta (user.*) dengan layout khusus
+Route::middleware(['auth', 'role:user'])
+    ->prefix('user')
+    ->name('user.')
+    ->group(function () {
+        Route::get('/status-pendaftaran', [UserDashboardController::class, 'statusPendaftaran'])->name('status-pendaftaran');
+        Route::get('/dokumen', [UserDashboardController::class, 'dokumen'])->name('dokumen');
+        Route::get('/jadwal-materi', [UserDashboardController::class, 'jadwalMateri'])->name('jadwal-materi');
+        Route::get('/pembayaran', [UserDashboardController::class, 'pembayaran'])->name('pembayaran');
+        Route::get('/biaya', [UserDashboardController::class, 'biaya'])->name('biaya');
+        Route::get('/sertifikat', [UserDashboardController::class, 'sertifikat'])->name('sertifikat');
+
+        // Profil & password user
+        Route::get('/profil', [UserProfileController::class, 'show'])->name('profil');
+        Route::post('/profil', [UserProfileController::class, 'update'])->name('profil.update');
+        Route::get('/password', [UserProfileController::class, 'showPassword'])->name('password');
+        Route::post('/password', [UserProfileController::class, 'updatePassword'])->name('password.update');
+
+        // Aksi pengguna terkait pendaftaran
+        Route::post('/pendaftaran/{pendaftaran}/perbaikan-dokumen', [UserDashboardController::class, 'submitPerbaikanDokumen'])
+            ->name('pendaftaran.perbaikan-dokumen');
+        Route::put('/pendaftaran/{pendaftaran}/dokumen-status', [UserDashboardController::class, 'updateDokumenStatus'])
+            ->name('pendaftaran.dokumen-status');
+        Route::get('/pendaftaran/{pendaftaran}/upload-dokumen', fn () => redirect()->route('user.dokumen'));
+        Route::post('/pendaftaran/{pendaftaran}/upload-dokumen', [UserDashboardController::class, 'uploadDokumen'])
+            ->name('pendaftaran.upload-dokumen');
+        Route::get('/pendaftaran/{pendaftaran}/sertifikat', [UserDashboardController::class, 'downloadSertifikat'])
+            ->name('pendaftaran.sertifikat');
+
+        // Logout khusus layout user
+        Route::post('/logout', function () {
+            auth()->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+            return redirect()->route('home');
+        })->name('logout');
+    });
 
 // ─── Admin — hanya aktif di admin.biaraloresa.my.id (harus di atas agar prioritas lebih tinggi)
 Route::domain('admin.biaraloresa.my.id')->group(function () {
@@ -142,7 +169,10 @@ Route::domain('admin.biaraloresa.my.id')->group(function () {
     Route::match(['GET', 'POST'], '/pendaftaran/{id}/dokumen-tolak', [DokumenController::class, 'tolak'])->middleware('admin')->name('admin.pendaftaran.dokumen-tolak');
     Route::get('/pendaftaran/{id}/setuju', [AdminDashboardController::class, 'showSetuju'])->middleware('admin')->name('admin.pendaftaran.setuju');
     Route::post('/pendaftaran/{id}/setuju', [AdminDashboardController::class, 'setuju'])->middleware('admin')->name('admin.pendaftaran.setuju.store');
+    Route::post('/pendaftaran/{id}/assign-periode', [AdminDashboardController::class, 'assignPeriode'])->middleware('admin')->name('admin.pendaftaran.assign-periode');
     Route::put('/pendaftaran/{id}/dokumen', [DokumenController::class, 'updateStatus'])->middleware('admin')->name('admin.dokumen.update');
+    Route::post('/pendaftaran/{pendaftaran}/dokumen/{field}/setuju-item', [DokumenController::class, 'setujuPerDokumen'])->middleware('admin')->name('admin.pendaftaran.dokumen-item-setuju');
+    Route::post('/pendaftaran/{pendaftaran}/dokumen/{field}/tolak-item', [DokumenController::class, 'tolakPerDokumen'])->middleware('admin')->name('admin.pendaftaran.dokumen-item-tolak');
 });
 
 // ─── Halaman Publik

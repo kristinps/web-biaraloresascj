@@ -1,5 +1,4 @@
-@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'user.layouts.app')
-
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'layouts.dashboard')
 @section('title', 'Pembayaran Pendaftaran')
 @section('page-title', 'Pembayaran Pendaftaran')
 @section('page-subtitle', 'Status dan langkah pembayaran biaya pendaftaran')
@@ -65,7 +64,20 @@
                             @if($item->status_pembayaran === 'lunas')
                                 <a href="{{ route('kursus-pernikahan.sukses', $item->id) }}" class="table-action-btn">Lihat detail</a>
                             @else
-                                <a href="{{ route('pembayaran.show', $item->id) }}" class="btn-bayar">Bayar / Cek QRIS</a>
+                                <div class="flex flex-col items-start gap-2">
+                                    @if($item->qris_url)
+                                        <div class="flex flex-col items-start gap-1">
+                                            <img src="{{ route('pembayaran.qr-image', $item->id) }}?t={{ time() }}"
+                                                 alt="QRIS {{ $item->nama_pria }} &amp; {{ $item->nama_wanita }}"
+                                                 class="w-48 h-48 sm:w-56 sm:h-56 object-contain rounded-xl border-2 border-gray-200 shadow-md bg-white"
+                                                 loading="lazy">
+                                            <p class="text-xs text-gray-500">Scan dengan GoPay, OVO, DANA, ShopeePay, atau mobile banking</p>
+                                        </div>
+                                    @endif
+                                    <a href="{{ route('pembayaran.show', $item->id) }}" class="btn-bayar">
+                                        {{ $item->qris_url ? 'Halaman Pembayaran Lengkap' : 'Bayar / Cek QRIS' }}
+                                    </a>
+                                </div>
                             @endif
                         </td>
                     </tr>

@@ -44,7 +44,7 @@ class BiayaTambahanNotification extends Notification
             $mail->line('**Keterangan:** ' . $this->biaya->keterangan);
         }
 
-        $mail->action('Login ke Dashboard', route('dashboard.user.biaya'));
+        $mail->action('Login ke Dashboard', route('dashboard.user'));
 
         return $mail
             ->line('Silakan melakukan pembayaran biaya tambahan melalui menu Biaya di dashboard peserta.')

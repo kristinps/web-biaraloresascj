@@ -33,6 +33,90 @@ class DokumenController extends Controller
         return view('admin.pendaftaran.dokumen', compact('pendaftaran', 'routePrefix'));
     }
 
+    /**
+     * Setuju satu dokumen (per field) → tandai sebagai diterima, kirim email.
+     */
+    public function setujuPerDokumen(Request $request, PendaftaranPernikahan $pendaftaran, string $field)
+    {
+        $fields = PendaftaranPernikahan::dokumenFields();
+        if (!isset($fields[$field])) {
+            abort(404);
+        }
+
+        $status = $pendaftaran->dokumen_status_verifikasi ?? [];
+        $status[$field] = true;
+
+        // Hitung ulang status_dokumen global: jika semua field yang ada filenya sudah true → lengkap
+        $allTrue = true;
+        foreach (array_keys($fields) as $f) {
+            if (!empty($pendaftaran->$f)) {
+                if (!filter_var($status[$f] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                    $allTrue = false;
+                    break;
+                }
+            }
+        }
+
+        $pendaftaran->dokumen_status_verifikasi = $status;
+        $pendaftaran->status_dokumen = $allTrue ? 'lengkap' : ($pendaftaran->status_dokumen ?: 'sedang_diperiksa');
+        $pendaftaran->save();
+
+        $label = $fields[$field];
+        $pesan = "Dokumen \"{$label}\" telah diterima oleh admin.";
+        $pendaftaran->notify(new DokumenStatusNotification($pendaftaran, $pesan));
+
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+        return redirect()
+            ->route($routePrefix . '.pendaftaran.show', $pendaftaran->id)
+            ->with('success', 'Dokumen "' . $label . '" diterima. Email notifikasi telah dikirim ke peserta.');
+    }
+
+    /**
+     * Tolak satu dokumen (per field) → tandai sebagai ditolak, kirim email.
+     */
+    public function tolakPerDokumen(Request $request, PendaftaranPernikahan $pendaftaran, string $field)
+    {
+        $fields = PendaftaranPernikahan::dokumenFields();
+        if (!isset($fields[$field])) {
+            abort(404);
+        }
+
+        $status = $pendaftaran->dokumen_status_verifikasi ?? [];
+        $status[$field] = false;
+
+        // Hitung ulang status_dokumen global: jika ada yang false → tidak_lengkap
+        $hasFalse = false;
+        $allTrue = true;
+        foreach (array_keys($fields) as $f) {
+            if (!empty($pendaftaran->$f)) {
+                $val = filter_var($status[$f] ?? false, FILTER_VALIDATE_BOOLEAN);
+                if (!$val) {
+                    $hasFalse = true;
+                    $allTrue = false;
+                }
+            }
+        }
+
+        if ($hasFalse) {
+            $pendaftaran->status_dokumen = 'tidak_lengkap';
+        } elseif ($allTrue) {
+            $pendaftaran->status_dokumen = 'lengkap';
+        } else {
+            $pendaftaran->status_dokumen = $pendaftaran->status_dokumen ?: 'sedang_diperiksa';
+        }
+        $pendaftaran->dokumen_status_verifikasi = $status;
+        $pendaftaran->save();
+
+        $label = $fields[$field];
+        $pesan = "Dokumen \"{$label}\" tidak diterima. Silakan perbaiki atau unggah ulang sesuai petunjuk admin.";
+        $pendaftaran->notify(new DokumenStatusNotification($pendaftaran, $pesan));
+
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+        return redirect()
+            ->route($routePrefix . '.pendaftaran.show', $pendaftaran->id)
+            ->with('success', 'Dokumen "' . $label . '" ditolak. Email notifikasi telah dikirim ke peserta.');
+    }
+
     /** Admin klik centang: setuju dokumen → status diterima (lengkap), kirim email */
     public function setuju($id)
     {
@@ -102,5 +186,24 @@ class DokumenController extends Controller
         };
 
         return back()->with('success', $label . ' Email notifikasi telah dikirim ke peserta.');
+    }
+
+    /** Update status verifikasi per dokumen (✔/✖) */
+    public function updateStatusPerDokumen(Request $request, $id)
+    {
+        $pendaftaran = PendaftaranPernikahan::findOrFail($id);
+        $fields = PendaftaranPernikahan::dokumenFields();
+        $status = [];
+
+        foreach (array_keys($fields) as $field) {
+            $val = $request->input("dokumen_status.{$field}");
+            $status[$field] = $val === '1' || $val === 'true';
+        }
+
+        $pendaftaran->update(['dokumen_status_verifikasi' => $status]);
+
+        $routePrefix = request()->routeIs('dashboard.*') ? 'dashboard' : 'admin';
+        return redirect()->route($routePrefix . '.pendaftaran.show', $id)
+            ->with('success', 'Status dokumen berhasil disimpan.');
     }
 }

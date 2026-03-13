@@ -38,7 +38,7 @@ class BiayaPembayaranController extends Controller
 
         if ($tagihan->status === 'lunas') {
             return redirect()
-                ->route('dashboard.user.biaya')
+                ->route('dashboard.user')
                 ->with('success', 'Biaya tambahan ini sudah lunas.');
         }
 
@@ -66,7 +66,7 @@ class BiayaPembayaranController extends Controller
                     $tagihan->update(['status' => 'lunas']);
                     AdminBiayaController::notifyAdminsBiayaLunas($tagihan);
 
-                    return redirect()->route('dashboard.user.biaya')
+                    return redirect()->route('dashboard.user')
                         ->with('success', 'Pembayaran biaya tambahan berhasil dikonfirmasi.');
                 }
             } catch (\Exception $e) {
@@ -99,7 +99,7 @@ class BiayaPembayaranController extends Controller
 
                 return response()->json([
                     'status'       => 'lunas',
-                    'redirect_url' => route('dashboard.user.biaya'),
+                    'redirect_url' => route('dashboard.user'),
                 ]);
             }
 
@@ -126,7 +126,7 @@ class BiayaPembayaranController extends Controller
         if ($tagihan->status === 'lunas') {
             return response()->json([
                 'status'       => 'lunas',
-                'redirect_url' => route('dashboard.user.biaya'),
+                'redirect_url' => route('dashboard.user'),
             ]);
         }
 
@@ -136,7 +136,7 @@ class BiayaPembayaranController extends Controller
 
             return response()->json([
                 'success'       => true,
-                'qr_image_url'  => route('dashboard.user.biaya.qr-image', $tagihan->id) . '?t=' . time(),
+                'qr_image_url'  => url('/'), // Halaman biaya dihapus
                 'expired_at'    => $tagihan->qris_expired_at?->toIso8601String(),
                 'expired_label' => $tagihan->qris_expired_at?->locale('id')->isoFormat('D MMM YYYY, HH:mm'),
             ]);

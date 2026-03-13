@@ -77,7 +77,8 @@
         .toast-success { background: rgba(240,253,244,0.98); border-color: #bbf7d0; color: #15803d; }
         .toast-success svg { color: #16a34a; }
         .toast-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
-        .menu-toggle { display: none; position: fixed; top: 12px; left: 12px; z-index: 102; width: 44px; height: 44px; border-radius: 12px; border: none; cursor: pointer; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15); align-items: center; justify-content: center; }
+        .menu-toggle { display: none; position: fixed; top: 12px; right: 12px; left: auto; z-index: 102; width: 44px; height: 44px; border-radius: 12px; border: none; cursor: pointer; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.15); align-items: center; justify-content: center; transition: opacity 0.2s, visibility 0.2s; }
+        .menu-toggle.menu-toggle-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -261,6 +262,49 @@
             text-decoration: underline;
         }
     </style>
+    {{-- Style halaman dashboard user (peserta) --}}
+    <style>
+        .dashboard-user-content { width: 100%; min-width: 0; padding-top: 1.5rem; }
+        @media (min-width: 640px) { .dashboard-user-content { padding-top: 2rem; } }
+        .dashboard-user-header { margin-bottom: 1.5rem; }
+        .dashboard-user-title { font-family: ui-serif, Georgia, serif; font-weight: 700; color: #fff; font-size: clamp(1.25rem, 4vw, 1.5rem); line-height: 1.3; margin-bottom: 0.25rem; }
+        .dashboard-user-subtitle { color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-bottom: 1rem; }
+        .dashboard-user-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+        .dashboard-user-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; text-decoration: none; transition: background 0.2s, color 0.2s; }
+        .dashboard-user-btn-icon { width: 1rem; height: 1rem; flex-shrink: 0; }
+        .dashboard-user-btn-secondary { background: rgba(255,255,255,0.95); color: #1e2685; border: 1px solid rgba(255,255,255,0.3); }
+        .dashboard-user-btn-secondary:hover { background: #fff; }
+        .dashboard-user-btn-primary { background: #2230ce; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .dashboard-user-btn-primary:hover { background: #1e2685; }
+        .dashboard-user-card { background: rgba(255,255,255,0.95); border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2); overflow: hidden; }
+        .dashboard-user-card--mt { margin-top: 2rem; }
+        .dashboard-user-card-header { padding: 1rem 1.25rem; border-bottom: 1px solid #f1f5f9; }
+        @media (min-width: 640px) { .dashboard-user-card-header { padding: 1rem 1.5rem; } }
+        .dashboard-user-card-title { font-family: ui-serif, Georgia, serif; font-weight: 700; color: #1f2937; font-size: 1.125rem; }
+        .dashboard-user-card-desc { font-size: 0.875rem; color: #6b7280; margin-top: 0.125rem; }
+        .dashboard-user-card-body { }
+        .dashboard-user-card-footer { padding: 0.75rem 1.25rem; border-top: 1px solid #f1f5f9; }
+        @media (min-width: 640px) { .dashboard-user-card-footer { padding: 0.75rem 1.5rem; } }
+        .dashboard-user-message { padding: 1rem 1.25rem; border-bottom: 1px solid #f1f5f9; }
+        .dashboard-user-message:last-child { border-bottom: none; }
+        @media (min-width: 640px) { .dashboard-user-message { padding: 1rem 1.5rem; } }
+        .dashboard-user-message--unread { background: rgba(34, 48, 206, 0.06); }
+        .dashboard-user-message-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+        .dashboard-user-message-content { flex: 1; min-width: 0; }
+        .dashboard-user-message-title { font-weight: 600; color: #1f2937; font-size: 0.9375rem; }
+        .dashboard-user-message-text { font-size: 0.875rem; color: #4b5563; margin-top: 0.25rem; line-height: 1.5; word-break: break-word; }
+        .dashboard-user-message-meta { font-size: 0.75rem; color: #9ca3af; margin-top: 0.5rem; }
+        .dashboard-user-badge { flex-shrink: 0; padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; background: #e0e7ff; color: #3730a3; }
+        .dashboard-user-empty { padding: 3rem 1.25rem; text-align: center; color: #6b7280; font-size: 0.875rem; }
+        @media (min-width: 640px) { .dashboard-user-empty { padding: 3rem 1.5rem; } }
+        .dashboard-user-list { list-style: none; }
+        .dashboard-user-list-item { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem 1rem; padding: 0.75rem 1.25rem; border-bottom: 1px solid #f1f5f9; }
+        .dashboard-user-list-item:last-child { border-bottom: none; }
+        @media (min-width: 640px) { .dashboard-user-list-item { padding: 0.75rem 1.5rem; } }
+        .dashboard-user-list-name { font-weight: 500; color: #1f2937; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        @media (max-width: 479px) { .dashboard-user-list-name { white-space: normal; } }
+        .dashboard-user-list-meta { font-size: 0.875rem; color: #6b7280; flex-shrink: 0; }
+    </style>
 </head>
 <body>
 
@@ -280,68 +324,63 @@
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                 Dashboard
             </a>
-            <a href="{{ route('dashboard.pendaftaran.index') }}" class="nav-item {{ request()->routeIs('dashboard.pendaftaran.index') || request()->routeIs('dashboard.pendaftaran.show') || request()->routeIs('dashboard.pendaftaran.masuk') ? 'active' : '' }}">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+            <a href="{{ route('dashboard.periode.index') }}" class="nav-item {{ request()->routeIs('dashboard.periode.*') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                Periode
+            </a>
+            <a href="{{ route('dashboard.pendaftaran.index') }}" class="nav-item {{ request()->routeIs('dashboard.pendaftaran.*') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                 Pendaftaran
             </a>
-            <a href="{{ route('dashboard.pendaftaran.dokumen-list') }}" class="nav-item {{ request()->routeIs('dashboard.pendaftaran.dokumen-list') ? 'active' : '' }}">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
-                Dokumen Pendaftaran
-            </a>
-            <a href="{{ route('dashboard.periode.index') }}" class="nav-item {{ request()->routeIs('dashboard.periode.*') ? 'active' : '' }}">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Manajemen Peserta
-            </a>
-            <a href="{{ route('dashboard.materi.periode-list') }}" class="nav-item {{ request()->routeIs('dashboard.materi.*') ? 'active' : '' }}">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                Materi
-            </a>
-            <a href="{{ route('dashboard.kehadiran.periode-list') }}" class="nav-item {{ request()->routeIs('dashboard.kehadiran.*') ? 'active' : '' }}">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                Kehadiran
-            </a>
-            @if(\Illuminate\Support\Facades\Route::has('dashboard.biaya.index'))
-                <a href="{{ route('dashboard.biaya.index') }}" class="nav-item {{ request()->routeIs('dashboard.biaya.*') ? 'active' : '' }}">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 12v-2m0 2c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Biaya
-                </a>
-            @endif
-            @if(\Illuminate\Support\Facades\Route::has('dashboard.sertifikat.index'))
-                <a href="{{ route('dashboard.sertifikat.index') }}" class="nav-item {{ request()->routeIs('dashboard.sertifikat.*') ? 'active' : '' }}">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M9 4.5h10.125A1.125 1.125 0 0120.25 5.625V18.75A1.125 1.125 0 0119.125 19.875H4.875A1.125 1.125 0 013.75 18.75V5.625A1.125 1.125 0 014.875 4.5H9z"/>
-                    </svg>
-                    Sertifikat
-                </a>
-            @endif
-            @if(auth()->user()->isSuperAdmin())
-            <div class="nav-section">Super Admin</div>
-            <a href="{{ route('dashboard.admin-crud.index') }}" class="nav-item {{ request()->routeIs('dashboard.admin-crud.*') ? 'active' : '' }}">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                CRUD Admin
-            </a>
-            @endif
         @else
             <div class="nav-section">Menu Peserta</div>
             <a href="{{ route('dashboard.index') }}" class="nav-item {{ request()->routeIs('dashboard.index') ? 'active' : '' }}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 Dashboard
             </a>
-            <a href="{{ route('dashboard.user.status-pendaftaran') }}" class="nav-item {{ request()->routeIs('dashboard.user.status-pendaftaran') ? 'active' : '' }}">Status Pendaftaran</a>
-            <a href="{{ route('dashboard.user.dokumen') }}" class="nav-item {{ request()->routeIs('dashboard.user.dokumen') ? 'active' : '' }}">Status Dokumen</a>
-            <a href="{{ route('dashboard.user.jadwal-materi') }}" class="nav-item {{ request()->routeIs('dashboard.user.jadwal-materi') ? 'active' : '' }}">Jadwal Materi</a>
-            @if(\Illuminate\Support\Facades\Route::has('dashboard.user.biaya'))
-                <a href="{{ route('dashboard.user.biaya') }}" class="nav-item {{ request()->routeIs('dashboard.user.biaya') ? 'active' : '' }}">Biaya</a>
-            @endif
-            <a href="{{ route('dashboard.user.sertifikat') }}" class="nav-item {{ request()->routeIs('dashboard.user.sertifikat') ? 'active' : '' }}">Surat Kelulusan</a>
-            <div class="nav-section">Akun</div>
-            <a href="{{ route('dashboard.user.profil') }}" class="nav-item {{ request()->routeIs('dashboard.user.profil') ? 'active' : '' }}">Profil</a>
-            <a href="{{ route('dashboard.user.password') }}" class="nav-item {{ request()->routeIs('dashboard.user.password') ? 'active' : '' }}">Ubah Sandi</a>
+            <a href="{{ route('user.status-pendaftaran') }}" class="nav-item {{ request()->routeIs('user.status-pendaftaran') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
+                </svg>
+                Status Pendaftaran
+            </a>
+            <a href="{{ route('user.dokumen') }}" class="nav-item {{ request()->routeIs('user.dokumen') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                </svg>
+                Kelengkapan Dokumen
+            </a>
+            <a href="{{ route('user.jadwal-materi') }}" class="nav-item {{ request()->routeIs('user.jadwal-materi') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                </svg>
+                Jadwal Materi
+            </a>
+            <a href="{{ route('user.pembayaran') }}" class="nav-item {{ request()->routeIs('user.pembayaran') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5h6m-6-2.25h3m-3.75 3V6.75m9 0V9m0 0v2.25m0-4.5V9"/>
+                </svg>
+                Pembayaran Pendaftaran
+            </a>
+            <a href="{{ route('user.biaya') }}" class="nav-item {{ request()->routeIs('user.biaya') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Biaya Pendaftaran
+            </a>
+            <a href="{{ route('user.sertifikat') }}" class="nav-item {{ request()->routeIs('user.sertifikat') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/>
+                </svg>
+                Sertifikat
+            </a>
+            <a href="{{ route('user.profil') }}" class="nav-item {{ request()->routeIs('user.profil') ? 'active' : '' }}">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                </svg>
+                Profil
+            </a>
         @endif
-        <div class="nav-section">Umum</div>
-        <a href="{{ route('home') }}" class="nav-item" target="_blank">Beranda</a>
         <div class="nav-section">Akun</div>
         <form method="POST" action="{{ route('logout') }}" class="block">
             @csrf
@@ -369,7 +408,7 @@
 </aside>
 
 <div class="main">
-    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Buka menu">☰</button>
+    <button class="menu-toggle" id="menuToggleBtn" onclick="toggleSidebar()" aria-label="Buka menu">☰</button>
     <main class="content">
         <div class="dashboard-banner-wrap">
             <div class="dashboard-banner-inner">
@@ -385,19 +424,7 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                {{-- Bar atas: nama user + tombol Logout (semua role: admin, super_admin, peserta) --}}
-                <div class="dashboard-top-bar flex flex-wrap items-center justify-between gap-3 mb-4">
-                    <p class="text-white/90 text-sm font-medium truncate max-w-[180px] sm:max-w-none">
-                        Hai, <span class="font-semibold text-white">{{ auth()->user()->name ?? 'User' }}</span>
-                    </p>
-                    <form method="POST" action="{{ route('logout') }}" class="inline flex-shrink-0">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-sm font-semibold bg-white text-primary-800 hover:bg-gray-50 transition-colors shadow-md border border-white/40">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                            Logout
-                        </button>
-                    </form>
-                </div>
+               
                 @yield('content')
             </div>
         </div>
@@ -408,16 +435,20 @@
 function toggleSidebar() {
     var sidebar = document.getElementById('sidebar');
     var overlay = document.getElementById('sidebarOverlay');
+    var btn = document.getElementById('menuToggleBtn');
     sidebar.classList.toggle('open');
     if (overlay) overlay.classList.toggle('open', sidebar.classList.contains('open'));
     document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+    if (btn) btn.classList.toggle('menu-toggle-hidden', sidebar.classList.contains('open'));
 }
 function closeSidebar() {
     var sidebar = document.getElementById('sidebar');
     var overlay = document.getElementById('sidebarOverlay');
+    var btn = document.getElementById('menuToggleBtn');
     sidebar.classList.remove('open');
     if (overlay) overlay.classList.remove('open');
     document.body.style.overflow = '';
+    if (btn) btn.classList.remove('menu-toggle-hidden');
 }
 </script>
 </body>

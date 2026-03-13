@@ -244,7 +244,9 @@
             cursor: pointer;
             color: var(--text);
             padding: 6px;
+            transition: opacity 0.2s, visibility 0.2s;
         }
+        .menu-toggle.menu-toggle-hidden { visibility: hidden; opacity: 0; pointer-events: none; }
         .menu-toggle svg { width: 22px; height: 22px; }
 
         .sidebar-overlay {
@@ -352,17 +354,17 @@
 <div class="main">
     <header class="header">
         <div style="display:flex;align-items:center;gap:12px">
-            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Buka menu">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
-                </svg>
-            </button>
             <div class="header-left">
                 <h1>@yield('page-title', 'Dashboard')</h1>
                 <p>@yield('page-subtitle', 'Panel Administrator Biara Loresa SCJ')</p>
             </div>
         </div>
-        <div class="header-right">
+        <div class="header-right" style="display:flex;align-items:center;gap:12px">
+            <button class="menu-toggle" id="menuToggleBtn" onclick="toggleSidebar()" aria-label="Buka menu">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                </svg>
+            </button>
             <div class="header-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
         </div>
     </header>
@@ -395,12 +397,12 @@
 function toggleSidebar() {
     var sidebar = document.getElementById('sidebar');
     var overlay = document.getElementById('sidebarOverlay');
+    var btn = document.getElementById('menuToggleBtn');
     if (!sidebar) return;
     var isOpen = sidebar.classList.toggle('open');
-    if (overlay) {
-        overlay.classList.toggle('open', isOpen);
-    }
+    if (overlay) overlay.classList.toggle('open', isOpen);
     document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (btn) btn.classList.toggle('menu-toggle-hidden', isOpen);
 }
 </script>
 @stack('scripts')

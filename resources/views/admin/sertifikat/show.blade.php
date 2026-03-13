@@ -133,7 +133,7 @@
         <div class="meta-sub">File disimpan di storage publik dan dapat diunduh oleh peserta melalui dashboard mereka.</div>
 
         <div class="preview-actions">
-            <a href="{{ route('dashboard.user.sertifikat.download', $surat->pendaftaran_id) }}" target="_blank" class="btn-primary">
+            <a href="{{ route('dashboard.user') }}" target="_blank" class="btn-primary">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4-4 4m0 0-4-4m4 4V4"/>
                 </svg>

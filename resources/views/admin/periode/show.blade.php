@@ -6,27 +6,34 @@
 
 @push('styles')
 <style>
-    .periode-meta {
-        background:#fff;border-radius:14px;border:1px solid #e2e8f0;
-        padding:18px 22px;display:flex;align-items:center;gap:14px;
-        margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,0.04);
+    .periode-show-page .periode-meta {
+        background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.10), rgba(56,189,248,0.08));
+        border-radius:14px; border:1px solid rgba(148,163,184,0.5);
+        padding:18px 22px; display:flex; align-items:center; gap:14px;
+        margin-bottom:24px; box-shadow:0 8px 24px rgba(15,23,42,0.08);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     }
     .pi-icon { width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
     .pi-icon.aktif   { background:linear-gradient(135deg,#22c55e,#4ade80);box-shadow:0 4px 10px rgba(34,197,94,0.3); }
     .pi-icon.selesai { background:linear-gradient(135deg,#94a3b8,#cbd5e1); }
     .pi-icon svg { width:22px;height:22px;color:#fff; }
-    .pi-name  { font-size:16px;font-weight:700;color:#1e293b; }
-    .pi-dates { font-size:12.5px;color:#64748b;margin-top:3px; }
+    .periode-show-page .pi-name  { font-size:16px;font-weight:700;color:#ffffff; }
+    .periode-show-page .pi-dates { font-size:12.5px;color:rgba(255,255,255,0.9);margin-top:3px; }
 
     .badge-status { display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600; }
     .badge-dot { width:6px;height:6px;border-radius:50%; }
-    .badge-aktif  { background:#f0fdf4;color:#15803d; } .badge-aktif .badge-dot  { background:#22c55e; }
-    .badge-selesai { background:#f8fafc;color:#475569; } .badge-selesai .badge-dot { background:#94a3b8; }
+    .periode-show-page .badge-aktif  { background:rgba(34,197,94,0.35);color:#bbf7d0; } .badge-aktif .badge-dot  { background:#22c55e; }
+    .periode-show-page .badge-selesai { background:rgba(148,163,184,0.35);color:#e2e8f0; } .badge-selesai .badge-dot { background:#94a3b8; }
 
     .stats-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px; }
-    .stat-card { background:#fff;border-radius:14px;border:1px solid #e2e8f0;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.04); }
-    .stat-card .val { font-size:26px;font-weight:800;color:#1e293b; }
-    .stat-card .lbl { font-size:12.5px;color:#64748b;margin-top:3px;font-weight:500; }
+    .periode-show-page .stat-card {
+        background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.10), rgba(56,189,248,0.08));
+        border-radius:14px; border:1px solid rgba(148,163,184,0.5);
+        padding:18px 20px; box-shadow:0 8px 24px rgba(15,23,42,0.08);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    .periode-show-page .stat-card .val { font-size:26px;font-weight:800;color:#ffffff; }
+    .periode-show-page .stat-card .lbl { font-size:12.5px;color:rgba(255,255,255,0.9);margin-top:3px;font-weight:500; }
 
     /* Batch action buttons */
     .batch-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px; }
@@ -45,38 +52,53 @@
     .bb-amber  { background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff; }
     .bb-teal   { background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff; }
 
-    .card { background:#fff;border-radius:16px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,0.04);overflow:hidden; }
-    .card-header { padding:18px 24px 14px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px; }
-    .card-header h2 { font-size:15px;font-weight:700;color:#1e293b; }
+    .periode-show-page .card {
+        background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.10), rgba(56,189,248,0.08));
+        border-radius:16px; border:1px solid rgba(148,163,184,0.5);
+        box-shadow:0 8px 24px rgba(15,23,42,0.08); overflow:hidden;
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    .periode-show-page .card-header { padding:18px 24px 14px; border-bottom:1px solid rgba(148,163,184,0.35); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+    .periode-show-page .card-header h2 { font-size:15px; font-weight:700; color:#ffffff; }
 
-    /* Tabel mengikuti tema beranda (style utama di layout dashboard) */
-    table { width:100%;border-collapse:collapse; }
+    table { width:100%; border-collapse:collapse; }
     td { vertical-align:middle; }
-    .td-num { color:#6366f1;font-weight:700;font-size:13px; }
-    .td-names { font-weight:600;color:#1e293b; }
-    .td-names small { display:block;font-size:12px;font-weight:400;color:#94a3b8; }
+    .periode-show-page .card table th,
+    .periode-show-page .card table td { color:#ffffff; border-bottom:1px solid rgba(148,163,184,0.35); padding:12px 16px; }
+    .periode-show-page .card table thead th { background:rgba(99,102,241,0.15); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; }
+    .periode-show-page .card table tbody tr:hover { background:rgba(255,255,255,0.06); }
+    .periode-show-page .td-num { color:#c7d2fe; font-weight:700; font-size:13px; }
+    .periode-show-page .td-names { font-weight:600; color:#ffffff; }
+    .periode-show-page .td-names small { display:block; font-size:12px; font-weight:400; color:rgba(255,255,255,0.8); }
 
     .badge { display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600; }
     .badge-dot2 { width:5px;height:5px;border-radius:50%; }
-    .badge-green  { background:#f0fdf4;color:#15803d; } .badge-green .badge-dot2  { background:#22c55e; }
-    .badge-amber  { background:#fffbeb;color:#b45309; } .badge-amber .badge-dot2  { background:#f59e0b; }
-    .badge-slate  { background:#f8fafc;color:#475569; } .badge-slate .badge-dot2  { background:#94a3b8; }
-    .badge-red    { background:#fef2f2;color:#dc2626; } .badge-red .badge-dot2    { background:#ef4444; }
-    .badge-blue   { background:#eff6ff;color:#1d4ed8; } .badge-blue .badge-dot2   { background:#3b82f6; }
+    .periode-show-page .badge-green  { background:rgba(34,197,94,0.35);color:#bbf7d0; } .badge-green .badge-dot2  { background:#22c55e; }
+    .periode-show-page .badge-amber  { background:rgba(245,158,11,0.35);color:#fef3c7; } .badge-amber .badge-dot2  { background:#f59e0b; }
+    .periode-show-page .badge-slate  { background:rgba(148,163,184,0.35);color:#e2e8f0; } .badge-slate .badge-dot2  { background:#94a3b8; }
+    .periode-show-page .badge-red    { background:rgba(239,68,68,0.35);color:#fecaca; } .badge-red .badge-dot2    { background:#ef4444; }
+    .periode-show-page .badge-blue   { background:rgba(59,130,246,0.35);color:#bfdbfe; } .badge-blue .badge-dot2   { background:#3b82f6; }
 
-    .btn-detail { display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;background:#f1f5f9;color:#475569;font-size:12.5px;font-weight:600;text-decoration:none;transition:background 0.15s; }
-    .btn-detail:hover { background:#e0e7ff;color:#4f46e5; }
+    .periode-show-page .btn-detail { display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,0.2);color:#ffffff;font-size:12.5px;font-weight:600;text-decoration:none;transition:background 0.15s; }
+    .periode-show-page .btn-detail:hover { background:rgba(99,102,241,0.5); color:#fff; }
     .btn-detail svg { width:13px;height:13px; }
 
-    .empty-state { text-align:center;padding:48px 24px;color:#94a3b8; }
+    .periode-show-page .empty-state { text-align:center; padding:48px 24px; color:rgba(255,255,255,0.9); }
     .empty-state svg { width:48px;height:48px;margin:0 auto 14px; }
-    .empty-state p { font-size:14px; }
+    .periode-show-page .empty-state p { font-size:14px; color:rgba(255,255,255,0.9); }
 
-    .pagination-wrap { padding:14px 24px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end; }
+    .periode-show-page .pagination-wrap,
+    .periode-show-page .dashboard-table-footer { padding:14px 24px; border-top:1px solid rgba(148,163,184,0.35); display:flex; justify-content:flex-end; }
+    .periode-show-page .pagination-wrap a,
+    .periode-show-page .pagination-wrap span,
+    .periode-show-page .dashboard-table-footer a,
+    .periode-show-page .dashboard-table-footer span { color:#ffffff !important; }
 
-    .btn-back { display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;background:#f1f5f9;color:#475569;font-size:13px;font-weight:600;text-decoration:none;transition:background 0.15s;margin-bottom:20px; }
-    .btn-back:hover { background:#e2e8f0; }
+    .periode-show-page .btn-back { display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;background:rgba(255,255,255,0.2);color:#ffffff;font-size:13px;font-weight:600;text-decoration:none;transition:background 0.15s;margin-bottom:20px; }
+    .periode-show-page .btn-back:hover { background:rgba(99,102,241,0.4); color:#fff; }
     .btn-back svg { width:14px;height:14px; }
+
+    .periode-show-page .section-aksi-label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:rgba(255,255,255,0.9); margin-bottom:10px; }
 
     /* Modal */
     .modal-overlay { display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.45);align-items:center;justify-content:center; }
@@ -98,7 +120,7 @@
 @endpush
 
 @section('content')
-
+<div class="periode-show-page">
 <a href="{{ route($routePrefix . '.periode.index') }}" class="btn-back">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
@@ -136,7 +158,7 @@
 
 {{-- Aksi Batch per Periode --}}
 <div style="margin-bottom:24px">
-    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#94a3b8;margin-bottom:10px">
+    <div class="section-aksi-label">
         Aksi Kursus (berlaku untuk semua peserta dalam periode ini)
     </div>
     <div class="batch-grid">
@@ -260,7 +282,7 @@
                                 <small>{{ $item->email }}</small>
                             </div>
                         </td>
-                        <td style="color:#64748b;font-size:13px">{{ $item->created_at->format('d M Y') }}</td>
+                        <td style="color:rgba(255,255,255,0.85);font-size:13px">{{ $item->created_at->format('d M Y') }}</td>
                         <td>
                             @php $sd = $item->status_dokumen ?? 'belum_diperiksa'; @endphp
                             @if($sd === 'lengkap')
@@ -305,6 +327,7 @@
             <p>Belum ada pendaftaran dalam periode ini.</p>
         </div>
     @endif
+</div>
 </div>
 
 @push('scripts')

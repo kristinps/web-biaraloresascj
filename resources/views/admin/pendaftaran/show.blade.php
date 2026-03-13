@@ -6,13 +6,11 @@
 
 @push('styles')
 <style>
-    .back-link {
+    .pendaftaran-show-page .back-link {
         display: inline-flex; align-items: center; gap: 7px;
-        font-size: 13.5px; font-weight: 600; color: #64748b;
+        font-size: 13.5px; font-weight: 600; color: #ffffff;
         text-decoration: none; margin-bottom: 20px;
-        transition: color 0.2s;
     }
-    .back-link:hover { color: #6366f1; }
     .back-link svg { width: 16px; height: 16px; }
 
     .detail-grid {
@@ -23,94 +21,93 @@
     }
     @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
 
-    .section-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
+    .pendaftaran-show-page .section-card {
+        background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.10), rgba(56,189,248,0.08));
+        border: 1px solid rgba(148,163,184,0.5);
         border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        box-shadow: 0 8px 24px rgba(15,23,42,0.08);
         margin-bottom: 20px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
     }
     .section-head {
         padding: 16px 22px;
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         display: flex; align-items: center; gap: 10px;
     }
-    .section-head svg { width: 18px; height: 18px; color: rgba(255,255,255,0.8); }
+    .section-head svg { width: 18px; height: 18px; color: #ffffff; }
     .section-head h3 { font-size: 14px; font-weight: 700; color: #fff; }
     .section-body { padding: 0; }
 
     .info-row {
         display: flex;
         padding: 12px 22px;
-        border-bottom: 1px solid #f8fafc;
+        border-bottom: 1px solid rgba(148,163,184,0.35);
         gap: 16px;
     }
     .info-row:last-child { border-bottom: none; }
-    .info-label {
+    .pendaftaran-show-page .info-label {
         width: 42%;
         font-size: 13px;
-        color: #94a3b8;
+        color: #ffffff;
         font-weight: 500;
         flex-shrink: 0;
         line-height: 1.5;
     }
-    .info-value {
+    .pendaftaran-show-page .info-value {
         flex: 1;
         font-size: 13.5px;
-        color: #1e293b;
+        color: #ffffff;
         font-weight: 600;
         line-height: 1.5;
         word-break: break-word;
     }
-    .info-value.muted { color: #94a3b8; font-weight: 400; font-style: italic; }
+    .pendaftaran-show-page .info-value.muted { color: rgba(255,255,255,0.85); font-weight: 400; font-style: italic; }
 
-    /* Payment badge */
     .pay-badge {
         display: inline-flex; align-items: center; gap: 7px;
         padding: 6px 14px; border-radius: 99px;
         font-size: 13px; font-weight: 700;
     }
     .pay-badge-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .pay-green { background: #f0fdf4; color: #15803d; }
+    .pendaftaran-show-page .pay-green { background: rgba(34,197,94,0.35); color: #bbf7d0; }
     .pay-green .pay-badge-dot { background: #22c55e; }
-    .pay-amber { background: #fffbeb; color: #b45309; }
+    .pendaftaran-show-page .pay-amber { background: rgba(245,158,11,0.35); color: #fef3c7; }
     .pay-amber .pay-badge-dot { background: #f59e0b; }
-    .pay-slate { background: #f8fafc; color: #475569; }
+    .pendaftaran-show-page .pay-slate { background: rgba(148,163,184,0.35); color: #e2e8f0; }
     .pay-slate .pay-badge-dot { background: #94a3b8; }
 
-    /* Dokumen */
-    .doc-link {
+    .pendaftaran-show-page .doc-link {
         display: inline-flex; align-items: center; gap: 6px;
         padding: 6px 12px; border-radius: 8px;
-        background: #f1f5f9; color: #4f46e5;
+        background: rgba(255,255,255,0.2); color: #ffffff;
         font-size: 12.5px; font-weight: 600;
-        text-decoration: none; transition: background 0.15s;
+        text-decoration: none;
     }
-    .doc-link:hover { background: #e0e7ff; }
     .doc-link svg { width: 13px; height: 13px; }
 
     .doc-table { width: 100%; border-collapse: collapse; }
-    .doc-table thead th {
+    .pendaftaran-show-page .doc-table thead th {
         padding: 10px 18px;
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #6b7280;
-        background: #f9fafb;
+        color: #ffffff;
+        background: rgba(99,102,241,0.15);
         text-align: left;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid rgba(148,163,184,0.35);
     }
-    .doc-table tbody td {
+    .pendaftaran-show-page .doc-table tbody td {
         padding: 10px 18px;
         font-size: 12.5px;
-        color: #1f2933;
-        border-bottom: 1px solid #f3f4f6;
+        color: #ffffff;
+        border-bottom: 1px solid rgba(148,163,184,0.35);
         vertical-align: middle;
     }
-    .doc-table tbody tr:hover { background: #f9fafb; }
-    .doc-table .doc-name { font-weight: 600; color: #111827; }
-    .doc-table .doc-empty { color: #9ca3af; font-style: italic; }
+    .pendaftaran-show-page .doc-table tbody tr:hover { background: transparent !important; }
+    .pendaftaran-show-page .doc-table .doc-name { font-weight: 600; color: #ffffff; }
+    .pendaftaran-show-page .doc-table .doc-empty { color: rgba(255,255,255,0.8); font-style: italic; }
     .doc-aksi {
         display: flex;
         align-items: center;
@@ -130,64 +127,114 @@
         transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
     }
     .icon-btn svg { width: 15px; height: 15px; }
-    .icon-btn-approve { color: #16a34a; background: #ecfdf3; }
-    .icon-btn-approve:hover { background: #bbf7d0; box-shadow: 0 2px 8px rgba(22,163,74,0.25); transform: translateY(-1px); }
-    .icon-btn-reject { color: #dc2626; background: #fef2f2; }
-    .icon-btn-reject:hover { background: #fecaca; box-shadow: 0 2px 8px rgba(220,38,38,0.25); transform: translateY(-1px); }
+    .pendaftaran-show-page .icon-btn-approve { color: #bbf7d0; background: rgba(34,197,94,0.35); }
+    .pendaftaran-show-page .icon-btn-reject { color: #fecaca; background: rgba(239,68,68,0.35); }
 
-    /* Dokumen & kursus status badges */
     .dok-badge { display:inline-flex;align-items:center;gap:7px;padding:5px 13px;border-radius:99px;font-size:12.5px;font-weight:700; }
     .dok-badge-dot { width:7px;height:7px;border-radius:50%; }
-    .dok-lengkap { background:#f0fdf4;color:#15803d; } .dok-lengkap .dok-badge-dot { background:#22c55e; }
-    .dok-tidak   { background:#fef2f2;color:#dc2626; } .dok-tidak .dok-badge-dot   { background:#ef4444; }
-    .dok-periksa { background:#fffbeb;color:#b45309; } .dok-periksa .dok-badge-dot { background:#f59e0b; }
+    .pendaftaran-show-page .dok-lengkap { background:rgba(34,197,94,0.35);color:#bbf7d0; } .dok-lengkap .dok-badge-dot { background:#22c55e; }
+    .pendaftaran-show-page .dok-tidak   { background:rgba(239,68,68,0.35);color:#fecaca; } .dok-tidak .dok-badge-dot   { background:#ef4444; }
+    .pendaftaran-show-page .dok-periksa { background:rgba(245,158,11,0.35);color:#fef3c7; } .dok-periksa .dok-badge-dot { background:#f59e0b; }
 
     .kursus-badge { display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:99px;font-size:12px;font-weight:700; }
     .kursus-badge-dot { width:6px;height:6px;border-radius:50%; }
-    .kb-belum   { background:#f8fafc;color:#475569; } .kb-belum .kursus-badge-dot   { background:#94a3b8; }
-    .kb-terjadwal { background:#eff6ff;color:#1d4ed8; } .kb-terjadwal .kursus-badge-dot { background:#3b82f6; }
-    .kb-berjalan  { background:#fef3c7;color:#b45309; } .kb-berjalan .kursus-badge-dot  { background:#f59e0b; }
-    .kb-lulus { background:#f0fdf4;color:#15803d; } .kb-lulus .kursus-badge-dot { background:#22c55e; }
-    .kb-tidak { background:#fef2f2;color:#dc2626; } .kb-tidak .kursus-badge-dot { background:#ef4444; }
+    .pendaftaran-show-page .kb-belum   { background:rgba(148,163,184,0.35);color:#e2e8f0; } .kb-belum .kursus-badge-dot   { background:#94a3b8; }
+    .pendaftaran-show-page .kb-terjadwal { background:rgba(59,130,246,0.35);color:#bfdbfe; } .kb-terjadwal .kursus-badge-dot { background:#3b82f6; }
+    .pendaftaran-show-page .kb-berjalan  { background:rgba(245,158,11,0.35);color:#fef3c7; } .kb-berjalan .kursus-badge-dot  { background:#f59e0b; }
+    .pendaftaran-show-page .kb-lulus { background:rgba(34,197,94,0.35);color:#bbf7d0; } .kb-lulus .kursus-badge-dot { background:#22c55e; }
+    .pendaftaran-show-page .kb-tidak { background:rgba(239,68,68,0.35);color:#fecaca; } .kb-tidak .kursus-badge-dot { background:#ef4444; }
 
-    .action-card { background:#fff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04);margin-bottom:20px; }
+    .pendaftaran-show-page .action-card {
+        background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.10), rgba(56,189,248,0.08));
+        border: 1px solid rgba(148,163,184,0.5);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+        margin-bottom: 20px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
     .action-head { padding:14px 22px;background:linear-gradient(135deg,#f59e0b,#fbbf24);display:flex;align-items:center;gap:9px; }
-    .action-head svg { width:17px;height:17px;color:rgba(255,255,255,0.85); }
+    .action-head svg { width:17px;height:17px;color:#fff; }
     .action-head h3 { font-size:13.5px;font-weight:700;color:#fff; }
     .action-body { padding:20px 22px; }
 
     .form-group { margin-bottom:14px; }
-    .form-label { display:block;font-size:12.5px;font-weight:600;color:#374151;margin-bottom:5px; }
-    .form-select, .form-textarea { width:100%;padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:13.5px;color:#1e293b;background:#fff;outline:none;transition:border-color 0.2s;font-family:inherit; }
-    .form-select:focus, .form-textarea:focus { border-color:#6366f1; }
+    .pendaftaran-show-page .action-body .form-label { display:block;font-size:12.5px;font-weight:600;color:#ffffff;margin-bottom:5px; }
+    .pendaftaran-show-page .action-body .form-select,
+    .pendaftaran-show-page .action-body .form-textarea {
+        width:100%;padding:9px 12px;border:1.5px solid rgba(148,163,184,0.5);border-radius:9px;
+        font-size:13.5px;color:#ffffff;background:rgba(255,255,255,0.12);outline:none;font-family:inherit;
+    }
+    .pendaftaran-show-page .action-body .form-select:focus,
+    .pendaftaran-show-page .action-body .form-textarea:focus { border-color:#6366f1; }
     .form-textarea { resize:vertical;min-height:80px; }
+    .pendaftaran-show-page .action-body .form-textarea::placeholder { color:rgba(255,255,255,0.5); }
 
-    .btn-action { display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:opacity 0.2s; }
-    .btn-action:hover { opacity:0.88; }
+    .btn-action { display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none; }
     .btn-action svg { width:14px;height:14px; }
     .btn-indigo { background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff; }
 
+    .pendaftaran-show-page .check-row label { font-size:13px;color:#ffffff;cursor:pointer; }
     .check-row { display:flex;align-items:center;gap:8px;margin-top:10px; }
     .check-row input[type=checkbox] { width:15px;height:15px;cursor:pointer;accent-color:#6366f1; }
-    .check-row label { font-size:13px;color:#374151;cursor:pointer; }
 
-    /* Full-width top card */
-    .top-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
+    .pendaftaran-show-page .top-card {
+        background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.10), rgba(56,189,248,0.08));
+        border: 1px solid rgba(148,163,184,0.5);
         border-radius: 16px;
         padding: 22px 24px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        box-shadow: 0 8px 24px rgba(15,23,42,0.08);
         margin-bottom: 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 16px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
     }
-    .top-card .reg-id { font-size: 22px; font-weight: 800; color: #1e293b; }
-    .top-card .reg-id span { color: #6366f1; }
-    .top-card .reg-date { font-size: 13px; color: #94a3b8; margin-top: 3px; }
+    .pendaftaran-show-page .top-card .reg-id { font-size: 22px; font-weight: 800; color: #ffffff; }
+    .pendaftaran-show-page .top-card .reg-id span { color: #c7d2fe; }
+    .pendaftaran-show-page .top-card .reg-date { font-size: 13px; color: #ffffff; margin-top: 3px; }
+
+    .btn-check-show {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 8px 16px; border-radius: 10px; border: none;
+        background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff;
+        font-size: 13px; font-weight: 600; cursor: pointer;
+        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+    }
+    .btn-check-show svg { width: 18px; height: 18px; }
+
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.45); display: none; align-items: center; justify-content: center; z-index: 120; }
+    .modal-backdrop.open { display: flex; }
+    .pendaftaran-show-page .modal-box {
+        background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.10), rgba(56,189,248,0.08));
+        border: 1px solid rgba(148,163,184,0.5);
+        border-radius: 18px;
+        max-width: 460px;
+        width: 100%;
+        padding: 22px;
+        box-shadow: 0 18px 45px rgba(15,23,42,0.35);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+    .pendaftaran-show-page .modal-box .modal-close { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.9); float: right; }
+    .pendaftaran-show-page .modal-box .form-group label { display: block; font-size: 13px; font-weight: 500; color: #ffffff; margin-bottom: 4px; }
+    .pendaftaran-show-page .modal-box .form-group select {
+        width: 100%; border-radius: 10px; border: 1px solid rgba(148,163,184,0.5);
+        padding: 10px 12px; font-size: 14px; color: #ffffff; background: rgba(255,255,255,0.12);
+    }
+    .pendaftaran-show-page .modal-box .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+    .pendaftaran-show-page .modal-box .btn-secondary {
+        padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(148,163,184,0.5);
+        background: rgba(255,255,255,0.2); font-size: 13px; color: #ffffff; cursor: pointer;
+    }
+    .pendaftaran-show-page .modal-box .btn-primary {
+        padding: 8px 18px; border-radius: 999px; border: none;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
 </style>
 @endpush
 
@@ -195,7 +242,7 @@
 @php
     $routePrefix = $routePrefix ?? (request()->routeIs('dashboard.*') ? 'dashboard' : 'admin');
 @endphp
-
+<div class="pendaftaran-show-page">
 <a href="{{ route($routePrefix . '.pendaftaran.index') }}" class="back-link">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
@@ -219,9 +266,16 @@
         @endif
 
         @if($pendaftaran->midtrans_order_id)
-            <span style="font-size:12px;color:#94a3b8;background:#f8fafc;padding:6px 12px;border-radius:8px;font-family:monospace">
+            <span style="font-size:12px;color:#ffffff;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:8px;font-family:monospace">
                 {{ $pendaftaran->midtrans_order_id }}
             </span>
+        @endif
+
+        @if(!$pendaftaran->periode_id && isset($periodes) && $periodes->isNotEmpty())
+            <button type="button" class="btn-check" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;width:auto;border-radius:10px" onclick="document.getElementById('periodeModalShow').classList.add('open')" title="Pilih Periode">
+                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:18px;height:18px"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Centang
+            </button>
         @endif
     </div>
 </div>
@@ -279,7 +333,7 @@
                 </div>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:10px">
-                <p style="font-size:12px;color:#64748b;margin:0;">Email notifikasi akan otomatis dikirim ke peserta ({{ $pendaftaran->email }})</p>
+                <p style="font-size:12px;color:#ffffff;margin:0;">Email notifikasi akan otomatis dikirim ke peserta ({{ $pendaftaran->email }})</p>
                 <button type="submit" class="btn-action btn-indigo">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25"/>
@@ -375,14 +429,22 @@
             </div>
             <div class="section-body">
                 @php
-                    $docs = [
-                        ['label' => 'KTP Calon Pria',              'file' => $pendaftaran->ktp_pria],
-                        ['label' => 'KTP Calon Wanita',            'file' => $pendaftaran->ktp_wanita],
-                        ['label' => 'Surat Baptis Pria',           'file' => $pendaftaran->surat_baptis_pria],
-                        ['label' => 'Surat Baptis Wanita',         'file' => $pendaftaran->surat_baptis_wanita],
-                        ['label' => 'Surat Pengantar Kombas Pria', 'file' => $pendaftaran->surat_pengantar_kombas_pria],
-                        ['label' => 'Surat Pengantar Kombas Wanita','file' => $pendaftaran->surat_pengantar_kombas_wanita],
-                    ];
+                    $docs = [];
+                    $perFieldStatus = $pendaftaran->dokumen_status_verifikasi ?? [];
+                    foreach (\App\Models\PendaftaranPernikahan::dokumenFields() as $field => $label) {
+                        $file = $pendaftaran->$field;
+                        $raw  = $perFieldStatus[$field] ?? null;
+                        $decided = array_key_exists($field, $perFieldStatus);
+                        $accepted = $decided && filter_var($raw, FILTER_VALIDATE_BOOLEAN);
+                        $rejected = $decided && !$accepted;
+                        $docs[] = [
+                            'field'    => $field,
+                            'label'    => $label,
+                            'file'     => $file,
+                            'accepted' => $accepted,
+                            'rejected' => $rejected,
+                        ];
+                    }
                 @endphp
                 <div style="overflow-x:auto">
                     <table class="doc-table">
@@ -390,7 +452,8 @@
                             <tr>
                                 <th>Nama Dokumen</th>
                                 <th>File Dokumen</th>
-                                <th style="width:120px">Aksi Dokumen</th>
+                                <th>Status</th>
+                                <th style="width:160px">Aksi Dokumen</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -410,24 +473,57 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="doc-aksi">
-                                        <form method="POST" action="{{ $routePrefix === 'dashboard' ? route('dashboard.pendaftaran.dokumen-setuju', $pendaftaran->id) : route('admin.pendaftaran.dokumen-setuju', $pendaftaran->id) }}" onsubmit="return confirm('Setuju semua dokumen untuk pendaftaran ini? Email notifikasi akan dikirim ke peserta.');">
-                                            @csrf
-                                            <button type="submit" class="icon-btn icon-btn-approve" title="Setuju (dokumen diterima)">
-                                                <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                        <form method="POST" action="{{ $routePrefix === 'dashboard' ? route('dashboard.pendaftaran.dokumen-tolak', $pendaftaran->id) : route('admin.pendaftaran.dokumen-tolak', $pendaftaran->id) }}" onsubmit="return confirm('Tolak dokumen pendaftaran ini? Peserta akan melihat status Tidak Diterima dan dapat mengirim perbaikan.');">
-                                            @csrf
-                                            <button type="submit" class="icon-btn icon-btn-reject" title="Tolak (dokumen tidak diterima)">
-                                                <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
+                                    @if(!$doc['file'])
+                                        <span class="muted doc-empty">Belum diunggah</span>
+                                    @elseif($doc['accepted'])
+                                        <span class="dok-badge dok-lengkap">
+                                            <span class="dok-badge-dot"></span>Diterima
+                                        </span>
+                                    @elseif($doc['rejected'])
+                                        <span class="dok-badge dok-tidak">
+                                            <span class="dok-badge-dot"></span>Ditolak
+                                        </span>
+                                    @else
+                                        <span class="dok-badge dok-periksa">
+                                            <span class="dok-badge-dot"></span>Sedang diperiksa
+                                        </span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($doc['file'])
+                                        @if($doc['accepted'])
+                                            <span class="muted">Sudah diterima</span>
+                                        @elseif($doc['rejected'])
+                                            <span class="muted">Sudah ditolak</span>
+                                        @else
+                                            <div class="doc-aksi">
+                                                <form method="POST" action="{{ $routePrefix === 'dashboard'
+                                                        ? route('dashboard.pendaftaran.dokumen-item-setuju', [$pendaftaran->id, $doc['field']])
+                                                        : route('admin.pendaftaran.dokumen-item-setuju', [$pendaftaran->id, $doc['field']]) }}"
+                                                      onsubmit="return confirm('Setuju dokumen {{ $doc['label'] }}? Peserta akan mendapat email bahwa dokumen ini diterima.');">
+                                                    @csrf
+                                                    <button type="submit" class="icon-btn icon-btn-approve" title="Setuju dokumen ini">
+                                                        <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                                <form method="POST" action="{{ $routePrefix === 'dashboard'
+                                                        ? route('dashboard.pendaftaran.dokumen-item-tolak', [$pendaftaran->id, $doc['field']])
+                                                        : route('admin.pendaftaran.dokumen-item-tolak', [$pendaftaran->id, $doc['field']]) }}"
+                                                      onsubmit="return confirm('Tolak dokumen {{ $doc['label'] }}? Peserta akan mendapat email bahwa dokumen ini perlu perbaikan.');">
+                                                    @csrf
+                                                    <button type="submit" class="icon-btn icon-btn-reject" title="Tolak dokumen ini">
+                                                        <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <span class="muted">Menunggu upload</span>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -481,6 +577,42 @@
             </div>
         </div>
     </div>
+</div>
+
+@if(!$pendaftaran->periode_id && isset($periodes) && $periodes->isNotEmpty())
+{{-- Modal Pilih Periode (tombol Centang di halaman detail) --}}
+<div id="periodeModalShow" class="modal-backdrop" role="dialog" aria-labelledby="modalTitleShow" aria-modal="true">
+    <div class="modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <h3 id="modalTitleShow" style="font-size:1.05rem;font-weight:700;color:#ffffff">Pilih Periode</h3>
+            <button type="button" class="modal-close" onclick="document.getElementById('periodeModalShow').classList.remove('open')" aria-label="Tutup">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" action="{{ $routePrefix === 'dashboard' ? route('dashboard.pendaftaran.assign-periode', $pendaftaran->id) : route('admin.pendaftaran.assign-periode', $pendaftaran->id) }}">
+            @csrf
+            <div class="form-group">
+                <label for="periode_id_show">Periode</label>
+                <select name="periode_id" id="periode_id_show" required>
+                    <option value="">-- Pilih Periode --</option>
+                    @foreach($periodes as $per)
+                    <option value="{{ $per->id }}">{{ $per->nama }} ({{ $per->tanggal_mulai?->format('d M Y') }} – {{ $per->tanggal_selesai?->format('d M Y') }})</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="document.getElementById('periodeModalShow').classList.remove('open')">Batal</button>
+                <button type="submit" class="btn-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.getElementById('periodeModalShow')?.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+    });
+</script>
+@endif
 </div>
 
 @endsection

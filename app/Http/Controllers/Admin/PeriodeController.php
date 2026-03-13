@@ -41,11 +41,11 @@ class PeriodeController extends Controller
         ]);
 
         $periode = PeriodePernikahan::create([
-            'nama'          => $request->nama,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai,
-            'catatan'       => $request->catatan,
-            'status'        => 'aktif',
+            'nama'            => $request->nama,
+            'tanggal_mulai'   => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->filled('tanggal_selesai') ? $request->tanggal_selesai : null,
+            'catatan'         => $request->catatan,
+            'status'          => 'aktif',
         ]);
 
         $admins = User::whereIn('role', [User::ROLE_SUPER_ADMIN, User::ROLE_ADMIN])->get();
@@ -91,10 +91,10 @@ class PeriodeController extends Controller
         ]);
 
         $periode->update([
-            'nama'          => $request->nama,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai,
-            'catatan'       => $request->catatan,
+            'nama'            => $request->nama,
+            'tanggal_mulai'   => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->filled('tanggal_selesai') ? $request->tanggal_selesai : null,
+            'catatan'         => $request->catatan,
         ]);
 
         $peserta = $periode->pendaftaran()->get();

@@ -1,4 +1,5 @@
-@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'user.layouts.app')
+@extends(request()->routeIs('dashboard.*') ? 'layouts.dashboard' : 'layouts.dashboard')
+
 
 @section('title', 'Sertifikat')
 @section('page-title', 'Sertifikat')

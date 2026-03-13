@@ -23,7 +23,7 @@ class MateriKursusNotification extends Notification
         if ($this->materi->file_materi) {
             $mail->action('Unduh Materi', asset('storage/' . $this->materi->file_materi));
         }
-        $mail->action('Lihat Jadwal Materi di Dashboard', route('dashboard.user.jadwal-materi'));
+        $mail->action('Buka Dashboard', route('dashboard.user'));
         return $mail
             ->line('Mohon pelajari materi ini sebelum sesi berlangsung.')
             ->salutation('Hormat kami, **Biara Loresa SCJ**');
